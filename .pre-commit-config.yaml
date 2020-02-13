@@ -3,8 +3,24 @@ repos:
   rev: v2.4.0
   hooks:
   - id: check-merge-conflict
+  - id: check-json
+  - id: check-toml
   - id: end-of-file-fixer
   - id: trailing-whitespace
+
+- repo: https://github.com/doublify/pre-commit-rust
+  rev: 55f347186aec7f2a4ec13c31effdb4b26512f2bc
+  hooks:
+  - id: clippy
+    name: clippy-lambda-smtp-relay
+    files: ^lambda-smtp-relay/
+    pass_filenames: false
+    entry: sh -c 'cd lambda-smtp-relay && cargo clippy -- -Dwarnings'
+  - id: fmt
+    name: fmt-lambda-smtp-relay
+    files: ^lambda-smtp-relay/
+    pass_filenames: false
+    entry: sh -c 'cd lambda-smtp-relay && cargo fmt'
 
 - repo: git://github.com/antonbabenko/pre-commit-terraform
   rev: v1.25.0

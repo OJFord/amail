@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  lambda-smtp-relay:
+    image: lambci/lambda:provided
+    environment:
+      AWS_ACCESS_KEY_ID:
+      AWS_SECRET_ACCESS_KEY:
+      S3_BUCKET:
+      S3_REGION:
+      RELAY_ENVELOPE_FROM:
+      RELAY_ENVELOPE_TO:
+      SMTP_HOST:
+      SMTP_USER:
+      SMTP_PASS:
+    volumes:
+      - ./lambda-smtp-relay/target/x86_64-unknown-linux-musl/release/handler:/var/task/bootstrap:ro,delegated
