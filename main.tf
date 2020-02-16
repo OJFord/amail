@@ -76,10 +76,11 @@ data "aws_region" "current" {}
 resource "cloudflare_record" "email_receiving" {
   for_each = local.email_domain_zones
 
-  zone_id = each.value.id
-  type    = "MX"
-  name    = "@"
-  value   = "inbound-smtp.${data.aws_region.current.name}.amazonaws.com"
+  zone_id  = each.value.id
+  type     = "MX"
+  name     = "@"
+  value    = "inbound-smtp.${data.aws_region.current.name}.amazonaws.com"
+  priority = 10
 }
 
 resource "random_id" "eml_store" {
