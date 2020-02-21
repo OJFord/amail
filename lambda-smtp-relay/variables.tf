@@ -7,6 +7,10 @@ variable "aws_account_id" {
   type = string
 }
 
+variable "aws_iam_path" {
+  type = string
+}
+
 variable "aws_iam_policy" {
   type = object({
     logging = object({

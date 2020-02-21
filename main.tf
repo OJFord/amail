@@ -7,6 +7,8 @@ locals {
   }
 
   num_ses_dkim_tokens = 3
+
+  aws_iam_path = "${var.aws_iam_path_prefix}/amail/"
 }
 
 resource "aws_ses_domain_identity" "email_domain" {
@@ -41,18 +43,18 @@ resource "aws_ses_domain_identity_verification" "email_domain" {
   ]
 }
 
-resource "aws_ses_domain_dkim" "email_provenance" {
+resource "aws_ses_domain_dkim" "dkim" {
   for_each = aws_ses_domain_identity.email_domain
 
   domain = each.value.domain
 }
 
-resource "cloudflare_record" "email_provenance" {
+resource "cloudflare_record" "dkim" {
   for_each = {
     for domain_i in setproduct(var.domains, range(local.num_ses_dkim_tokens))
     : "${local.email_domain_zones[domain_i[0]].zone}-dkim${domain_i[1]}" => merge(
       local.email_domain_zones[domain_i[0]],
-      { token = aws_ses_domain_dkim.email_provenance[domain_i[0]].dkim_tokens[domain_i[1]] }
+      { token = aws_ses_domain_dkim.dkim[domain_i[0]].dkim_tokens[domain_i[1]] }
     )
   }
 
@@ -62,7 +64,7 @@ resource "cloudflare_record" "email_provenance" {
   value   = "${each.value.token}.dkim.amazonses.com"
 }
 
-resource "cloudflare_record" "email_antispoof" {
+resource "cloudflare_record" "spf" {
   for_each = local.email_domain_zones
 
   zone_id = each.value.id
@@ -73,7 +75,7 @@ resource "cloudflare_record" "email_antispoof" {
 
 data "aws_region" "current" {}
 
-resource "cloudflare_record" "email_receiving" {
+resource "cloudflare_record" "mx" {
   for_each = local.email_domain_zones
 
   zone_id  = each.value.id
@@ -154,7 +156,7 @@ resource "aws_ses_receipt_rule" "eml_store" {
   }
 }
 
-data "aws_iam_policy_document" "log_to_cloudwatch" {
+data "aws_iam_policy_document" "logging" {
   statement {
     sid    = "AllowLogging"
     effect = "Allow"
@@ -169,11 +171,11 @@ data "aws_iam_policy_document" "log_to_cloudwatch" {
   }
 }
 
-resource "aws_iam_policy" "log_to_cloudwatch" {
-  name   = join("", data.aws_iam_policy_document.log_to_cloudwatch.statement.*.sid)
-  policy = data.aws_iam_policy_document.log_to_cloudwatch.json
+resource "aws_iam_policy" "logging" {
+  path   = local.aws_iam_path
+  name   = join("", data.aws_iam_policy_document.logging.statement.*.sid)
+  policy = data.aws_iam_policy_document.logging.json
 }
-
 
 data "aws_iam_policy_document" "eml_fetch" {
   statement {
@@ -189,6 +191,7 @@ data "aws_iam_policy_document" "eml_fetch" {
 }
 
 resource "aws_iam_policy" "eml_fetch" {
+  path   = local.aws_iam_path
   name   = join("", data.aws_iam_policy_document.eml_fetch.statement.*.sid)
   policy = data.aws_iam_policy_document.eml_fetch.json
 }
@@ -199,8 +202,9 @@ module "smtp_relay" {
   enable = var.modules.smtp_relay
 
   aws_account_id = data.aws_caller_identity.current.account_id
+  aws_iam_path   = local.aws_iam_path
   aws_iam_policy = {
-    logging   = aws_iam_policy.log_to_cloudwatch
+    logging   = aws_iam_policy.logging
     eml_fetch = aws_iam_policy.eml_fetch
   }
   eml_bucket  = aws_s3_bucket.eml_store

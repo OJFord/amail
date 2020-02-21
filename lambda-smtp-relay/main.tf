@@ -2,7 +2,7 @@ locals {
   one_if_enabled = var.enable ? 1 : 0
 }
 
-resource "null_resource" "smtp_relay" {
+resource "null_resource" "lambda_runtime" {
   count = local.one_if_enabled
 
   triggers = {
@@ -21,9 +21,9 @@ resource "null_resource" "smtp_relay" {
   }
 }
 
-data "archive_file" "smtp_relay" {
+data "archive_file" "lambda_runtime" {
   depends_on = [
-    null_resource.smtp_relay,
+    null_resource.lambda_runtime,
   ]
 
   type        = "zip"
@@ -31,7 +31,7 @@ data "archive_file" "smtp_relay" {
   output_path = "${path.module}/handler.zip"
 }
 
-data "aws_iam_policy_document" "lambda_assume_role" {
+data "aws_iam_policy_document" "smtp_relay" {
   statement {
     effect = "Allow"
     actions = [
@@ -50,16 +50,17 @@ data "aws_iam_policy_document" "lambda_assume_role" {
 resource "aws_iam_role" "smtp_relay" {
   count = local.one_if_enabled
 
+  path               = var.aws_iam_path
   name               = "smtp-relay"
-  assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
+  assume_role_policy = data.aws_iam_policy_document.smtp_relay.json
 }
 
 resource "aws_lambda_function" "smtp_relay" {
   count = local.one_if_enabled
 
   function_name    = "smtp-relay"
-  filename         = data.archive_file.smtp_relay.output_path
-  source_code_hash = data.archive_file.smtp_relay.output_base64sha256
+  filename         = data.archive_file.lambda_runtime.output_path
+  source_code_hash = data.archive_file.lambda_runtime.output_base64sha256
   runtime          = "provided"
   handler          = "main"
   role             = aws_iam_role.smtp_relay[count.index].arn
@@ -81,21 +82,21 @@ resource "aws_lambda_function" "smtp_relay" {
 resource "aws_lambda_permission" "eml_store" {
   count = local.one_if_enabled
 
-  statement_id   = "smtp-relay"
+  statement_id   = "AllowSESInvocation"
   action         = "lambda:InvokeFunction"
   function_name  = aws_lambda_function.smtp_relay[count.index].function_name
   principal      = "ses.amazonaws.com"
   source_account = var.aws_account_id
 }
 
-resource "aws_iam_role_policy_attachment" "smtp_relay_cloudwatch" {
+resource "aws_iam_role_policy_attachment" "logging" {
   count = local.one_if_enabled
 
   role       = aws_iam_role.smtp_relay[count.index].name
   policy_arn = var.aws_iam_policy.logging.arn
 }
 
-resource "aws_iam_role_policy_attachment" "smtp_relay_eml_fetch" {
+resource "aws_iam_role_policy_attachment" "eml_fetch" {
   count = local.one_if_enabled
 
   role       = aws_iam_role.smtp_relay[count.index].name

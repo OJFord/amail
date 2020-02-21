@@ -1,3 +1,9 @@
+variable "aws_iam_path_prefix" {
+  description = "Prefix to use for IAM paths"
+  type        = string
+  default     = ""
+}
+
 variable "domains" {
   description = "Domains to verify and use"
   type        = list(string)
