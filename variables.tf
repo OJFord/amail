@@ -3,6 +3,13 @@ variable "domains" {
   type        = list(string)
 }
 
+variable "modules" {
+  description = "Optional modules to enable. If enabled, the parameter map of the same name must also be given."
+  type = object({
+    smtp_relay = bool
+  })
+}
+
 variable "smtp_relay" {
   description = "SMTP relay options"
   type = object({

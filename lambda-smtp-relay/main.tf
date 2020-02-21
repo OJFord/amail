@@ -1,4 +1,10 @@
+locals {
+  one_if_enabled = var.enable ? 1 : 0
+}
+
 resource "null_resource" "smtp_relay" {
+  count = local.one_if_enabled
+
   triggers = {
     # TODO: not trigger always, download from GitHub releases?
     always = uuid() # always trigger and let cargo decide if anything to do
@@ -42,17 +48,21 @@ data "aws_iam_policy_document" "lambda_assume_role" {
 }
 
 resource "aws_iam_role" "smtp_relay" {
+  count = local.one_if_enabled
+
   name               = "smtp-relay"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
 }
 
 resource "aws_lambda_function" "smtp_relay" {
+  count = local.one_if_enabled
+
   function_name    = "smtp-relay"
   filename         = data.archive_file.smtp_relay.output_path
   source_code_hash = data.archive_file.smtp_relay.output_base64sha256
   runtime          = "provided"
   handler          = "main"
-  role             = aws_iam_role.smtp_relay.arn
+  role             = aws_iam_role.smtp_relay[count.index].arn
 
   kms_key_arn = var.user_params.kms_key.arn
   environment {
@@ -69,19 +79,25 @@ resource "aws_lambda_function" "smtp_relay" {
 }
 
 resource "aws_lambda_permission" "eml_store" {
+  count = local.one_if_enabled
+
   statement_id   = "smtp-relay"
   action         = "lambda:InvokeFunction"
-  function_name  = aws_lambda_function.smtp_relay.function_name
+  function_name  = aws_lambda_function.smtp_relay[count.index].function_name
   principal      = "ses.amazonaws.com"
   source_account = var.aws_account_id
 }
 
 resource "aws_iam_role_policy_attachment" "smtp_relay_cloudwatch" {
-  role       = aws_iam_role.smtp_relay.name
+  count = local.one_if_enabled
+
+  role       = aws_iam_role.smtp_relay[count.index].name
   policy_arn = var.aws_iam_policy.logging.arn
 }
 
 resource "aws_iam_role_policy_attachment" "smtp_relay_eml_fetch" {
-  role       = aws_iam_role.smtp_relay.name
+  count = local.one_if_enabled
+
+  role       = aws_iam_role.smtp_relay[count.index].name
   policy_arn = var.aws_iam_policy.eml_fetch.arn
 }

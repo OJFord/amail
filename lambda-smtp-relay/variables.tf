@@ -1,3 +1,8 @@
+variable "enable" {
+  type    = bool
+  default = false
+}
+
 variable "aws_account_id" {
   type = string
 }
