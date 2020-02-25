@@ -26,6 +26,7 @@ use rusoto_s3::GetObjectRequest;
 use rusoto_s3::S3Client;
 use rusoto_s3::S3;
 use serde_derive::Serialize;
+use tokio::io::AsyncReadExt;
 
 #[derive(Serialize)]
 struct Output {}
@@ -66,35 +67,30 @@ fn handler(e: SimpleEmailEvent, _: Context) -> Result<Output, HandlerError> {
 
 #[tokio::main]
 async fn relay_eml(smtp: &mut smtp::SmtpClient, s3: &S3Client, message_id: &str) {
-    match s3
-        .get_object(GetObjectRequest {
-            bucket: env::var("S3_BUCKET").unwrap(),
-            key: message_id.into(),
-            ..Default::default()
-        })
-        .then(|obj| obj.unwrap().body.unwrap().into_future())
-        .await
-    {
-        (Some(eml), _) => {
-            let email = lettre::Email::new(
-                lettre::Envelope::new(
-                    Some(
-                        lettre::EmailAddress::new(env::var("RELAY_ENVELOPE_FROM").unwrap())
-                            .unwrap(),
-                    ),
-                    vec![
-                        lettre::EmailAddress::new(env::var("RELAY_ENVELOPE_TO").unwrap()).unwrap(),
-                    ],
-                )
-                .unwrap(),
-                message_id.into(),
-                eml.unwrap().as_ref().into(),
-            );
-            smtp.clone().transport().send(email).unwrap();
-        }
-        (_, e) => {
-            println!("{:#?}", e);
-            panic!(e)
-        }
-    }
+    let mut content = Vec::new();
+    s3.get_object(GetObjectRequest {
+        bucket: env::var("S3_BUCKET").unwrap(),
+        key: message_id.into(),
+        ..Default::default()
+    })
+    .await
+    .expect("Failed to retrieve email")
+    .body
+    .unwrap()
+    .into_async_read()
+    .read_to_end(&mut content)
+    .await
+    .expect("Failed to read email");
+
+    let email = lettre::Email::new(
+        lettre::Envelope::new(
+            Some(lettre::EmailAddress::new(env::var("RELAY_ENVELOPE_FROM").unwrap()).unwrap()),
+            vec![lettre::EmailAddress::new(env::var("RELAY_ENVELOPE_TO").unwrap()).unwrap()],
+        )
+        .unwrap(),
+        message_id.into(),
+        content,
+    );
+
+    smtp.clone().transport().send(email).unwrap();
 }
