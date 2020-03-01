@@ -64,6 +64,7 @@ resource "aws_lambda_function" "smtp_relay" {
   runtime          = "provided"
   handler          = "main"
   role             = aws_iam_role.smtp_relay[count.index].arn
+  timeout          = 12
 
   kms_key_arn = var.user_params.kms_key.arn
   environment {
