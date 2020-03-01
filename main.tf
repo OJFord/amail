@@ -210,3 +210,11 @@ module "smtp_relay" {
   eml_bucket  = aws_s3_bucket.eml_store
   user_params = var.smtp_relay
 }
+
+module "outgoing" {
+  source = "./outgoing"
+
+  enable = var.modules.outgoing
+
+  aws_iam_path = local.aws_iam_path
+}
