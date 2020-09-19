@@ -10,6 +10,6 @@ output "smtp" {
     ]
     tls      = true
     username = aws_iam_access_key.smtp.id
-    password = aws_iam_access_key.smtp.ses_smtp_password
+    password = aws_iam_access_key.smtp.ses_smtp_password_v4
   }
 }

@@ -1,10 +1,4 @@
-locals {
-  one_if_enabled = var.enable ? 1 : 0
-}
-
 resource "null_resource" "lambda_runtime" {
-  count = local.one_if_enabled
-
   triggers = {
     # TODO: not trigger always, download from GitHub releases?
     always = uuid() # always trigger and let cargo decide if anything to do
@@ -48,22 +42,18 @@ data "aws_iam_policy_document" "smtp_relay" {
 }
 
 resource "aws_iam_role" "smtp_relay" {
-  count = local.one_if_enabled
-
   path               = var.aws_iam_path
   name               = "smtp-relay"
   assume_role_policy = data.aws_iam_policy_document.smtp_relay.json
 }
 
 resource "aws_lambda_function" "smtp_relay" {
-  count = local.one_if_enabled
-
   function_name    = "smtp-relay"
   filename         = data.archive_file.lambda_runtime.output_path
   source_code_hash = data.archive_file.lambda_runtime.output_base64sha256
   runtime          = "provided"
   handler          = "main"
-  role             = aws_iam_role.smtp_relay[count.index].arn
+  role             = aws_iam_role.smtp_relay.arn
   timeout          = 12
 
   kms_key_arn = var.user_params.kms_key.arn
@@ -81,25 +71,19 @@ resource "aws_lambda_function" "smtp_relay" {
 }
 
 resource "aws_lambda_permission" "eml_store" {
-  count = local.one_if_enabled
-
   statement_id   = "AllowSESInvocation"
   action         = "lambda:InvokeFunction"
-  function_name  = aws_lambda_function.smtp_relay[count.index].function_name
+  function_name  = aws_lambda_function.smtp_relay.function_name
   principal      = "ses.amazonaws.com"
   source_account = var.aws_account_id
 }
 
 resource "aws_iam_role_policy_attachment" "logging" {
-  count = local.one_if_enabled
-
-  role       = aws_iam_role.smtp_relay[count.index].name
+  role       = aws_iam_role.smtp_relay.name
   policy_arn = var.aws_iam_policy.logging.arn
 }
 
 resource "aws_iam_role_policy_attachment" "eml_fetch" {
-  count = local.one_if_enabled
-
-  role       = aws_iam_role.smtp_relay[count.index].name
+  role       = aws_iam_role.smtp_relay.name
   policy_arn = var.aws_iam_policy.eml_fetch.arn
 }

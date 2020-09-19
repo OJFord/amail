@@ -146,7 +146,7 @@ resource "aws_ses_receipt_rule" "eml_store" {
   }
 
   dynamic "lambda_action" {
-    for_each = var.modules.smtp_relay ? [module.smtp_relay.function_arn] : []
+    for_each = var.modules.smtp_relay ? [module.smtp_relay[0].function_arn] : []
 
     content {
       function_arn    = lambda_action.value
@@ -198,8 +198,7 @@ resource "aws_iam_policy" "eml_fetch" {
 
 module "smtp_relay" {
   source = "./lambda-smtp-relay"
-
-  enable = var.modules.smtp_relay
+  count  = var.modules.smtp_relay ? 1 : 0
 
   aws_account_id = data.aws_caller_identity.current.account_id
   aws_iam_path   = local.aws_iam_path
@@ -213,8 +212,7 @@ module "smtp_relay" {
 
 module "outgoing" {
   source = "./outgoing"
-
-  enable = var.modules.outgoing
+  count  = var.modules.outgoing ? 1 : 0
 
   aws_iam_path = local.aws_iam_path
 }
