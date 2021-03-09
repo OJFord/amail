@@ -3,6 +3,8 @@ version: '3'
 services:
   lambda-smtp-relay:
     image: lambci/lambda:provided
+    depends_on:
+      - lambda-smtp-relay-build
     environment:
       AWS_ACCESS_KEY_ID:
       AWS_SECRET_ACCESS_KEY:
@@ -21,6 +23,7 @@ services:
     command: cargo build --release
     volumes:
       - ./lambda-smtp-relay:/volume
+      - ./Cargo.lock:/volume/Cargo.lock
       - /dev/null:/volume/.cargo/config
       - cargo-cache:/root/.cargo/registry
 

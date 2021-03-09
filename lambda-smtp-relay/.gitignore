@@ -1,6 +1,5 @@
 /.cargo/
 
-/target/
 *.zip
 bootstrap
 handler
