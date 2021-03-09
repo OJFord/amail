@@ -1,6 +1,6 @@
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v2.4.0
+  rev: v3.4.0
   hooks:
   - id: check-merge-conflict
   - id: check-json
@@ -9,14 +9,14 @@ repos:
   - id: trailing-whitespace
 
 - repo: https://github.com/doublify/pre-commit-rust
-  rev: 55f347186aec7f2a4ec13c31effdb4b26512f2bc
+  rev: v1.0
   hooks:
     - id: fmt
     - id: cargo-check
     - id: clippy
 
 - repo: git://github.com/antonbabenko/pre-commit-terraform
-  rev: v1.25.0
+  rev: v1.47.0
   hooks:
   - id: terraform_fmt
-  - id: terraform_tflint
+  - id: terraform_validate

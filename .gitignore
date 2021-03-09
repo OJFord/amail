@@ -1,5 +1,6 @@
 target/
 .envrc
 .terraform/
+.terraform.lock.hcl
 
 /lambda-smtp-relay/Cargo.lock
