@@ -8,6 +8,7 @@ services:
     environment:
       AWS_ACCESS_KEY_ID:
       AWS_SECRET_ACCESS_KEY:
+      AWS_SESSION_TOKEN:
       S3_BUCKET:
       S3_REGION:
       RELAY_ENVELOPE_FROM:
