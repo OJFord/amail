@@ -1,0 +1,27 @@
+{
+  "scripts": {
+    "build": "rm dist/build/* && rollup -c && tauri build",
+    "build-debug": "DEBUG=true rollup -c && tauri build --debug",
+    "dev": "DEBUG=true RUST_BACKTRACE=1 rollup -c -w"
+  },
+  "devDependencies": {
+    "@fortawesome/free-solid-svg-icons": "^5.15.3",
+    "@rollup/plugin-commonjs": "^19.0.1",
+    "@rollup/plugin-node-resolve": "^13.0.1",
+    "@tauri-apps/cli": "^1.0.0-beta.5",
+    "bootswatch": "^5.0.2",
+    "fa-svelte": "^3.1.0",
+    "rollup": "^2.53.2",
+    "rollup-plugin-css-only": "^3.1.0",
+    "rollup-plugin-livereload": "^2.0.5",
+    "rollup-plugin-svelte": "^7.1.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "sirv-cli": "^1.0.12",
+    "svelte": "^3.38.3",
+    "sveltestrap": "^5.4.0"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^1.0.0-beta.4"
+  },
+  "private": true
+}
