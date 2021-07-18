@@ -53,7 +53,7 @@ struct EmlMeta {
 }
 
 #[tauri::command]
-fn list_eml() -> Result<Vec<EmlMeta>, AmailError> {
+fn list_eml() -> Result<Vec<(EmlMeta, String)>, AmailError> {
     let mut emls = fs::read_dir(
         base_strategy::choose_base_strategy()?
             .data_dir()
@@ -93,13 +93,41 @@ fn list_eml() -> Result<Vec<EmlMeta>, AmailError> {
                             .ok_or_else(|| anyhow!("Missing subject"))?,
                     })
                 })
+                .and_then(|meta| {
+                    Ok((
+                        meta,
+                        String::from(
+                            eml.path()
+                                .to_str()
+                                .ok_or_else(|| anyhow!("Non-unicode  path"))?,
+                        ),
+                    ))
+                })
         })
         .collect()
 }
 
+#[tauri::command]
+fn view_eml(id: String) -> Result<String, AmailError> {
+    let contents = &fs::read(id)?;
+    let eml = mailparse::parse_mail(contents)?;
+
+    if eml.ctype.mimetype == "text/html" || eml.ctype.mimetype == "text/plain" {
+        return Ok(eml.get_body()?);
+    }
+
+    for part in eml.subparts {
+        if part.ctype.mimetype == "text/html" || part.ctype.mimetype == "text/plain" {
+            return Ok(part.get_body()?);
+        }
+    }
+
+    Err(AmailError::Other(anyhow!("No plaintext version")))
+}
+
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![list_eml])
+        .invoke_handler(tauri::generate_handler![list_eml, view_eml])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

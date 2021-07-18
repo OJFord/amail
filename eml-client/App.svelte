@@ -15,6 +15,7 @@
   import List from "./routes/List.svelte";
 
   let page = List;
+  let pageProps = {};
 
 </script>
 
@@ -36,7 +37,14 @@
 
     <Col>
       <div id="page">
-        <svelte:component this={page} />
+        <svelte:component
+          this={page}
+          on:view={(event) => {
+            page = event.detail.page;
+            pageProps = event.detail.props;
+          }}
+          {...pageProps}
+        />
       </div>
     </Col>
   </Row>

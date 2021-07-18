@@ -1,5 +1,6 @@
 import commonjs from "@rollup/plugin-commonjs";
 import css from "rollup-plugin-css-only";
+import json from "@rollup/plugin-json";
 import livereload from "rollup-plugin-livereload";
 import resolve from "@rollup/plugin-node-resolve";
 import svelte from "rollup-plugin-svelte";
@@ -65,6 +66,7 @@ export default {
       },
     }),
     css({ output: "bundle.css" }),
+    json(),
     resolve({
       browser: true,
       dedupe: ["svelte"],

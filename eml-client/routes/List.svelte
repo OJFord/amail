@@ -1,4 +1,5 @@
 <script>
+  import { createEventDispatcher } from "svelte";
   import {
     ListGroup,
     ListGroupItem,
@@ -10,6 +11,9 @@
   import * as tauri from "@tauri-apps/api/tauri";
 
   import RelativeDate from "../components/RelativeDate.svelte";
+  import Single from "./Single.svelte";
+
+  const dispatch = createEventDispatcher();
 
   let emls = null;
   tauri
@@ -25,8 +29,13 @@
   <Spinner primary />
 {:else}
   <ListGroup flush>
-    {#each emls as eml}
-      <ListGroupItem tag="a" href="#">
+    {#each emls as [eml, id]}
+      <ListGroupItem
+        tag="a"
+        href="#"
+        on:click={() =>
+          dispatch("view", { page: Single, props: { id, emlMeta: eml } })}
+      >
         <Container fluid>
           <Row>
             <h3>{eml.subject}</h3>
