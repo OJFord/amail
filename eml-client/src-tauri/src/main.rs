@@ -14,29 +14,17 @@ use thiserror::Error;
 
 #[derive(Debug, Error)]
 enum AmailError {
+    #[error(transparent)]
     IoError {
         #[from]
         source: std::io::Error,
     },
-    ParseError {
-        #[from]
-        source: mailparse::MailParseError,
-    },
+    #[error(transparent)]
+    ParseError(#[from] mailparse::MailParseError),
     #[error(transparent)]
     HomeDirError(#[from] etcetera::HomeDirError),
     #[error(transparent)]
     Other(#[from] anyhow::Error),
-}
-
-impl std::fmt::Display for AmailError {
-    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
-        match self {
-            AmailError::IoError { source } => source.fmt(formatter),
-            AmailError::ParseError { source } => source.fmt(formatter),
-            AmailError::HomeDirError(source) => source.fmt(formatter),
-            AmailError::Other(source) => source.fmt(formatter),
-        }
-    }
 }
 
 impl From<AmailError> for tauri::InvokeError {
