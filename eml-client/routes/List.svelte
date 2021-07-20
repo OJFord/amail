@@ -48,7 +48,7 @@
             </Col>
 
             <Col>
-              {eml.author}
+              {eml.from.name}
             </Col>
           </Row>
         </Container>
