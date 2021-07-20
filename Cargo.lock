@@ -37,8 +37,8 @@ name = "amail-eml-client"
 version = "0.0.0"
 dependencies = [
  "anyhow",
- "etcetera",
  "mailparse",
+ "notmuch",
  "serde",
  "serde_json",
  "tauri",
@@ -1021,17 +1021,6 @@ dependencies = [
  "proc-macro2 1.0.27",
  "quote 1.0.9",
  "syn 1.0.73",
-]
-
-[[package]]
-name = "etcetera"
-version = "0.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "016b04fd1e94fb833d432634245c9bb61cf1c7409668a0e7d4c3ab00c5172dec"
-dependencies = [
- "cfg-if 1.0.0",
- "dirs-next",
- "thiserror",
 ]
 
 [[package]]
@@ -2489,6 +2478,16 @@ dependencies = [
  "zbus",
  "zvariant",
  "zvariant_derive",
+]
+
+[[package]]
+name = "notmuch"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bccc64ef9ae09b901c203ab01fdb88477e54574c18d604aa9e9192be7d1c09a7"
+dependencies = [
+ "libc",
+ "supercow",
 ]
 
 [[package]]
@@ -3987,6 +3986,12 @@ name = "subtle"
 version = "2.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6bdef32e8150c2a081110b42772ffe7d7c9032b606bc226c8260fd97e0976601"
+
+[[package]]
+name = "supercow"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "171758edb47aa306a78dfa4ab9aeb5167405bd4e3dc2b64e88f6a84bbe98bd63"
 
 [[package]]
 name = "syn"

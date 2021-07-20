@@ -4,11 +4,9 @@
 )]
 
 use std::fs;
+use std::process::Command;
 
 use anyhow::anyhow;
-use etcetera::base_strategy;
-use etcetera::base_strategy::BaseStrategy;
-use mailparse::MailHeaderMap;
 use serde::Serialize;
 use thiserror::Error;
 
@@ -20,9 +18,9 @@ enum AmailError {
         source: std::io::Error,
     },
     #[error(transparent)]
-    ParseError(#[from] mailparse::MailParseError),
+    NotMuchError(#[from] notmuch::Error),
     #[error(transparent)]
-    HomeDirError(#[from] etcetera::HomeDirError),
+    ParseError(#[from] mailparse::MailParseError),
     #[error(transparent)]
     Other(#[from] anyhow::Error),
 }
@@ -42,55 +40,62 @@ struct EmlMeta {
 
 #[tauri::command]
 fn list_eml() -> Result<Vec<(EmlMeta, String)>, AmailError> {
-    let mut emls = fs::read_dir(
-        base_strategy::choose_base_strategy()?
-            .data_dir()
-            .join("amail")
-            .join("eml"),
-    )?
-    .map(|e| e.ok())
-    .filter(|e| e.is_some())
-    .flatten()
-    .collect::<Vec<_>>();
+    let mut db_path = String::from_utf8(
+        Command::new("notmuch")
+            .args(&["config", "get", "database.path"])
+            .output()
+            .expect("Failed to find notmuch database.path")
+            .stdout,
+    )
+    .expect("Non-UTF8 database.path");
+    db_path = db_path.trim().to_string();
 
-    emls.sort_by_key(|e| std::cmp::Reverse(e.metadata().and_then(|m| m.modified()).unwrap()));
+    let db = notmuch::Database::open(&db_path, notmuch::DatabaseMode::ReadOnly)?;
+    let eml_query = db.create_query("tag:inbox")?;
+    eml_query.set_sort(notmuch::Sort::NewestFirst);
+    let emls = eml_query.search_messages()?;
 
-    emls.iter()
+    emls.into_iter()
         .take(25)
         .map(|eml| {
-            Ok(mailparse::parse_headers(&fs::read(eml.path())?)?.0)
-                .and_then(|eml| {
-                    Ok(EmlMeta {
-                        author: eml
-                            .get_first_header("From")
-                            .ok_or_else(|| anyhow!("Missing from"))
-                            .and_then(|ref f| Ok(mailparse::addrparse_header(f)?))
-                            .and_then(|a| {
-                                a.extract_single_info()
-                                    .ok_or_else(|| anyhow!("Expected single from address"))
-                                    .map(|s| s.display_name.unwrap_or(s.addr))
-                            })?,
-
-                        timestamp: eml
-                            .get_first_value("Date")
-                            .ok_or_else(|| anyhow!("Missing date"))
-                            .and_then(|ref d| Ok(mailparse::dateparse(d)?))?,
-
-                        subject: eml
-                            .get_first_value("Subject")
-                            .ok_or_else(|| anyhow!("Missing subject"))?,
+            Ok(EmlMeta {
+                author: eml
+                    .header("From")?
+                    .ok_or_else(|| anyhow!("Missing From"))
+                    .and_then(|ref f| {
+                        Ok(mailparse::addrparse_header(
+                            &mailparse::parse_header(f.as_bytes())?.0,
+                        )?)
                     })
-                })
-                .and_then(|meta| {
-                    Ok((
-                        meta,
-                        String::from(
-                            eml.path()
-                                .to_str()
-                                .ok_or_else(|| anyhow!("Non-unicode  path"))?,
-                        ),
-                    ))
-                })
+                    .map(|a| {
+                        a.into_inner()
+                            .iter()
+                            .map(|a| match a {
+                                mailparse::MailAddr::Group(g) => g.group_name.to_owned(),
+                                mailparse::MailAddr::Single(s) => s
+                                    .display_name
+                                    .to_owned()
+                                    .unwrap_or_else(|| s.addr.to_owned()),
+                            })
+                            .collect::<Vec<String>>()
+                            .join(", ")
+                    })?,
+                subject: eml
+                    .header("Subject")?
+                    .ok_or_else(|| anyhow!("Missing subject"))?
+                    .into(),
+                timestamp: eml.date(),
+            })
+            .and_then(|meta| {
+                Ok((
+                    meta,
+                    String::from(
+                        eml.filename()
+                            .to_str()
+                            .ok_or_else(|| anyhow!("Non-unicode path"))?,
+                    ),
+                ))
+            })
         })
         .collect()
 }
