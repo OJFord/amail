@@ -3,15 +3,20 @@
     windows_subsystem = "windows"
 )]
 
+use std::convert::TryFrom;
 use std::fs;
 use std::process::Command;
 
 use anyhow::anyhow;
-use serde::Serialize;
 use thiserror::Error;
 
+mod eml;
+use eml::EmlMeta;
+
 #[derive(Debug, Error)]
-enum AmailError {
+pub enum AmailError {
+    #[error(transparent)]
+    Infallible(#[from] std::convert::Infallible),
     #[error(transparent)]
     IoError {
         #[from]
@@ -29,13 +34,6 @@ impl From<AmailError> for tauri::InvokeError {
     fn from(e: AmailError) -> tauri::InvokeError {
         Self::from(format!("{}", e))
     }
-}
-
-#[derive(Serialize)]
-struct EmlMeta {
-    author: String,
-    subject: String,
-    timestamp: i64,
 }
 
 #[tauri::command]
@@ -58,44 +56,14 @@ fn list_eml() -> Result<Vec<(EmlMeta, String)>, AmailError> {
     emls.into_iter()
         .take(25)
         .map(|eml| {
-            Ok(EmlMeta {
-                author: eml
-                    .header("From")?
-                    .ok_or_else(|| anyhow!("Missing From"))
-                    .and_then(|ref f| {
-                        Ok(mailparse::addrparse_header(
-                            &mailparse::parse_header(f.as_bytes())?.0,
-                        )?)
-                    })
-                    .map(|a| {
-                        a.into_inner()
-                            .iter()
-                            .map(|a| match a {
-                                mailparse::MailAddr::Group(g) => g.group_name.to_owned(),
-                                mailparse::MailAddr::Single(s) => s
-                                    .display_name
-                                    .to_owned()
-                                    .unwrap_or_else(|| s.addr.to_owned()),
-                            })
-                            .collect::<Vec<String>>()
-                            .join(", ")
-                    })?,
-                subject: eml
-                    .header("Subject")?
-                    .ok_or_else(|| anyhow!("Missing subject"))?
-                    .into(),
-                timestamp: eml.date(),
-            })
-            .and_then(|meta| {
-                Ok((
-                    meta,
-                    String::from(
-                        eml.filename()
-                            .to_str()
-                            .ok_or_else(|| anyhow!("Non-unicode path"))?,
-                    ),
-                ))
-            })
+            Ok((
+                EmlMeta::try_from(&eml)?,
+                String::from(
+                    eml.filename()
+                        .to_str()
+                        .ok_or_else(|| anyhow!("Non-unicode path"))?,
+                ),
+            ))
         })
         .collect()
 }
