@@ -29,7 +29,12 @@
   <Row>
     <div id="side">
       <Nav class="sticky-top" vertical>
-        <NavLink on:click={() => (page = List)}>
+        <NavLink
+          on:click={() => {
+            page = List;
+            pageProps = {};
+          }}
+        >
           <Icon icon={faStream} />
         </NavLink>
       </Nav>
