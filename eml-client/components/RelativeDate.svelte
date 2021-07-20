@@ -23,9 +23,11 @@
     const now = new Date();
     const hoursDiff = (now - date) / (60 * 60 * 1000);
 
-    if (hoursDiff < 1.5) return relativeDate.format(-hoursDiff * 60, "minutes");
+    if (hoursDiff < 1.5)
+      return relativeDate.format(-(hoursDiff * 60).toFixed(0), "minutes");
 
-    if (hoursDiff < 20) return relativeDate.format(-hoursDiff, "hours");
+    if (hoursDiff < 20)
+      return relativeDate.format(-hoursDiff.toFixed(0), "hours");
 
     if (hoursDiff < 7 * 24) return weekdayDate.format(date);
 
