@@ -29,14 +29,13 @@
   <Spinner primary />
 {:else}
   <ListGroup flush>
-    {#each emls as [eml, id]}
+    {#each emls as emlMeta}
       <ListGroupItem
         tag="a"
         href="#"
-        on:click={() =>
-          dispatch("view", { page: Single, props: { id, emlMeta: eml } })}
+        on:click={() => dispatch("view", { page: Single, props: { emlMeta } })}
       >
-        <EmlListItem emlMeta={eml} />
+        <EmlListItem {emlMeta} />
       </ListGroupItem>
     {/each}
   </ListGroup>

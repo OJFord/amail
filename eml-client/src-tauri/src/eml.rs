@@ -5,11 +5,12 @@ use itertools::Itertools;
 use mailparse::MailAddr;
 use notmuch::Message;
 use notmuch::MessageOwner;
+use serde::Deserialize;
 use serde::Serialize;
 
 use crate::AmailError;
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(untagged)]
 pub enum EmlAddr {
     Single { name: String, address: String },
@@ -38,13 +39,15 @@ impl From<&MailAddr> for EmlAddr {
     }
 }
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct EmlMeta {
-    from: EmlAddr,
-    subject: String,
-    tags: Vec<String>,
-    to: Vec<EmlAddr>,
-    timestamp: i64,
+    pub from: EmlAddr,
+    pub id: String,
+    pub id_thread: String,
+    pub subject: String,
+    pub tags: Vec<String>,
+    pub to: Vec<EmlAddr>,
+    pub timestamp: i64,
 }
 
 impl<'o, O> TryFrom<&Message<'o, O>> for EmlMeta
@@ -65,6 +68,9 @@ where
             .into_iter()
             .exactly_one()
             .map_err(|e| anyhow!("Expected exactly one From address: {:?}", e))?,
+
+            id: eml.id().to_string(),
+            id_thread: eml.thread_id().to_string(),
 
             subject: eml
                 .header("Subject")?

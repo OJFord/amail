@@ -36,41 +36,39 @@ impl From<AmailError> for tauri::InvokeError {
     }
 }
 
-#[tauri::command]
-fn list_eml() -> Result<Vec<(EmlMeta, String)>, AmailError> {
-    let mut db_path = String::from_utf8(
-        Command::new("notmuch")
-            .args(&["config", "get", "database.path"])
-            .output()
-            .expect("Failed to find notmuch database.path")
-            .stdout,
-    )
-    .expect("Non-UTF8 database.path");
-    db_path = db_path.trim().to_string();
+struct State {
+    db_path: String,
+}
 
-    let db = notmuch::Database::open(&db_path, notmuch::DatabaseMode::ReadOnly)?;
+impl State {
+    fn open_db_ro(&self) -> Result<notmuch::Database, AmailError> {
+        Ok(notmuch::Database::open(
+            &self.db_path,
+            notmuch::DatabaseMode::ReadOnly,
+        )?)
+    }
+}
+
+#[tauri::command]
+fn list_eml(state: tauri::State<State>) -> Result<Vec<EmlMeta>, AmailError> {
+    let db = state.open_db_ro()?;
     let eml_query = db.create_query("tag:inbox")?;
     eml_query.set_sort(notmuch::Sort::NewestFirst);
     let emls = eml_query.search_messages()?;
 
     emls.into_iter()
         .take(25)
-        .map(|eml| {
-            Ok((
-                EmlMeta::try_from(&eml)?,
-                String::from(
-                    eml.filename()
-                        .to_str()
-                        .ok_or_else(|| anyhow!("Non-unicode path"))?,
-                ),
-            ))
-        })
+        .map(|m| EmlMeta::try_from(&m))
         .collect()
 }
 
 #[tauri::command]
-fn view_eml(id: String) -> Result<String, AmailError> {
-    let contents = &fs::read(id)?;
+fn view_eml(state: tauri::State<State>, eml_meta: EmlMeta) -> Result<String, AmailError> {
+    let db = state.open_db_ro()?;
+    let msg = db
+        .find_message(&eml_meta.id)?
+        .ok_or_else(|| anyhow!("Message {} not found", eml_meta.id))?;
+    let contents = &fs::read(msg.filename())?;
     let eml = mailparse::parse_mail(contents)?;
 
     if eml.ctype.mimetype == "text/html" || eml.ctype.mimetype == "text/plain" {
@@ -87,7 +85,18 @@ fn view_eml(id: String) -> Result<String, AmailError> {
 }
 
 fn main() {
+    let mut db_path = String::from_utf8(
+        Command::new("notmuch")
+            .args(&["config", "get", "database.path"])
+            .output()
+            .expect("Failed to find notmuch database.path")
+            .stdout,
+    )
+    .expect("Non-UTF8 database.path");
+    db_path = db_path.trim().to_string();
+
     tauri::Builder::default()
+        .manage(State { db_path })
         .invoke_handler(tauri::generate_handler![list_eml, view_eml])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
