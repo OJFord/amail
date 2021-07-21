@@ -1,5 +1,4 @@
 <script>
-  import "bootswatch/dist/darkly/bootstrap.min.css";
   import Icon from "fa-svelte";
   import { faStream } from "@fortawesome/free-solid-svg-icons/faStream";
   import {
@@ -55,7 +54,7 @@
   </Row>
 </Container>
 
-<style>
+<style scoped>
   #page {
   }
 

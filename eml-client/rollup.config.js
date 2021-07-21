@@ -3,7 +3,9 @@ import css from "rollup-plugin-css-only";
 import json from "@rollup/plugin-json";
 import livereload from "rollup-plugin-livereload";
 import resolve from "@rollup/plugin-node-resolve";
+import scss from "rollup-plugin-scss";
 import svelte from "rollup-plugin-svelte";
+import sveltePreprocess from "svelte-preprocess";
 import { terser } from "rollup-plugin-terser";
 
 const watch = Boolean(process.env.ROLLUP_WATCH);
@@ -71,11 +73,16 @@ export default {
 
   plugins: [
     svelte({
+      emitCss: true,
       compilerOptions: {
         dev: !production,
       },
+      preprocess: sveltePreprocess({
+        sourceMap: !production,
+      }),
     }),
     css({ output: "bundle.css" }),
+    scss({ output: `${distDir}/build/global.css` }),
     json(),
     resolve({
       browser: true,
