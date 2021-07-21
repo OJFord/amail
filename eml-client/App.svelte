@@ -20,7 +20,7 @@
 
 <div id="top">
   <Navbar class="sticky-top" color="primary">
-    <NavbarBrand>EML Viewer</NavbarBrand>
+    <NavbarBrand><h1>Amail</h1></NavbarBrand>
   </Navbar>
 </div>
 

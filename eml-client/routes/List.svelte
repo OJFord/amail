@@ -10,7 +10,7 @@
   } from "sveltestrap";
   import * as tauri from "@tauri-apps/api/tauri";
 
-  import RelativeDate from "../components/RelativeDate.svelte";
+  import EmlListItem from "../components/EmlListItem.svelte";
   import Single from "./Single.svelte";
 
   const dispatch = createEventDispatcher();
@@ -36,22 +36,7 @@
         on:click={() =>
           dispatch("view", { page: Single, props: { id, emlMeta: eml } })}
       >
-        <Container fluid>
-          <Row>
-            <h3>{eml.subject}</h3>
-          </Row>
-
-          <Row>
-            <Col xs="3">
-              <!-- UNIX timestamp *1000 to get ms -->
-              <RelativeDate date={eml.timestamp * 1000} />
-            </Col>
-
-            <Col>
-              {eml.from.name}
-            </Col>
-          </Row>
-        </Container>
+        <EmlListItem emlMeta={eml} />
       </ListGroupItem>
     {/each}
   </ListGroup>
