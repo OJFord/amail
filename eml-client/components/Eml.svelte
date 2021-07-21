@@ -10,7 +10,7 @@
 
   let contents = null;
 
-  tauri
+  $: tauri
     .invoke("view_eml", { emlMeta })
     .then((eml) => {
       contents = sanitizeHtml(eml, {

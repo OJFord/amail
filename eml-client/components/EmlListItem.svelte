@@ -3,16 +3,14 @@
 
   import {
     Col,
-    Container,
     Row,
     //
   } from "sveltestrap";
 
   import RelativeDate from "./RelativeDate.svelte";
-
 </script>
 
-<Container fluid>
+<div>
   <Row>
     <h3 class:strong={emlMeta.tags.includes("unread")}>
       {emlMeta.subject}
@@ -29,4 +27,4 @@
       {emlMeta.from.name}
     </Col>
   </Row>
-</Container>
+</div>

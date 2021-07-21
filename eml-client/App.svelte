@@ -12,9 +12,9 @@
     Row,
   } from "sveltestrap";
 
-  import List from "./routes/List.svelte";
+  import EmlList from "./components/EmlList.svelte";
 
-  let page = List;
+  let page = EmlList;
   let pageProps = {};
 
 </script>
@@ -33,7 +33,7 @@
           <NavLink
             active
             on:click={() => {
-              page = List;
+              page = EmlList;
               pageProps = {};
             }}
           >
