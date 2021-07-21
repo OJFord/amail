@@ -5,6 +5,7 @@
     Col,
     Container,
     Nav,
+    NavItem,
     Navbar,
     NavbarBrand,
     NavLink,
@@ -26,21 +27,25 @@
 
 <Container fluid>
   <Row>
-    <div id="side">
-      <Nav class="sticky-top" vertical>
-        <NavLink
-          on:click={() => {
-            page = List;
-            pageProps = {};
-          }}
-        >
-          <Icon icon={faStream} />
-        </NavLink>
+    <Col xs="1">
+      <Nav vertical pills>
+        <NavItem>
+          <NavLink
+            active
+            on:click={() => {
+              page = List;
+              pageProps = {};
+            }}
+          >
+            <Icon icon={faStream} />
+            <h2>tag:inbox</h2>
+          </NavLink>
+        </NavItem>
       </Nav>
-    </div>
+    </Col>
 
     <Col>
-      <div id="page">
+      <Container fluid>
         <svelte:component
           this={page}
           on:view={(event) => {
@@ -49,19 +54,12 @@
           }}
           {...pageProps}
         />
-      </div>
+      </Container>
     </Col>
   </Row>
 </Container>
 
 <style scoped>
-  #page {
-  }
-
-  #side {
-    top: 5rem;
-  }
-
   #top {
     margin-bottom: 1rem;
   }
