@@ -10,6 +10,8 @@ const watch = Boolean(process.env.ROLLUP_WATCH);
 const production = !process.env.DEBUG;
 const distDir = "dist";
 
+const PORT = (Math.random() * (65535 - 1024) + 1024).toFixed(0);
+
 let renderer;
 let server;
 
@@ -23,9 +25,17 @@ function render() {
   return {
     writeBundle() {
       if (renderer) return;
-      renderer = require("child_process").spawn("yarn", ["tauri", "dev"], {
-        stdio: [process.stdin, process.stdout, process.stderr],
-      });
+      renderer = require("child_process").spawn(
+        "yarn",
+        [
+          "tauri",
+          "dev",
+          `--config={"build": {"devPath": "http://localhost:${PORT}"}}`,
+        ],
+        {
+          stdio: [process.stdin, process.stdout, process.stderr],
+        }
+      );
     },
   };
 }
@@ -36,7 +46,7 @@ function serve() {
       if (server) return;
       server = require("child_process").spawn(
         "yarn",
-        ["sirv", "--dev", "--port=4000", "--no-clear", "dist"],
+        ["sirv", "--dev", `--port=${PORT}`, "--no-clear", "dist"],
         {
           stdio: [process.stdin, process.stdout, process.stderr],
         }
