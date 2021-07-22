@@ -1,5 +1,5 @@
 $h1-font-size: 2rem;
-$h2-font-size: 1.2rem;
+$h2-font-size: 1rem;
 $h3-font-size: 0.8rem;
 $h4-font-size: 0.6rem;
 $h5-font-size: 0.4rem;
@@ -9,10 +9,25 @@ $h6-font-size: 0.2rem;
 @import "./node_modules/bootstrap-scss/bootstrap";
 @import "./node_modules/bootswatch/dist/flatly/bootswatch";
 
+html,
+body {
+  height: 100%;
+}
+
 .nav-pills .nav-link {
   display: -webkit-box;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
 
   svg {
     margin: 5px;
   }
+
+  h2 span {
+    vertical-align: middle;
+  }
+}
+
+.scroll {
+  overflow-y: scroll;
 }

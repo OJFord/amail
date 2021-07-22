@@ -1,22 +1,18 @@
 <script>
-  import { createEventDispatcher } from "svelte";
   import {
     ListGroup,
     ListGroupItem,
-    Col,
-    Container,
-    Row,
     Spinner,
+    //
   } from "sveltestrap";
+
   import * as tauri from "@tauri-apps/api/tauri";
 
   import EmlListItem from "./EmlListItem.svelte";
-  import Eml from "./Eml.svelte";
 
-  const dispatch = createEventDispatcher();
+  export let emlSelected = null;
 
   let emls = null;
-  let selected = null;
   tauri
     .invoke("list_eml")
     .then((emlList) => {
@@ -29,26 +25,19 @@
 {#if emls == null}
   <Spinner primary />
 {:else}
-  <Row>
-    <Col xs="4">
-      <ListGroup flush>
-        {#each emls as emlMeta}
-          <ListGroupItem
-            tag="a"
-            href="#"
-            on:click={() => (selected = emlMeta)}
-            color={selected && selected == emlMeta ? "secondary" : ""}
-          >
-            <EmlListItem {emlMeta} />
-          </ListGroupItem>
-        {/each}
-      </ListGroup>
-    </Col>
-
-    <Col class="bg-light">
-      {#if selected}
-        <Eml emlMeta={selected} />
-      {/if}
-    </Col>
-  </Row>
+  <ListGroup flush>
+    {#each emls as emlMeta}
+      <ListGroupItem
+        tag="a"
+        href="#"
+        on:click={() => (emlSelected = emlMeta)}
+        color={emlSelected && emlSelected == emlMeta ? "secondary" : ""}
+      >
+        <EmlListItem {emlMeta} />
+      </ListGroupItem>
+    {/each}
+  </ListGroup>
 {/if}
+
+<style scoped>
+</style>

@@ -13,55 +13,46 @@
   } from "sveltestrap";
 
   import EmlList from "./components/EmlList.svelte";
+  import Eml from "./components/Eml.svelte";
 
-  let page = EmlList;
-  let pageProps = {};
+  let emlSelected = null;
 
 </script>
 
-<div id="top">
-  <Navbar class="sticky-top" color="primary">
-    <NavbarBrand><h1>Amail</h1></NavbarBrand>
-  </Navbar>
-</div>
+<Container fluid class="h-100 d-flex flex-column">
+  <Row class="flex-shrink-0">
+    <Navbar color="primary">
+      <NavbarBrand><h1>Amail</h1></NavbarBrand>
+    </Navbar>
+  </Row>
 
-<Container fluid>
-  <Row>
-    <Col xs="1">
+  <Row class="flex-fill" style="min-height: 0;">
+    <Col xs="1" class="border">
       <Nav vertical pills>
         <NavItem>
-          <NavLink
-            active
-            on:click={() => {
-              page = EmlList;
-              pageProps = {};
-            }}
-          >
+          <NavLink active on:click={() => {}}>
             <Icon icon={faStream} />
-            <h2>tag:inbox</h2>
+            <h2><span>tag:inbox</span></h2>
           </NavLink>
         </NavItem>
       </Nav>
     </Col>
 
-    <Col>
-      <Container fluid>
-        <svelte:component
-          this={page}
-          on:view={(event) => {
-            page = event.detail.page;
-            pageProps = event.detail.props;
-          }}
-          {...pageProps}
-        />
-      </Container>
+    <Col xs="4" class="mh-100 scroll">
+      <EmlList bind:emlSelected />
     </Col>
+
+    <Col class="bg-light mh-100 scroll">
+      {#if emlSelected}
+        <Eml emlMeta={emlSelected} />
+      {/if}
+    </Col>
+  </Row>
+
+  <Row class="flex-shrink-0">
+    <Col class="mh-100" />
   </Row>
 </Container>
 
 <style scoped>
-  #top {
-    margin-bottom: 1rem;
-  }
-
 </style>
