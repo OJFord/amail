@@ -1,6 +1,6 @@
 <script>
   import Icon from "fa-svelte";
-  import { faStream } from "@fortawesome/free-solid-svg-icons/faStream";
+  import { faTag } from "@fortawesome/free-solid-svg-icons/faTag";
   import {
     Col,
     Container,
@@ -14,10 +14,11 @@
 
   import EmlList from "./components/EmlList.svelte";
   import Eml from "./components/Eml.svelte";
+  import Search from "./components/Search.svelte";
 
   let emlSelected = null;
-  const queries = ["tag:inbox", "tag:unread"];
-  let querySelected = queries[0];
+  const tags = ["tag:inbox", "tag:unread"];
+  let querySelected = tags[0];
 
 </script>
 
@@ -31,22 +32,26 @@
   <Row class="flex-fill" style="min-height: 0;">
     <Col xs="1" class="border">
       <Nav vertical pills>
-        {#each queries as query}
+        {#each tags as tag}
           <NavItem>
             <NavLink
-              active={query == querySelected}
-              on:click={() => (querySelected = query)}
+              active={tag == querySelected}
+              on:click={() => (querySelected = tag)}
             >
-              <Icon icon={faStream} />
-              <h2><span>{query}</span></h2>
+              <Icon icon={faTag} />
+              <h2><span>{tag.split("tag:")[1]}</span></h2>
             </NavLink>
           </NavItem>
         {/each}
       </Nav>
     </Col>
 
-    <Col xs="4" class="mh-100 scroll">
-      <EmlList query={querySelected} bind:emlSelected />
+    <Col xs="4" class="h-100 d-flex flex-column">
+      <Search bind:querySelected quietQueries={tags} />
+
+      <Row class="flex-fill mh-100 scroll">
+        <EmlList query={querySelected} bind:emlSelected />
+      </Row>
     </Col>
 
     <Col class="bg-light mh-100 scroll">
