@@ -51,9 +51,14 @@ impl State {
 }
 
 #[tauri::command]
-fn list_eml(state: tauri::State<State>) -> Result<Vec<Result<EmlMeta, EmlParseError>>, AmailError> {
+fn list_eml(
+    state: tauri::State<State>,
+    query: String,
+) -> Result<Vec<Result<EmlMeta, EmlParseError>>, AmailError> {
+    println!("Executing query: {}", query);
+
     let db = state.open_db_ro()?;
-    let eml_query = db.create_query("tag:inbox")?;
+    let eml_query = db.create_query(&query)?;
     eml_query.set_sort(notmuch::Sort::NewestFirst);
     let emls = eml_query.search_messages()?;
 

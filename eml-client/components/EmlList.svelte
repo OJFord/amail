@@ -11,10 +11,11 @@
   import EmlListItem from "./EmlListItem.svelte";
 
   export let emlSelected = null;
+  export let query;
 
   let emls = null;
-  tauri
-    .invoke("list_eml")
+  $: tauri
+    .invoke("list_eml", { query })
     .then((emlList) => {
       emls = emlList;
     })

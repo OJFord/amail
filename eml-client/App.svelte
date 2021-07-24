@@ -16,6 +16,8 @@
   import Eml from "./components/Eml.svelte";
 
   let emlSelected = null;
+  const queries = ["tag:inbox", "tag:unread"];
+  let querySelected = queries[0];
 
 </script>
 
@@ -29,17 +31,22 @@
   <Row class="flex-fill" style="min-height: 0;">
     <Col xs="1" class="border">
       <Nav vertical pills>
-        <NavItem>
-          <NavLink active on:click={() => {}}>
-            <Icon icon={faStream} />
-            <h2><span>tag:inbox</span></h2>
-          </NavLink>
-        </NavItem>
+        {#each queries as query}
+          <NavItem>
+            <NavLink
+              active={query == querySelected}
+              on:click={() => (querySelected = query)}
+            >
+              <Icon icon={faStream} />
+              <h2><span>{query}</span></h2>
+            </NavLink>
+          </NavItem>
+        {/each}
       </Nav>
     </Col>
 
     <Col xs="4" class="mh-100 scroll">
-      <EmlList bind:emlSelected />
+      <EmlList query={querySelected} bind:emlSelected />
     </Col>
 
     <Col class="bg-light mh-100 scroll">
