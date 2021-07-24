@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.4.0
+    rev: v4.0.1
     hooks:
       - id: check-merge-conflict
       - id: check-json
@@ -16,13 +16,13 @@ repos:
       - id: clippy
 
   - repo: git://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.47.0
+    rev: v1.50.0
     hooks:
       - id: terraform_fmt
       - id: terraform_validate
 
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: "v2.3.0"
+    rev: "v2.3.2"
     hooks:
       - id: prettier
         additional_dependencies:
