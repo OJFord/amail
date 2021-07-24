@@ -69,6 +69,16 @@ fn list_eml(
 }
 
 #[tauri::command]
+fn list_tags(state: tauri::State<State>) -> Result<Vec<String>, AmailError> {
+    println!("Listing tags");
+
+    let db = state.open_db_ro()?;
+    db.all_tags()
+        .map(|ts| ts.into_iter().collect::<Vec<String>>())
+        .map_err(AmailError::from)
+}
+
+#[tauri::command]
 fn view_eml(state: tauri::State<State>, eml_meta: EmlMeta) -> Result<String, AmailError> {
     let db = state.open_db_ro()?;
     let msg = db
@@ -103,7 +113,7 @@ fn main() {
 
     tauri::Builder::default()
         .manage(State { db_path })
-        .invoke_handler(tauri::generate_handler![list_eml, view_eml])
+        .invoke_handler(tauri::generate_handler![list_eml, list_tags, view_eml])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
