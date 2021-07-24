@@ -30,10 +30,19 @@
       <ListGroupItem
         tag="a"
         href="#"
-        on:click={() => (emlSelected = emlMeta)}
-        color={emlSelected && emlSelected == emlMeta ? "secondary" : ""}
+        on:click={() => (emlSelected = emlMeta.Ok)}
+        color={emlSelected && emlSelected == emlMeta.Ok ? "secondary" : ""}
       >
-        <EmlListItem {emlMeta} />
+        {#if emlMeta.Ok}
+          <EmlListItem emlMeta={emlMeta.Ok} />
+        {:else}
+          <div class="bg-error">
+            {#if emlMeta.Err.id}
+              <h4>{emlMeta.Err.id}</h4>
+            {/if}
+            Failed to parse: {emlMeta.Err.reason}
+          </div>
+        {/if}
       </ListGroupItem>
     {/each}
   </ListGroup>

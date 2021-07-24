@@ -24,7 +24,7 @@
     </Col>
 
     <Col>
-      {emlMeta.from.name}
+      {emlMeta.from.map((m) => m.name).join(", ")}
     </Col>
   </Row>
 </div>

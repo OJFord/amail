@@ -12,6 +12,7 @@ use thiserror::Error;
 
 mod eml;
 use eml::EmlMeta;
+use eml::EmlParseError;
 
 #[derive(Debug, Error)]
 pub enum AmailError {
@@ -50,7 +51,7 @@ impl State {
 }
 
 #[tauri::command]
-fn list_eml(state: tauri::State<State>) -> Result<Vec<EmlMeta>, AmailError> {
+fn list_eml(state: tauri::State<State>) -> Result<Vec<Result<EmlMeta, EmlParseError>>, AmailError> {
     let db = state.open_db_ro()?;
     let eml_query = db.create_query("tag:inbox")?;
     eml_query.set_sort(notmuch::Sort::NewestFirst);
@@ -58,7 +59,7 @@ fn list_eml(state: tauri::State<State>) -> Result<Vec<EmlMeta>, AmailError> {
 
     emls.into_iter()
         .take(25)
-        .map(|m| EmlMeta::try_from(&m))
+        .map(|m| Ok(EmlMeta::try_from(&m)))
         .collect()
 }
 
