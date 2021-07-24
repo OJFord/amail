@@ -24,6 +24,14 @@
     </Col>
 
     <Col>
+      {#if emlMeta.sender}
+        {#if emlMeta.from.map((m) => m.name).includes(emlMeta.sender.name)}
+          {emlMeta.sender.address}
+        {:else}
+          {emlMeta.sender.name}
+        {/if}
+        <small><i>on behalf of</i></small>
+      {/if}
       {emlMeta.from.map((m) => m.name).join(", ")}
     </Col>
   </Row>
