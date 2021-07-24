@@ -3,7 +3,6 @@
 
   export let quietQueries = [];
   export let querySelected = null;
-
 </script>
 
 <div class="search">
@@ -19,5 +18,4 @@
   .search {
     margin: 0.3rem;
   }
-
 </style>

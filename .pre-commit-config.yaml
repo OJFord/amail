@@ -26,4 +26,4 @@ repos:
     hooks:
       - id: prettier
         additional_dependencies:
-          - prettier-plugin-svelte@2.1.6
+          - prettier-plugin-svelte@2.3.1

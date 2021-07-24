@@ -33,7 +33,6 @@
 
     return fullDate.format(date);
   };
-
 </script>
 
 <span>{formatDate(date)}</span>

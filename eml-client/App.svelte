@@ -19,7 +19,6 @@
   let emlSelected = null;
   const tags = ["tag:inbox", "tag:unread"];
   let querySelected = tags[0];
-
 </script>
 
 <Container fluid class="h-100 d-flex flex-column">

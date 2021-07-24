@@ -20,7 +20,6 @@
       emls = emlList;
     })
     .catch(console.error);
-
 </script>
 
 {#if emls == null}
