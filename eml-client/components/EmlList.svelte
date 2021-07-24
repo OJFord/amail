@@ -11,6 +11,7 @@
   import EmlListItem from "./EmlListItem.svelte";
 
   export let emlSelected = null;
+  export let hideTags = new Set();
   export let query;
 
   let emls = null;
@@ -34,7 +35,7 @@
         color={emlSelected && emlSelected == emlMeta.Ok ? "secondary" : ""}
       >
         {#if emlMeta.Ok}
-          <EmlListItem emlMeta={emlMeta.Ok} />
+          <EmlListItem emlMeta={emlMeta.Ok} {hideTags} />
         {:else}
           <div class="bg-error">
             {#if emlMeta.Err.id}

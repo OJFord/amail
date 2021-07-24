@@ -57,7 +57,11 @@
       <Search bind:querySelected quietQueries={tagQueries} />
 
       <Row class="flex-fill mh-100 scroll">
-        <EmlList query={querySelected} bind:emlSelected />
+        <EmlList
+          query={querySelected}
+          bind:emlSelected
+          hideTags={new Set([querySelected.split("tag:")[1]])}
+        />
       </Row>
     </Col>
 

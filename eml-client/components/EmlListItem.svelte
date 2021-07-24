@@ -1,5 +1,7 @@
 <script>
   export let emlMeta;
+  export let hideTags = new Set();
+  hideTags.add("unread");
 
   import {
     Col,
@@ -8,13 +10,20 @@
   } from "sveltestrap";
 
   import RelativeDate from "./RelativeDate.svelte";
+  import TagBadges from "./TagBadges.svelte";
 </script>
 
 <div>
   <Row>
-    <h3 class:strong={emlMeta.tags.includes("unread")}>
-      {emlMeta.subject}
-    </h3>
+    <Col>
+      <h3 class:strong={emlMeta.tags.includes("unread")}>
+        {emlMeta.subject}
+      </h3>
+    </Col>
+
+    <Col xs="3">
+      <TagBadges tags={emlMeta.tags.filter((t) => !hideTags.has(t))} />
+    </Col>
   </Row>
 
   <Row class="h4 text-muted">
