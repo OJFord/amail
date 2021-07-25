@@ -16,17 +16,24 @@
   import EmlList from "./components/EmlList.svelte";
   import Eml from "./components/Eml.svelte";
   import Search from "./components/Search.svelte";
+  import TagsSelect from "./components/TagsSelect.svelte";
+  import TagQueryModal from "./components/TagQueryModal.svelte";
 
   let emlSelected = null;
   let tagQueries = [];
   let querySelected = "tag:inbox";
 
-  tauri
-    .invoke("list_tags")
-    .then((tagList) => {
+  let tagModalOpen = false;
+  let tagSelected;
+
+  const refreshTagList = () =>
+    tauri.invoke("list_tags").then((tagList) => {
       tagQueries = tagList.map((t) => `tag:${t}`);
-    })
-    .catch(console.error);
+    });
+
+  const refreshQuery = () => (querySelected = new String(querySelected));
+
+  refreshTagList();
 </script>
 
 <Container fluid class="h-100 d-flex flex-column">
@@ -54,7 +61,30 @@
     </Col>
 
     <Col xs="4" class="h-100 d-flex flex-column">
-      <Search bind:querySelected quietQueries={tagQueries} />
+      <Row style="margin: 0.3rem">
+        <Col>
+          <Search bind:querySelected quietQueries={tagQueries} />
+        </Col>
+
+        <Col xs="2">
+          <TagsSelect
+            on:tagSelected={(tag) => {
+              tagSelected = tag.detail;
+              tagModalOpen = true;
+            }}
+          />
+        </Col>
+
+        <TagQueryModal
+          bind:isOpen={tagModalOpen}
+          tag={tagSelected}
+          query={querySelected}
+          on:retagComplete={() => {
+            refreshTagList();
+            refreshQuery();
+          }}
+        />
+      </Row>
 
       <Row class="flex-fill mh-100 scroll">
         <EmlList

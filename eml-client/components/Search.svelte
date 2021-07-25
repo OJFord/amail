@@ -10,12 +10,11 @@
     type="search"
     placeholder={querySelected ? querySelected : "Enter a query"}
     on:input={(q) => (querySelected = q.target.value)}
-    value={quietQueries.includes(querySelected) ? null : querySelected}
+    value={quietQueries.includes(querySelected.valueOf())
+      ? null
+      : querySelected}
   />
 </div>
 
 <style lang="scss">
-  .search {
-    margin: 0.3rem;
-  }
 </style>

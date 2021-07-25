@@ -48,6 +48,49 @@ impl State {
             notmuch::DatabaseMode::ReadOnly,
         )?)
     }
+
+    fn open_db_rw(&self) -> Result<notmuch::Database, AmailError> {
+        Ok(notmuch::Database::open(
+            &self.db_path,
+            notmuch::DatabaseMode::ReadWrite,
+        )?)
+    }
+}
+
+#[tauri::command]
+fn apply_tag(state: tauri::State<State>, query: String, tag: String) -> Result<(), AmailError> {
+    println!("Adding tag:{} where {}", tag, query);
+
+    let db = state.open_db_rw()?;
+    let eml_query = db.create_query(&format!("({}) and not tag:{}", query, tag))?;
+
+    for eml in eml_query.search_messages()? {
+        eml.add_tag(&tag)?;
+    }
+    Ok(())
+}
+
+#[tauri::command]
+fn rm_tag(state: tauri::State<State>, query: String, tag: String) -> Result<(), AmailError> {
+    println!("Removing tag:{} where {}", tag, query);
+
+    let db = state.open_db_rw()?;
+    let eml_query = db.create_query(&format!("({}) and tag:{}", query, tag))?;
+
+    for eml in eml_query.search_messages()? {
+        eml.remove_tag(&tag)?;
+    }
+    Ok(())
+}
+
+#[tauri::command]
+fn count_matches(state: tauri::State<State>, query: String) -> Result<u32, AmailError> {
+    println!("Counting matches for query: {}", query);
+
+    let db = state.open_db_ro()?;
+    let eml_query = db.create_query(&query)?;
+
+    eml_query.count_messages().map_err(AmailError::from)
 }
 
 #[tauri::command]
@@ -113,7 +156,14 @@ fn main() {
 
     tauri::Builder::default()
         .manage(State { db_path })
-        .invoke_handler(tauri::generate_handler![list_eml, list_tags, view_eml])
+        .invoke_handler(tauri::generate_handler![
+            apply_tag,
+            count_matches,
+            list_eml,
+            list_tags,
+            rm_tag,
+            view_eml,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
