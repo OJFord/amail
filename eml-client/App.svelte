@@ -26,6 +26,9 @@
   let tagModalOpen = false;
   let tagSelected;
 
+  const markRead = (id) =>
+    tauri.invoke("rm_tag", { query: `id:${id}`, tag: "unread" });
+
   const refreshTagList = () =>
     tauri.invoke("list_tags").then((tagList) => {
       tagQueries = tagList.map((t) => `tag:${t}`);
@@ -34,6 +37,10 @@
   const refreshQuery = () => (querySelected = new String(querySelected));
 
   refreshTagList();
+
+  $: if (emlSelected != null) {
+    markRead(emlSelected.id).then(refreshQuery);
+  }
 </script>
 
 <Container fluid class="h-100 d-flex flex-column">

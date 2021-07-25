@@ -32,12 +32,16 @@
         tag="a"
         href="#"
         on:click={() => (emlSelected = emlMeta.Ok)}
-        color={emlSelected && emlSelected == emlMeta.Ok ? "secondary" : ""}
+        color={emlMeta.Err
+          ? "warning"
+          : emlSelected && emlSelected.id == emlMeta.Ok.id
+          ? "secondary"
+          : ""}
       >
         {#if emlMeta.Ok}
           <EmlListItem emlMeta={emlMeta.Ok} {hideTags} />
         {:else}
-          <div class="bg-warning">
+          <div>
             {#if emlMeta.Err.id}
               <h4>{emlMeta.Err.id}</h4>
             {/if}
