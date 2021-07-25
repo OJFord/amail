@@ -12,7 +12,7 @@
   };
 </script>
 
-<span class="tags">
+<h3 class="tags">
   {#each tags as tag}
     <span class="tag">
       <Badge pill color="" style={`background-color: ${rgbForTag(tag)};`}>
@@ -20,12 +20,11 @@
       </Badge>
     </span>
   {/each}
-</span>
+</h3>
 
 <style lang="scss">
   .tags {
     overflow: hidden;
-    position: absolute;
     white-space: nowrap;
   }
 </style>

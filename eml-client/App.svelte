@@ -102,11 +102,13 @@
       </Row>
     </Col>
 
-    <Col class="bg-light mh-100 scroll">
-      {#if emlSelected}
+    {#if emlSelected}
+      <Col class="border h-100 d-flex flex-column">
         <Eml emlMeta={emlSelected} />
-      {/if}
-    </Col>
+      </Col>
+    {:else}
+      <Col class="bg-light" />
+    {/if}
   </Row>
 
   <Row class="flex-shrink-0">
