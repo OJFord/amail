@@ -8,34 +8,12 @@ use std::fs;
 use std::process::Command;
 
 use anyhow::anyhow;
-use thiserror::Error;
 
 mod eml;
+mod error;
 use eml::EmlMeta;
-use eml::EmlParseError;
-
-#[derive(Debug, Error)]
-pub enum AmailError {
-    #[error(transparent)]
-    Infallible(#[from] std::convert::Infallible),
-    #[error(transparent)]
-    IoError {
-        #[from]
-        source: std::io::Error,
-    },
-    #[error(transparent)]
-    NotMuchError(#[from] notmuch::Error),
-    #[error(transparent)]
-    ParseError(#[from] mailparse::MailParseError),
-    #[error(transparent)]
-    Other(#[from] anyhow::Error),
-}
-
-impl From<AmailError> for tauri::InvokeError {
-    fn from(e: AmailError) -> tauri::InvokeError {
-        Self::from(format!("{}", e))
-    }
-}
+use error::AmailError;
+use error::EmlParseError;
 
 struct State {
     db_path: String,
