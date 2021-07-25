@@ -1,7 +1,7 @@
 <script>
   export let emlMeta;
   export let hideTags = new Set();
-  hideTags.add("unread");
+  $: hideTags.add("unread");
 
   import {
     Col,
