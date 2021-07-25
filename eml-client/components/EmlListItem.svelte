@@ -16,8 +16,12 @@
 <div>
   <Row>
     <Col>
-      <h3 class:strong={emlMeta.tags.includes("unread")}>
-        {emlMeta.subject}
+      <h3>
+        {#if emlMeta.tags.includes("unread")}
+          <strong>{emlMeta.subject}</strong>
+        {:else}
+          {emlMeta.subject}
+        {/if}
       </h3>
     </Col>
 
