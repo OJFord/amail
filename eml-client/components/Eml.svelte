@@ -20,10 +20,11 @@
   let body = null;
   let selectedAlt = null;
 
-  const refreshDefaultSelection = () =>
-    (selectedAlt =
-      body.Contents ||
-      body.Alternatives.sort((a) => -a.Contents.is_cleaned_html)[0].Contents);
+  const refreshDefaultSelection = () => {
+    let altHtml = body.alternatives.filter((a) => a.is_cleaned_html)[0];
+    selectedAlt = !body.is_cleaned_html && altHtml ? altHtml : body;
+  };
+
   $: tauri.invoke("view_eml", { id: emlMeta.id.valueOf() }).then((eml) => {
     body = eml;
     refreshDefaultSelection();
@@ -33,11 +34,20 @@
   const formatMailAddr = (m) =>
     m.name ? `${m.name} <${_formatAddr(m)}>` : _formatAddr(m);
 
-  let attachments;
+  let alts;
+  $: if (body) alts = [body].concat(body.alternatives);
+
+  let attachments = [];
   $: if (selectedAlt)
     attachments = [selectedAlt]
       .concat(selectedAlt.extra)
       .filter((e) => e.disposition == "Attachment");
+
+  let inlines = [];
+  $: if (selectedAlt)
+    inlines = [selectedAlt]
+      .concat(selectedAlt.extra)
+      .filter((e) => e.disposition == "Inline");
 </script>
 
 {#if body == null}
@@ -83,18 +93,22 @@
   </Row>
 
   <Row>
-    {#if body.Alternatives}
+    {#if !selectedAlt}
+      <Spinner />
+    {:else if body.alternatives}
       <Dropdown>
         <DropdownToggle caret class="btn-xs">
           {selectedAlt.mimetype}
         </DropdownToggle>
         <DropdownMenu>
-          {#each body.Alternatives as alt}
+          {#each alts as alt}
             <DropdownItem
               on:click={() => {
-                selectedAlt = alt.Contents;
-              }}>{alt.Contents.mimetype}</DropdownItem
+                selectedAlt = alt;
+              }}
             >
+              {alt.mimetype}
+            </DropdownItem>
           {/each}
         </DropdownMenu>
       </Dropdown>
@@ -105,9 +119,7 @@
 
   <Row class="flex-fill mh-100 scroll">
     <div class="body">
-      {#each [selectedAlt]
-        .concat(selectedAlt.extra)
-        .filter((e) => e.disposition == "Inline") as part}
+      {#each inlines as part}
         <EmlBodyPart {part} />
       {/each}
     </div>

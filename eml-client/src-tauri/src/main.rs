@@ -102,22 +102,17 @@ fn list_tags(state: tauri::State<State>) -> Result<Vec<String>, AmailError> {
         .map_err(AmailError::from)
 }
 
-#[derive(Clone, Debug, Serialize)]
-pub struct EmlBodyAlt {
+#[derive(Clone, Debug, Default, Serialize)]
+pub struct EmlBody {
+    pub alternatives: Vec<EmlBody>,
     pub content: String,
     pub content_encoded: Option<Vec<u8>>,
     pub disposition: String,
-    pub extra: Vec<EmlBodyAlt>,
+    pub extra: Vec<EmlBody>,
     pub filename: Option<String>,
     pub is_cleaned_html: bool,
     pub mimetype: String,
     pub size: Option<String>,
-}
-
-#[derive(Clone, Debug, Serialize)]
-enum EmlBody {
-    Contents(EmlBodyAlt),
-    Alternatives(Vec<EmlBody>),
 }
 
 fn parse_body_part(part: &mailparse::ParsedMail) -> Result<EmlBody, AmailError> {
@@ -132,55 +127,46 @@ fn parse_body_part(part: &mailparse::ParsedMail) -> Result<EmlBody, AmailError> 
 
     match MimeMultipartType::from_content_type(mimect) {
         None => match part.ctype.mimetype.as_str() {
-            "text/html" => Ok(EmlBody::Contents(EmlBodyAlt {
+            "text/html" => Ok(EmlBody {
                 content: ammonia::Builder::default()
                     .rm_tag_attributes("img", &["src"])
                     .clean(&part.get_body()?)
                     .to_string(),
-                content_encoded: None,
                 disposition: format!("{:?}", content_disp.disposition),
-                extra: vec![],
                 filename: content_disp.params.get("filename").map(|f| f.into()),
                 is_cleaned_html: true,
                 mimetype: part.ctype.mimetype.to_owned(),
                 size: content_disp.params.get("size").map(|f| f.into()),
-            })),
-            _ => Ok(EmlBody::Contents(EmlBodyAlt {
+                ..Default::default()
+            }),
+            _ => Ok(EmlBody {
                 content: part.get_body()?,
                 content_encoded: Some(part.get_body_raw()?),
                 disposition: format!("{:?}", content_disp.disposition),
-                extra: vec![],
                 filename: content_disp.params.get("filename").map(|f| f.into()),
-                is_cleaned_html: false,
                 mimetype: part.ctype.mimetype.to_owned(),
                 size: content_disp.params.get("size").map(|f| f.into()),
-            })),
+                ..Default::default()
+            }),
         },
 
-        Some(MimeMultipartType::Alternative) => Ok(EmlBody::Alternatives(
-            part.subparts
+        Some(MimeMultipartType::Alternative) => {
+            let mut first = parse_body_part(&part.subparts[0])?;
+            first.alternatives = part.subparts[1..]
                 .iter()
                 .map(parse_body_part)
-                .collect::<Result<_, AmailError>>()?,
-        )),
+                .collect::<Result<_, _>>()?;
+            Ok(first)
+        }
 
         Some(MimeMultipartType::Mixed) => {
             let mut first = parse_body_part(&part.subparts[0])?;
+            first.extra = part.subparts[1..]
+                .iter()
+                .map(parse_body_part)
+                .collect::<Result<_, _>>()?;
 
-            Ok(match first {
-                EmlBody::Contents(ref mut b) => {
-                    b.extra = part.subparts[1..]
-                        .iter()
-                        .map(|p| match parse_body_part(p)? {
-                            EmlBody::Contents(b) => Ok(b),
-                            _ => Err(anyhow!("Unimplemented mixed alternatives")),
-                        })
-                        .collect::<Result<_, _>>()?;
-
-                    Ok(first)
-                }
-                _ => Err(anyhow!("Unimplemented mixed alternatives")),
-            }?)
+            Ok(first)
         }
         Some(t) => Err(anyhow!("Not implemented: {:?}", t).into()),
     }
