@@ -13,7 +13,9 @@ build = "src/build.rs"
 tauri-build = { version = "^1.0.0-beta.2" }
 
 [dependencies]
+ammonia = "^3.1.2"
 anyhow = "^1.0"
+email = "^0.0.21"
 itertools = "^0.10.1"
 mailparse = "^0.13.5"
 notmuch = "^0.6.0"

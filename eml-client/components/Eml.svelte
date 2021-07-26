@@ -1,6 +1,9 @@
 <script>
-  import sanitizeHtml from "sanitize-html";
   import {
+    Dropdown,
+    DropdownToggle,
+    DropdownMenu,
+    DropdownItem,
     Row,
     Spinner,
     //
@@ -11,25 +14,24 @@
 
   export let emlMeta;
 
-  let contents = null;
+  let body = null;
+  let selectedAlt = null;
 
-  $: tauri
-    .invoke("view_eml", { emlMeta })
-    .then((eml) => {
-      contents = sanitizeHtml(eml, {
-        allowedTags: sanitizeHtml.defaults.allowedTags.filter(
-          (tag) => tag != "img"
-        ),
-      });
-    })
-    .catch(console.error);
+  const refreshDefaultSelection = () =>
+    (selectedAlt =
+      body.Contents ||
+      body.Alternatives.sort((a) => -a.Contents.is_cleaned_html)[0].Contents);
+  $: tauri.invoke("view_eml", { id: emlMeta.id.valueOf() }).then((eml) => {
+    body = eml;
+    refreshDefaultSelection();
+  });
 
   const _formatAddr = (m) => m.address || `[${m.members.length} mailboxes]`;
   const formatMailAddr = (m) =>
     m.name ? `${m.name} <${_formatAddr(m)}>` : _formatAddr(m);
 </script>
 
-{#if contents == null}
+{#if body == null}
   <Spinner primary />
 {:else}
   <Row style="padding-top: 1rem;">
@@ -72,8 +74,39 @@
   </Row>
 
   <Row>
-    <div>
-      {@html contents}
+    {#if body.Alternatives}
+      <Dropdown>
+        <DropdownToggle caret class="btn-xs">
+          {selectedAlt.mimetype}
+        </DropdownToggle>
+        <DropdownMenu>
+          {#each body.Alternatives as alt}
+            <DropdownItem
+              on:click={() => {
+                selectedAlt = alt.Contents;
+              }}>{alt.Contents.mimetype}</DropdownItem
+            >
+          {/each}
+        </DropdownMenu>
+      </Dropdown>
+    {/if}
+  </Row>
+
+  <hr class="border-bottom" />
+
+  <Row class="flex-fill mh-100 scroll">
+    <div class="body">
+      {#if selectedAlt.is_cleaned_html}
+        {@html selectedAlt.content}
+      {:else}
+        {selectedAlt.content}
+      {/if}
     </div>
   </Row>
 {/if}
+
+<style lang="scss" scoped>
+  .body {
+    padding: 1rem;
+  }
+</style>

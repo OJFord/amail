@@ -8,6 +8,9 @@ use std::fs;
 use std::process::Command;
 
 use anyhow::anyhow;
+use email::mimeheaders::MimeContentType;
+use email::MimeMultipartType;
+use serde::Serialize;
 
 mod eml;
 mod error;
@@ -99,26 +102,64 @@ fn list_tags(state: tauri::State<State>) -> Result<Vec<String>, AmailError> {
         .map_err(AmailError::from)
 }
 
+#[derive(Clone, Debug, Serialize)]
+pub struct EmlBodyAlt {
+    pub content: String,
+    pub is_cleaned_html: bool,
+    pub mimetype: String,
+}
+
+#[derive(Clone, Debug, Serialize)]
+enum EmlBody {
+    Contents(EmlBodyAlt),
+    Alternatives(Vec<EmlBody>),
+}
+
+fn parse_body_part(part: &mailparse::ParsedMail) -> Result<EmlBody, AmailError> {
+    let mimect: MimeContentType = part
+        .ctype
+        .mimetype
+        .split_once('/')
+        .map(|(s1, s2)| (s1.into(), s2.into()))
+        .ok_or_else(|| anyhow!("Failed to parse mimetype: {}", part.ctype.mimetype))?;
+
+    match MimeMultipartType::from_content_type(mimect) {
+        None => match part.ctype.mimetype.as_str() {
+            "text/html" => Ok(EmlBody::Contents(EmlBodyAlt {
+                content: ammonia::Builder::default()
+                    .rm_tag_attributes("img", &["src"])
+                    .clean(&part.get_body()?)
+                    .to_string(),
+                is_cleaned_html: true,
+                mimetype: part.ctype.mimetype.to_owned(),
+            })),
+            _ => Ok(EmlBody::Contents(EmlBodyAlt {
+                content: part.get_body()?,
+                is_cleaned_html: false,
+                mimetype: part.ctype.mimetype.to_owned(),
+            })),
+        },
+        Some(MimeMultipartType::Alternative) => Ok(EmlBody::Alternatives(
+            part.subparts
+                .iter()
+                .map(parse_body_part)
+                .collect::<Result<_, AmailError>>()?,
+        )),
+        _ => unimplemented!(),
+    }
+}
+
 #[tauri::command]
-fn view_eml(state: tauri::State<State>, eml_meta: EmlMeta) -> Result<String, AmailError> {
+fn view_eml(state: tauri::State<State>, id: String) -> Result<EmlBody, AmailError> {
+    println!("Opening id:{}", id);
     let db = state.open_db_ro()?;
     let msg = db
-        .find_message(&eml_meta.id)?
-        .ok_or_else(|| anyhow!("Message {} not found", eml_meta.id))?;
+        .find_message(&id)?
+        .ok_or_else(|| anyhow!("Message {} not found", id))?;
     let contents = &fs::read(msg.filename())?;
-    let eml = mailparse::parse_mail(contents)?;
 
-    if eml.ctype.mimetype == "text/html" || eml.ctype.mimetype == "text/plain" {
-        return Ok(eml.get_body()?);
-    }
-
-    for part in eml.subparts {
-        if part.ctype.mimetype == "text/html" || part.ctype.mimetype == "text/plain" {
-            return Ok(part.get_body()?);
-        }
-    }
-
-    Err(AmailError::Other(anyhow!("No plaintext version")))
+    println!("Parsing id:{}", id);
+    parse_body_part(&mailparse::parse_mail(contents)?)
 }
 
 fn main() {

@@ -16,6 +16,10 @@ pub enum AmailError {
     #[error(transparent)]
     ParseError(#[from] mailparse::MailParseError),
     #[error(transparent)]
+    MimeError(#[from] email::results::ParsingError),
+    #[error(transparent)]
+    Utf8Error(#[from] std::str::Utf8Error),
+    #[error(transparent)]
     Other(#[from] anyhow::Error),
 }
 
