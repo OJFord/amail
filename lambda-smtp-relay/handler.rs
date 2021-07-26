@@ -71,13 +71,13 @@ async fn relay_eml(smtp: &mut smtp::SmtpTransport, s3: &S3Client, message_id: &s
         ..Default::default()
     })
     .await
-    .expect(&format!("Failed to retrieve {}", message_id))
+    .unwrap_or_else(|_| panic!("Failed to retrieve {}", message_id))
     .body
     .unwrap()
     .into_async_read()
     .read_to_end(&mut content)
     .await
-    .expect(&format!("Failed to read {}", message_id));
+    .unwrap_or_else(|_| panic!("Failed to read {}", message_id));
 
     let relay_from = lettre::Address::from_str(
         &env::var("RELAY_ENVELOPE_FROM").expect("Missing $RELAY_ENVELOPE_FROM"),
@@ -93,5 +93,5 @@ async fn relay_eml(smtp: &mut smtp::SmtpTransport, s3: &S3Client, message_id: &s
         lettre::Envelope::new(Some(relay_from), vec![relay_to]).expect("Failed to build envelope");
 
     smtp.send_raw(&envelope, &content)
-        .expect(&format!("Failed to send {}", message_id));
+        .unwrap_or_else(|_| panic!("Failed to send {}", message_id));
 }
