@@ -105,6 +105,8 @@ fn list_tags(state: tauri::State<State>) -> Result<Vec<String>, AmailError> {
 #[derive(Clone, Debug, Serialize)]
 pub struct EmlBodyAlt {
     pub content: String,
+    pub disposition: String,
+    pub extra: Vec<EmlBodyAlt>,
     pub is_cleaned_html: bool,
     pub mimetype: String,
 }
@@ -130,22 +132,46 @@ fn parse_body_part(part: &mailparse::ParsedMail) -> Result<EmlBody, AmailError> 
                     .rm_tag_attributes("img", &["src"])
                     .clean(&part.get_body()?)
                     .to_string(),
+                disposition: format!("{:?}", part.get_content_disposition().disposition),
+                extra: vec![],
                 is_cleaned_html: true,
                 mimetype: part.ctype.mimetype.to_owned(),
             })),
             _ => Ok(EmlBody::Contents(EmlBodyAlt {
                 content: part.get_body()?,
+                disposition: format!("{:?}", part.get_content_disposition().disposition),
+                extra: vec![],
                 is_cleaned_html: false,
                 mimetype: part.ctype.mimetype.to_owned(),
             })),
         },
+
         Some(MimeMultipartType::Alternative) => Ok(EmlBody::Alternatives(
             part.subparts
                 .iter()
                 .map(parse_body_part)
                 .collect::<Result<_, AmailError>>()?,
         )),
-        _ => unimplemented!(),
+
+        Some(MimeMultipartType::Mixed) => {
+            let mut first = parse_body_part(&part.subparts[0])?;
+
+            Ok(match first {
+                EmlBody::Contents(ref mut b) => {
+                    b.extra = part.subparts[1..]
+                        .iter()
+                        .map(|p| match parse_body_part(p)? {
+                            EmlBody::Contents(b) => Ok(b),
+                            _ => Err(anyhow!("Unimplemented mixed alternatives")),
+                        })
+                        .collect::<Result<_, _>>()?;
+
+                    Ok(first)
+                }
+                _ => Err(anyhow!("Unimplemented mixed alternatives")),
+            }?)
+        }
+        Some(t) => Err(anyhow!("Not implemented: {:?}", t).into()),
     }
 }
 

@@ -10,6 +10,7 @@
   } from "sveltestrap";
   import * as tauri from "@tauri-apps/api/tauri";
 
+  import EmlBodyPart from "./EmlBodyPart.svelte";
   import TagBadges from "./TagBadges.svelte";
 
   export let emlMeta;
@@ -96,11 +97,11 @@
 
   <Row class="flex-fill mh-100 scroll">
     <div class="body">
-      {#if selectedAlt.is_cleaned_html}
-        {@html selectedAlt.content}
-      {:else}
-        {selectedAlt.content}
-      {/if}
+      {#each [selectedAlt]
+        .concat(selectedAlt.extra)
+        .filter((e) => e.disposition == "Inline") as part}
+        <EmlBodyPart {part} />
+      {/each}
     </div>
   </Row>
 {/if}
