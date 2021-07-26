@@ -1,5 +1,6 @@
 <script>
   import {
+    Col,
     Dropdown,
     DropdownToggle,
     DropdownMenu,
@@ -10,6 +11,7 @@
   } from "sveltestrap";
   import * as tauri from "@tauri-apps/api/tauri";
 
+  import EmlAttachment from "./EmlAttachment.svelte";
   import EmlBodyPart from "./EmlBodyPart.svelte";
   import TagBadges from "./TagBadges.svelte";
 
@@ -103,6 +105,16 @@
         <EmlBodyPart {part} />
       {/each}
     </div>
+  </Row>
+
+  <Row class="border-top">
+    {#each [selectedAlt]
+      .concat(selectedAlt.extra)
+      .filter((e) => e.disposition == "Attachment") as part}
+      <Col xs="3">
+        <EmlAttachment {part} />
+      </Col>
+    {/each}
   </Row>
 {/if}
 

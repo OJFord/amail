@@ -1,5 +1,13 @@
 <script>
   export let part;
+
+  const friendlySize = (s) => {
+    let si;
+    for (si = 0; s > 150; si++) {
+      s /= 1000;
+    }
+    return `${s.toFixed(1)}${["", "k", "M", "G"][si]}`;
+  };
 </script>
 
 {#if part.is_cleaned_html}
@@ -9,5 +17,6 @@
     <p>{para}</p>
   {/each}
 {:else}
-  [Unimplemented {part.mimetype} content]
+  {#if part.size}{friendlySize(part.size)}of{/if}
+  <em>{part.mimetype}</em> content
 {/if}

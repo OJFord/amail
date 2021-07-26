@@ -105,10 +105,13 @@ fn list_tags(state: tauri::State<State>) -> Result<Vec<String>, AmailError> {
 #[derive(Clone, Debug, Serialize)]
 pub struct EmlBodyAlt {
     pub content: String,
+    pub content_encoded: Option<Vec<u8>>,
     pub disposition: String,
     pub extra: Vec<EmlBodyAlt>,
+    pub filename: Option<String>,
     pub is_cleaned_html: bool,
     pub mimetype: String,
+    pub size: Option<String>,
 }
 
 #[derive(Clone, Debug, Serialize)]
@@ -125,6 +128,8 @@ fn parse_body_part(part: &mailparse::ParsedMail) -> Result<EmlBody, AmailError> 
         .map(|(s1, s2)| (s1.into(), s2.into()))
         .ok_or_else(|| anyhow!("Failed to parse mimetype: {}", part.ctype.mimetype))?;
 
+    let content_disp = part.get_content_disposition();
+
     match MimeMultipartType::from_content_type(mimect) {
         None => match part.ctype.mimetype.as_str() {
             "text/html" => Ok(EmlBody::Contents(EmlBodyAlt {
@@ -132,17 +137,23 @@ fn parse_body_part(part: &mailparse::ParsedMail) -> Result<EmlBody, AmailError> 
                     .rm_tag_attributes("img", &["src"])
                     .clean(&part.get_body()?)
                     .to_string(),
-                disposition: format!("{:?}", part.get_content_disposition().disposition),
+                content_encoded: None,
+                disposition: format!("{:?}", content_disp.disposition),
                 extra: vec![],
+                filename: content_disp.params.get("filename").map(|f| f.into()),
                 is_cleaned_html: true,
                 mimetype: part.ctype.mimetype.to_owned(),
+                size: content_disp.params.get("size").map(|f| f.into()),
             })),
             _ => Ok(EmlBody::Contents(EmlBodyAlt {
                 content: part.get_body()?,
-                disposition: format!("{:?}", part.get_content_disposition().disposition),
+                content_encoded: Some(part.get_body_raw()?),
+                disposition: format!("{:?}", content_disp.disposition),
                 extra: vec![],
+                filename: content_disp.params.get("filename").map(|f| f.into()),
                 is_cleaned_html: false,
                 mimetype: part.ctype.mimetype.to_owned(),
+                size: content_disp.params.get("size").map(|f| f.into()),
             })),
         },
 

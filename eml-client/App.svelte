@@ -112,7 +112,7 @@
   </Row>
 
   <Row class="flex-shrink-0">
-    <Col class="mh-100" />
+    <Col class="border mh-100" style="min-height: 1rem;" />
   </Row>
 </Container>
 
