@@ -32,6 +32,12 @@
   const _formatAddr = (m) => m.address || `[${m.members.length} mailboxes]`;
   const formatMailAddr = (m) =>
     m.name ? `${m.name} <${_formatAddr(m)}>` : _formatAddr(m);
+
+  let attachments;
+  $: if (selectedAlt)
+    attachments = [selectedAlt]
+      .concat(selectedAlt.extra)
+      .filter((e) => e.disposition == "Attachment");
 </script>
 
 {#if body == null}
@@ -107,15 +113,15 @@
     </div>
   </Row>
 
-  <Row class="border-top">
-    {#each [selectedAlt]
-      .concat(selectedAlt.extra)
-      .filter((e) => e.disposition == "Attachment") as part}
-      <Col xs="3">
-        <EmlAttachment {part} />
-      </Col>
-    {/each}
-  </Row>
+  {#if attachments.length}
+    <Row class="border-top">
+      {#each attachments as part}
+        <Col xs="3">
+          <EmlAttachment {part} />
+        </Col>
+      {/each}
+    </Row>
+  {/if}
 {/if}
 
 <style lang="scss" scoped>

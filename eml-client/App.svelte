@@ -67,7 +67,7 @@
       </Nav>
     </Col>
 
-    <Col xs="4" class="h-100 d-flex flex-column">
+    <Col xs="4" class="border-bottom h-100 d-flex flex-column">
       <Row style="margin: 0.3rem">
         <Col>
           <Search bind:querySelected quietQueries={tagQueries} />
@@ -112,7 +112,7 @@
   </Row>
 
   <Row class="flex-shrink-0">
-    <Col class="border mh-100" style="min-height: 1rem;" />
+    <Col class="mh-100" style="min-height: 1rem;" />
   </Row>
 </Container>
 
