@@ -14,9 +14,16 @@
   {@html part.content}
 {:else if part.mimetype == "text/plain"}
   {#each part.content.split(/\r\n\r\n/) as para}
-    <p>{para}</p>
+    <pre>{para}</pre>
   {/each}
 {:else}
   {#if part.size}{friendlySize(part.size)}of{/if}
   <em>{part.mimetype}</em> content
 {/if}
+
+<style scoped lang="scss">
+  pre {
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+  }
+</style>

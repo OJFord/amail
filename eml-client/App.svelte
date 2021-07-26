@@ -103,7 +103,7 @@
     </Col>
 
     {#if emlSelected}
-      <Col class="border h-100 d-flex flex-column">
+      <Col class="border h-100 d-flex flex-column" style="min-width: 0;">
         <Eml emlMeta={emlSelected} />
       </Col>
     {:else}
