@@ -10,6 +10,7 @@ use std::process::Command;
 use anyhow::anyhow;
 use email::mimeheaders::MimeContentType;
 use email::MimeMultipartType;
+use itertools::Itertools;
 use serde::Serialize;
 
 mod eml;
@@ -112,6 +113,7 @@ pub struct EmlBody {
     pub filename: Option<String>,
     pub is_cleaned_html: bool,
     pub mimetype: String,
+    pub signature: Option<Box<EmlBody>>,
     pub size: Option<String>,
 }
 
@@ -168,6 +170,19 @@ fn parse_body_part(part: &mailparse::ParsedMail) -> Result<EmlBody, AmailError> 
 
             Ok(first)
         }
+
+        Some(MimeMultipartType::Signed) => {
+            let mut first = parse_body_part(&part.subparts[0])?;
+            first.signature = Some(Box::new(parse_body_part(
+                part.subparts[1..]
+                    .iter()
+                    .exactly_one()
+                    .map_err(|_| anyhow!("Expected exactly one signature for signed part"))?,
+            )?));
+
+            Ok(first)
+        }
+
         Some(t) => Err(anyhow!("Not implemented: {:?}", t).into()),
     }
 }
