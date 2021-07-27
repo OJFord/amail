@@ -131,6 +131,7 @@ fn parse_body_part(part: &mailparse::ParsedMail) -> Result<EmlBody, AmailError> 
         None => match part.ctype.mimetype.as_str() {
             "text/html" => Ok(EmlBody {
                 content: ammonia::Builder::default()
+                    .set_tag_attribute_value("a", "target", "_blank")
                     .rm_tag_attributes("img", &["src"])
                     .clean(&part.get_body()?)
                     .to_string(),
