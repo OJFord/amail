@@ -101,7 +101,7 @@
           {selectedAlt.mimetype}
         </DropdownToggle>
         <DropdownMenu>
-          {#each alts as alt}
+          {#each alts.filter((a) => a != selectedAlt) as alt}
             <DropdownItem
               on:click={() => {
                 selectedAlt = alt;
