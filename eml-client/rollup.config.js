@@ -38,6 +38,7 @@ function render() {
           stdio: [process.stdin, process.stdout, process.stderr],
         }
       );
+      renderer.on("exit", exit);
     },
   };
 }
