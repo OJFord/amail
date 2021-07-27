@@ -15,6 +15,10 @@ body {
   height: 100%;
 }
 
+.dropdown-toggle.disabled::after {
+  visibility: hidden;
+}
+
 .nav-pills .nav-link {
   display: -webkit-box;
   margin-top: 0.5rem;

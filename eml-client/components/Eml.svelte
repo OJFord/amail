@@ -95,9 +95,12 @@
   <Row>
     {#if !selectedAlt}
       <Spinner />
-    {:else if body.alternatives}
+    {:else}
       <Dropdown>
-        <DropdownToggle caret class="btn-xs">
+        <DropdownToggle
+          caret
+          class={`btn-xs ${body.alternatives.length ? "" : "disabled"}`}
+        >
           {selectedAlt.mimetype}
         </DropdownToggle>
         <DropdownMenu>
