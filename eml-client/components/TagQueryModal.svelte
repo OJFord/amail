@@ -9,7 +9,8 @@
     ModalFooter,
     Row,
   } from "sveltestrap";
-  import * as tauri from "@tauri-apps/api/tauri";
+
+  import * as api from "../api.js";
 
   export let isOpen;
   export let tag;
@@ -17,19 +18,11 @@
 
   const dispatch = createEventDispatcher();
 
-  const applyTag = (query, tag) =>
-    tauri
-      .invoke("apply_tag", { query, tag })
-      .then(() => dispatch("retagComplete", { query, tag }));
-
-  const countMatches = (query) => tauri.invoke("count_matches", { query });
-
-  const rmTag = (query, tag) =>
-    tauri
-      .invoke("rm_tag", { query, tag })
-      .then(() => dispatch("retagComplete"));
-
   const toggle = () => (isOpen = !isOpen);
+  const onRetag = (event, detail) => {
+    dispatch(event, detail);
+    toggle();
+  };
 </script>
 
 <Modal {isOpen} {toggle}>
@@ -38,9 +31,9 @@
   <ModalBody>
     <Row>
       <p>
-        There are {#await countMatches(query)}...{:then n}
+        There are {#await api.countMatches(query)}...{:then n}
           <mark class="info">{n}</mark>
-        {/await} results for the selected query; of which {#await countMatches(`(${query}) and tag:${tag}`)}...{:then n}
+        {/await} results for the selected query; of which {#await api.countMatches(`(${query}) and tag:${tag}`)}...{:then n}
           <mark class="info">{n}</mark>
         {/await} are currently tagged <code>{tag}</code>.
       </p>
@@ -51,13 +44,16 @@
     <Row>
       <Col style="text-align: center;">
         <span class="tag-modal-button">
-          <Button color="success" on:click={applyTag(query, tag).then(toggle)}>
+          <Button
+            color="success"
+            on:click={api.applyTag(query, tag).then(onRetag)}
+          >
             Apply to all
           </Button>
         </span>
 
         <span class="tag-modal-button">
-          <Button color="danger" on:click={rmTag(query, tag).then(toggle)}>
+          <Button color="danger" on:click={api.rmTag(query, tag).then(onRetag)}>
             Remove from all
           </Button>
         </span>

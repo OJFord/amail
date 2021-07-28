@@ -9,8 +9,8 @@
     Spinner,
     //
   } from "sveltestrap";
-  import * as tauri from "@tauri-apps/api/tauri";
 
+  import * as api from "../api.js";
   import EmlAttachment from "./EmlAttachment.svelte";
   import EmlBodyPart from "./EmlBodyPart.svelte";
   import TagBadges from "./TagBadges.svelte";
@@ -25,7 +25,7 @@
     selectedAlt = !body.is_cleaned_html && altHtml ? altHtml : body;
   };
 
-  $: tauri.invoke("view_eml", { id: emlMeta.id.valueOf() }).then((eml) => {
+  $: api.viewEml(emlMeta.id.valueOf()).then((eml) => {
     body = eml;
     refreshDefaultSelection();
   });

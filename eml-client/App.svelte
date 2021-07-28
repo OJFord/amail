@@ -1,5 +1,6 @@
 <script>
   import Icon from "fa-svelte";
+  import { createEventDispatcher } from "svelte";
   import { faTag } from "@fortawesome/free-solid-svg-icons/faTag";
   import {
     Col,
@@ -11,13 +12,15 @@
     NavLink,
     Row,
   } from "sveltestrap";
-  import * as tauri from "@tauri-apps/api/tauri";
 
+  import * as api from "./api.js";
   import EmlList from "./components/EmlList.svelte";
   import Eml from "./components/Eml.svelte";
   import Search from "./components/Search.svelte";
   import TagsSelect from "./components/TagsSelect.svelte";
   import TagQueryModal from "./components/TagQueryModal.svelte";
+
+  const dispatch = createEventDispatcher();
 
   let emlSelected = null;
   let tagQueries = [];
@@ -26,11 +29,10 @@
   let tagModalOpen = false;
   let tagSelected;
 
-  const markRead = (id) =>
-    tauri.invoke("rm_tag", { query: `id:${id}`, tag: "unread" });
+  const markRead = (id) => api.rmTag(`id:${id}`, "unread").then(dispatch);
 
   const refreshTagList = () =>
-    tauri.invoke("list_tags").then((tagList) => {
+    api.listTags().then((tagList) => {
       tagQueries = tagList.map((t) => `tag:${t}`);
     });
 
@@ -86,7 +88,7 @@
           bind:isOpen={tagModalOpen}
           tag={tagSelected}
           query={querySelected}
-          on:retagComplete={() => {
+          on:tagsUpdated={() => {
             refreshTagList();
             refreshQuery();
           }}

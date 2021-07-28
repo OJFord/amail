@@ -9,15 +9,13 @@
     DropdownToggle,
     //
   } from "sveltestrap";
-  import * as tauri from "@tauri-apps/api/tauri";
+
+  import * as api from "../api.js";
 
   const dispatch = createEventDispatcher();
 
   let tags = [];
-  tauri
-    .invoke("list_tags")
-    .then((tagList) => (tags = tagList))
-    .catch(console.error);
+  api.tagList().then((ts) => (tags = ts));
 </script>
 
 <Dropdown>
