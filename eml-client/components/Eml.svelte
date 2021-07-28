@@ -1,5 +1,6 @@
 <script>
   import {
+    Button,
     Col,
     Dropdown,
     DropdownToggle,
@@ -93,29 +94,37 @@
   </Row>
 
   <Row>
-    {#if !selectedAlt}
-      <Spinner />
-    {:else}
-      <Dropdown>
-        <DropdownToggle
-          caret
-          class={`btn-xs ${body.alternatives.length ? "" : "disabled"}`}
-        >
-          {selectedAlt.mimetype}
-        </DropdownToggle>
-        <DropdownMenu>
-          {#each alts.filter((a) => a != selectedAlt) as alt}
-            <DropdownItem
-              on:click={() => {
-                selectedAlt = alt;
-              }}
-            >
-              {alt.mimetype}
-            </DropdownItem>
-          {/each}
-        </DropdownMenu>
-      </Dropdown>
-    {/if}
+    <Col xs="1" class="align-left">
+      {#if !selectedAlt}
+        <Spinner />
+      {:else}
+        <Dropdown>
+          <DropdownToggle
+            caret
+            class={`${body.alternatives.length ? "" : "disabled"}`}
+          >
+            {selectedAlt.mimetype}
+          </DropdownToggle>
+          <DropdownMenu>
+            {#each alts.filter((a) => a != selectedAlt) as alt}
+              <DropdownItem
+                on:click={() => {
+                  selectedAlt = alt;
+                }}
+              >
+                {alt.mimetype}
+              </DropdownItem>
+            {/each}
+          </DropdownMenu>
+        </Dropdown>
+      {/if}
+    </Col>
+
+    <Col xs="1" class="align-left">
+      <Button class="" on:click={() => api.rmTag(`id:${emlMeta.id}`, "inbox")}>
+        Archive
+      </Button>
+    </Col>
   </Row>
 
   <hr class="border-bottom" />
