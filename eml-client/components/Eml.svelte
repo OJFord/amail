@@ -21,15 +21,13 @@
   let body = null;
   let selectedAlt = null;
 
-  const refreshDefaultSelection = () => {
+  const refreshDefaultSelection = (eml) => {
+    body = eml;
     let altHtml = body.alternatives.filter((a) => a.is_cleaned_html)[0];
     selectedAlt = !body.is_cleaned_html && altHtml ? altHtml : body;
   };
 
-  $: api.viewEml(emlMeta.id.valueOf()).then((eml) => {
-    body = eml;
-    refreshDefaultSelection();
-  });
+  $: api.viewEml(emlMeta.id.valueOf()).then(refreshDefaultSelection);
 
   const _formatAddr = (m) => m.address || `[${m.members.length} mailboxes]`;
   const formatMailAddr = (m) =>

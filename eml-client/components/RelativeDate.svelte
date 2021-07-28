@@ -1,6 +1,11 @@
 <script>
   export let date;
 
+  const hoursDiff = (date) => {
+    const now = new Date();
+    return (now - date) / (60 * 60 * 1000);
+  };
+
   const formatDate = (date) => {
     const relativeDate = new Intl.RelativeTimeFormat("en-GB", {
       numeric: "auto",
@@ -20,19 +25,23 @@
       return "?";
     }
 
-    const now = new Date();
-    const hoursDiff = (now - date) / (60 * 60 * 1000);
+    if (hoursDiff(date) < 1.5)
+      return relativeDate.format(-(hoursDiff(date) * 60).toFixed(0), "minutes");
 
-    if (hoursDiff < 1.5)
-      return relativeDate.format(-(hoursDiff * 60).toFixed(0), "minutes");
+    if (hoursDiff(date) < 20)
+      return relativeDate.format(-hoursDiff(date).toFixed(0), "hours");
 
-    if (hoursDiff < 20)
-      return relativeDate.format(-hoursDiff.toFixed(0), "hours");
-
-    if (hoursDiff < 7 * 24) return weekdayDate.format(date);
+    if (hoursDiff(date) < 7 * 24) return weekdayDate.format(date);
 
     return fullDate.format(date);
   };
+
+  let formattedDate = date ? formatDate(date) : null;
+  const msHour = 1000 * 60 * 60;
+  setInterval(
+    () => (formattedDate = formatDate(date)),
+    (hoursDiff(date) * msHour) / 1.5 / 60
+  );
 </script>
 
-<span>{formatDate(date)}</span>
+<span>{formattedDate}</span>
