@@ -4,13 +4,17 @@
 )]
 
 use std::convert::TryFrom;
+use std::env;
 use std::fs;
 use std::process::Command;
+use std::str::FromStr;
 
 use anyhow::anyhow;
 use email::mimeheaders::MimeContentType;
 use email::MimeMultipartType;
 use itertools::Itertools;
+use lettre::transport::smtp;
+use lettre::Transport;
 use serde::Serialize;
 
 mod eml;
@@ -21,6 +25,7 @@ use error::EmlParseError;
 
 struct State {
     db_path: String,
+    smtp: smtp::SmtpTransport,
 }
 
 impl State {
@@ -201,6 +206,32 @@ fn view_eml(state: tauri::State<State>, id: String) -> Result<EmlBody, AmailErro
     parse_body_part(&mailparse::parse_mail(contents)?)
 }
 
+#[tauri::command]
+fn send_eml(
+    state: tauri::State<State>,
+    to: Vec<String>,
+    from: String,
+    eml: String,
+) -> Result<(), AmailError> {
+    let envelope = lettre::Envelope::new(
+        Some(lettre::Address::from_str(&from)?),
+        to.iter()
+            .map(|ref e| lettre::Address::from_str(e))
+            .collect::<Result<_, _>>()?,
+    )?;
+
+    let response = state.smtp.send_raw(&envelope, &eml.as_ref())?;
+    match response.is_positive() {
+        true => Ok(()),
+        false => Err(anyhow!(
+            "SMTP error {}: {}",
+            response.code,
+            response.message.join("\n")
+        )
+        .into()),
+    }
+}
+
 fn main() {
     let mut db_path = String::from_utf8(
         Command::new("notmuch")
@@ -212,14 +243,24 @@ fn main() {
     .expect("Non-UTF8 database.path");
     db_path = db_path.trim().to_string();
 
+    let smtp_host = env::var("SMTP_HOST").expect("Missing $SMTP_HOST");
+    let smtp = smtp::SmtpTransport::relay(&smtp_host)
+        .expect("Failed to create SMTP client")
+        .credentials(smtp::authentication::Credentials::new(
+            env::var("SMTP_USER").expect("Missing $SMTP_USER"),
+            env::var("SMTP_PASS").expect("Missing $SMTP_PASS"),
+        ))
+        .build();
+
     tauri::Builder::default()
-        .manage(State { db_path })
+        .manage(State { db_path, smtp })
         .invoke_handler(tauri::generate_handler![
             apply_tag,
             count_matches,
             list_eml,
             list_tags,
             rm_tag,
+            send_eml,
             view_eml,
         ])
         .run(tauri::generate_context!())

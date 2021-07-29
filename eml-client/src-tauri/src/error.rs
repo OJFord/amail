@@ -12,6 +12,12 @@ pub enum AmailError {
         source: std::io::Error,
     },
     #[error(transparent)]
+    LettreAddressError(#[from] lettre::address::AddressError),
+    #[error(transparent)]
+    LettreError(#[from] lettre::error::Error),
+    #[error(transparent)]
+    LettreSmtpError(#[from] lettre::transport::smtp::error::Error),
+    #[error(transparent)]
     NotMuchError(#[from] notmuch::Error),
     #[error(transparent)]
     ParseError(#[from] mailparse::MailParseError),

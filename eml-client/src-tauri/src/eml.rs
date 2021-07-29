@@ -65,6 +65,7 @@ pub struct EmlMeta {
     pub from: Vec<Mailbox>,
     pub id: String,
     pub id_thread: String,
+    pub references: Option<String>,
     pub reply_to: Option<Vec<EmlAddr>>,
     pub sender: Option<Mailbox>,
     pub subject: Option<String>,
@@ -139,6 +140,8 @@ impl<'o, O: MessageOwner> TryFrom<&Message<'o, O>> for EmlMeta {
             id: eml.id().to_string(),
 
             id_thread: eml.thread_id().to_string(),
+
+            references: parse_header(eml, "References")?,
 
             reply_to: parse_optional_address_list(eml, "Reply-To")?,
 

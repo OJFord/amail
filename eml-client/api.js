@@ -14,6 +14,9 @@ export const rmTag = (query, tag) =>
     .invoke("rm_tag", { query, tag })
     .then(() => Promise.resolve("tagsUpdated", { tags: [tag] }));
 
+export const sendEml = (to, from, eml) =>
+  tauri.invoke("send_eml", { to, from, eml });
+
 export const tagList = () => tauri.invoke("list_tags");
 
 export const viewEml = (id) => tauri.invoke("view_eml", { id });

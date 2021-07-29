@@ -17,6 +17,7 @@ ammonia = "^3.1.2"
 anyhow = "^1.0"
 email = "^0.0.21"
 itertools = "^0.10.1"
+lettre = {version = "=0.10.0-alpha.1", default_features = false, features= ["builder", "rustls-tls", "smtp-transport"] }
 mailparse = "^0.13.5"
 notmuch = "^0.6.0"
 serde_json = "^1.0"
