@@ -24,10 +24,10 @@
   export let emlMeta;
   export let editable = false;
 
-  let from = emlMeta.from.map(formatMailAddr).join(", ");
-  let to = emlMeta.to.map(formatMailAddr).join(", ");
-  let cc = emlMeta.cc ? emlMeta.cc.map(formatMailAddr).join(", ") : "";
-  let bcc = emlMeta.bcc ? emlMeta.bcc.map(formatMailAddr).join(", ") : "";
+  $: from = emlMeta.from.map(formatMailAddr).join(", ");
+  $: to = emlMeta.to.map(formatMailAddr).join(", ");
+  $: cc = emlMeta.cc ? emlMeta.cc.map(formatMailAddr).join(", ") : "";
+  $: bcc = emlMeta.bcc ? emlMeta.bcc.map(formatMailAddr).join(", ") : "";
 </script>
 
 <h4>
