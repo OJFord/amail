@@ -5,6 +5,8 @@ export const applyTag = (query, tag, dispatch) =>
     .invoke("apply_tag", { query, tag })
     .then(() => Promise.resolve("tagsUpdated", { tags: [tag] }));
 
+export const getName = () => tauri.invoke("get_name");
+
 export const listTags = () => tauri.invoke("list_tags");
 
 export const countMatches = (query) => tauri.invoke("count_matches", { query });

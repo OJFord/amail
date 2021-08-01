@@ -207,6 +207,12 @@ fn view_eml(state: tauri::State<State>, id: String) -> Result<EmlBody, AmailErro
 }
 
 #[tauri::command]
+fn get_name() -> String {
+    println!("Getting user's name");
+    whoami::realname()
+}
+
+#[tauri::command]
 fn send_eml(
     state: tauri::State<State>,
     to: Vec<String>,
@@ -257,6 +263,7 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             apply_tag,
             count_matches,
+            get_name,
             list_eml,
             list_tags,
             rm_tag,
