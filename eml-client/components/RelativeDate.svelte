@@ -36,7 +36,7 @@
     return fullDate.format(date);
   };
 
-  let formattedDate = date ? formatDate(date) : null;
+  $: formattedDate = date ? formatDate(date) : null;
   const msHour = 1000 * 60 * 60;
   setInterval(
     () => (formattedDate = formatDate(date)),
