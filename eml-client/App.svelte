@@ -53,7 +53,7 @@
   </Row>
 
   <Row class="flex-fill" style="min-height: 0;">
-    <Col xs="1" class="border">
+    <Col xs="1" class="border mh-100 scroll">
       <Nav vertical pills>
         {#each tagQueries as tag}
           <NavItem>
