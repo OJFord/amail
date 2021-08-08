@@ -6,8 +6,7 @@
     //
   } from "sveltestrap";
 
-  import * as tauri from "@tauri-apps/api/tauri";
-
+  import * as api from "../api.js";
   import EmlListItem from "./EmlListItem.svelte";
 
   export let emlSelected = null;
@@ -15,12 +14,7 @@
   export let query;
 
   let emls = null;
-  $: tauri
-    .invoke("list_eml", { query })
-    .then((emlList) => {
-      emls = emlList;
-    })
-    .catch(console.error);
+  $: api.listEml(query).then((emlList) => (emls = emlList));
 </script>
 
 {#if emls == null}

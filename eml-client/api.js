@@ -7,6 +7,8 @@ export const applyTag = (query, tag, dispatch) =>
 
 export const getName = () => tauri.invoke("get_name");
 
+export const listEml = (query) => tauri.invoke("list_eml", { query });
+
 export const listTags = () => tauri.invoke("list_tags");
 
 export const countMatches = (query) => tauri.invoke("count_matches", { query });

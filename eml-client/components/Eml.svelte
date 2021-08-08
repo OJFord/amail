@@ -99,6 +99,23 @@
     </Col>
 
     <Col xs="1" class="align-left">
+      {#if !emlMeta.tags.includes("spam")}
+        <Button
+          on:click={() =>
+            api.applyTag(`id:${emlMeta.id}`, "spam").then(dispatch)}
+        >
+          Spam
+        </Button>
+      {:else}
+        <Button
+          on:click={() => api.rmTag(`id:${emlMeta.id}`, "spam").then(dispatch)}
+        >
+          Not spam
+        </Button>
+      {/if}
+    </Col>
+
+    <Col xs="1" class="align-left">
       <Button class="" on:click={() => (replyModalOpen = true)}>Reply</Button>
       <EmlReplyModal {emlMeta} emlBody={body} bind:isOpen={replyModalOpen} />
     </Col>

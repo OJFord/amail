@@ -32,7 +32,7 @@
 
   const markRead = (id) => api.rmTag(`id:${id}`, "unread").then(dispatch);
 
-  const refreshTagList = () =>
+  const refreshTagList = () => {
     api.listTags().then((tagList) => {
       tagQueries = tagList.map((t) => {
         const query = ["inbox", "sent"].includes(t)
@@ -57,6 +57,17 @@
         });
       });
     });
+
+    const arraySetEqual = (a, b) =>
+      a.length == b.length && a.every((e) => b.indexOf(e) != -1);
+
+    if (emlSelected)
+      api.listEml(`id:${emlSelected.id}`).then(([emlMeta]) => {
+        // update if different only to avoid recursion
+        if (!arraySetEqual(emlSelected.tags, emlMeta.Ok.tags))
+          emlSelected.tags = emlMeta.Ok.tags;
+      });
+  };
 
   const refreshQuery = () => (querySelected = new String(querySelected));
 
