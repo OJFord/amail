@@ -3,6 +3,7 @@
   import { createEventDispatcher } from "svelte";
   import { faTag } from "@fortawesome/free-solid-svg-icons/faTag";
   import {
+    Badge,
     Col,
     Container,
     Nav,
@@ -33,14 +34,19 @@
 
   const refreshTagList = () =>
     api.listTags().then((tagList) => {
-      tagQueries = tagList.map((t) =>
-        Object({
+      tagQueries = tagList.map((t) => {
+        api.countMatches(`tag:${t} and tag:unread`).then((c) => {
+          const tIdx = tagQueries.findIndex((e) => e.name == t);
+          if (tIdx != -1) tagQueries[tIdx].unreadCount = c;
+        });
+        return Object({
           name: t,
           query: ["inbox", "sent"].includes(t)
             ? `tag:${t}`
             : `tag:${t} and tag:inbox`,
-        })
-      );
+          unreadCount: 0,
+        });
+      });
     });
 
   const refreshQuery = () => (querySelected = new String(querySelected));
@@ -62,14 +68,19 @@
   <Row class="flex-fill" style="min-height: 0;">
     <Col xs="1" class="border mh-100 scroll">
       <Nav vertical pills>
-        {#each tagQueries as tag}
+        {#each tagQueries.filter((t) => t.unreadCount > 0) as tag}
           <NavItem>
             <NavLink
               active={tag.query == querySelected}
               on:click={() => (querySelected = tag.query)}
             >
               <Icon icon={faTag} />
-              <h2><span>{tag.name}</span></h2>
+              <h2 class="tag">
+                <span>{tag.name}</span>
+              </h2>
+              <Badge color="info" style="font-size: 0.6rem;">
+                {tag.unreadCount}
+              </Badge>
             </NavLink>
           </NavItem>
         {/each}
@@ -130,5 +141,8 @@
   </Row>
 </Container>
 
-<style scoped>
+<style type="text/scss">
+  h2.tag {
+    margin-right: 0.3rem;
+  }
 </style>
