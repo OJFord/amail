@@ -39,12 +39,13 @@
           const tIdx = tagQueries.findIndex((e) => e.name == t);
           if (tIdx != -1) tagQueries[tIdx].unreadCount = c;
         });
+
         return Object({
           name: t,
           query: ["inbox", "sent"].includes(t)
             ? `tag:${t}`
             : `tag:${t} and tag:inbox`,
-          unreadCount: 0,
+          unreadCount: (tagQueries.find((e) => e.name == t) ?? {}).unreadCount,
         });
       });
     });
@@ -54,7 +55,7 @@
   refreshTagList();
 
   $: if (emlSelected != null) {
-    markRead(emlSelected.id).then(refreshQuery);
+    markRead(emlSelected.id).then(refreshQuery).then(refreshTagList);
   }
 </script>
 
@@ -129,7 +130,13 @@
 
     {#if emlSelected}
       <Col class="border h-100 d-flex flex-column" style="min-width: 0;">
-        <Eml emlMeta={emlSelected} />
+        <Eml
+          emlMeta={emlSelected}
+          on:tagsUpdated={() => {
+            refreshTagList();
+            refreshQuery();
+          }}
+        />
       </Col>
     {:else}
       <Col class="bg-light" />

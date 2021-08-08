@@ -1,4 +1,5 @@
 <script>
+  import { createEventDispatcher } from "svelte";
   import {
     Button,
     Col,
@@ -19,6 +20,8 @@
   import TagBadges from "./TagBadges.svelte";
 
   export let emlMeta;
+
+  const dispatch = createEventDispatcher();
 
   let body = null;
   let selectedAlt = null;
@@ -88,7 +91,9 @@
     </Col>
 
     <Col xs="1" class="align-left">
-      <Button class="" on:click={() => api.rmTag(`id:${emlMeta.id}`, "inbox")}>
+      <Button
+        on:click={() => api.rmTag(`id:${emlMeta.id}`, "inbox").then(dispatch)}
+      >
         Archive
       </Button>
     </Col>
