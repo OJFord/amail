@@ -33,7 +33,14 @@
 
   const refreshTagList = () =>
     api.listTags().then((tagList) => {
-      tagQueries = tagList.map((t) => `tag:${t}`);
+      tagQueries = tagList.map((t) =>
+        Object({
+          name: t,
+          query: ["inbox", "sent"].includes(t)
+            ? `tag:${t}`
+            : `tag:${t} and tag:inbox`,
+        })
+      );
     });
 
   const refreshQuery = () => (querySelected = new String(querySelected));
@@ -58,11 +65,11 @@
         {#each tagQueries as tag}
           <NavItem>
             <NavLink
-              active={tag == querySelected}
-              on:click={() => (querySelected = tag)}
+              active={tag.query == querySelected}
+              on:click={() => (querySelected = tag.query)}
             >
               <Icon icon={faTag} />
-              <h2><span>{tag.split("tag:")[1]}</span></h2>
+              <h2><span>{tag.name}</span></h2>
             </NavLink>
           </NavItem>
         {/each}
@@ -72,7 +79,10 @@
     <Col xs="4" class="border-bottom h-100 d-flex flex-column">
       <Row style="margin: 0.3rem">
         <Col>
-          <Search bind:querySelected quietQueries={tagQueries} />
+          <Search
+            bind:querySelected
+            quietQueries={tagQueries.map((t) => t.query)}
+          />
         </Col>
 
         <Col xs="2">
@@ -99,7 +109,9 @@
         <EmlList
           query={querySelected}
           bind:emlSelected
-          hideTags={new Set([querySelected.split("tag:")[1]])}
+          hideTags={new Set([
+            (tagQueries.find((t) => t.query == querySelected) ?? {}).name,
+          ])}
         />
       </Row>
     </Col>
