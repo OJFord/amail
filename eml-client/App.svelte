@@ -35,16 +35,24 @@
   const refreshTagList = () =>
     api.listTags().then((tagList) => {
       tagQueries = tagList.map((t) => {
-        api.countMatches(`tag:${t} and tag:unread`).then((c) => {
+        const query = ["inbox", "sent"].includes(t)
+          ? `tag:${t}`
+          : `tag:${t} and tag:inbox`;
+
+        api.countMatches(`(${query}) and tag:unread`).then((c) => {
           const tIdx = tagQueries.findIndex((e) => e.name == t);
           if (tIdx != -1) tagQueries[tIdx].unreadCount = c;
         });
 
+        api.countMatches(query).then((c) => {
+          const tIdx = tagQueries.findIndex((e) => e.name == t);
+          if (tIdx != -1) tagQueries[tIdx].totalCount = c;
+        });
+
         return Object({
           name: t,
-          query: ["inbox", "sent"].includes(t)
-            ? `tag:${t}`
-            : `tag:${t} and tag:inbox`,
+          query,
+          totalCount: (tagQueries.find((e) => e.name == t) ?? {}).totalCount,
           unreadCount: (tagQueries.find((e) => e.name == t) ?? {}).unreadCount,
         });
       });
@@ -69,7 +77,7 @@
   <Row class="flex-fill" style="min-height: 0;">
     <Col xs="1" class="border mh-100 scroll">
       <Nav vertical pills>
-        {#each tagQueries.filter((t) => t.unreadCount > 0) as tag}
+        {#each tagQueries.filter((t) => t.totalCount > 0) as tag}
           <NavItem>
             <NavLink
               active={tag.query == querySelected}
@@ -79,9 +87,11 @@
               <h2 class="tag">
                 <span>{tag.name}</span>
               </h2>
-              <Badge color="info" style="font-size: 0.6rem;">
-                {tag.unreadCount}
-              </Badge>
+              {#if tag.unreadCount > 0}
+                <Badge color="info" style="font-size: 0.6rem;">
+                  {tag.unreadCount}
+                </Badge>
+              {/if}
             </NavLink>
           </NavItem>
         {/each}
