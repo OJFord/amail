@@ -50,6 +50,13 @@
   </h4>
 {/if}
 
+{#if emlMeta.received_by && !to.includes(formatMailAddr(emlMeta.received_by))}
+  <h4>
+    <i>Received by:</i>
+    {formatMailAddr(emlMeta.received_by)}
+  </h4>
+{/if}
+
 {#if emlMeta.to}
   <h4>
     <i>To:</i>

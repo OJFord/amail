@@ -43,6 +43,7 @@ dependencies = [
  "lettre",
  "mailparse",
  "notmuch",
+ "regex",
  "serde",
  "serde_json",
  "tauri",

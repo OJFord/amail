@@ -3,6 +3,7 @@ use std::convert::TryFrom;
 use mailparse::MailAddr;
 use notmuch::Message;
 use notmuch::MessageOwner;
+use regex::Regex;
 use serde::Deserialize;
 use serde::Serialize;
 
@@ -65,6 +66,7 @@ pub struct EmlMeta {
     pub from: Vec<Mailbox>,
     pub id: String,
     pub id_thread: String,
+    pub received_by: Option<Mailbox>,
     pub references: Option<String>,
     pub reply_to: Option<Vec<EmlAddr>>,
     pub sender: Option<Mailbox>,
@@ -140,6 +142,29 @@ impl<'o, O: MessageOwner> TryFrom<&Message<'o, O>> for EmlMeta {
             id: eml.id().to_string(),
 
             id_thread: eml.thread_id().to_string(),
+
+            received_by: match parse_header(eml, "Received")? {
+                Some(h) => {
+                    let rx = Regex::new(r"for ([^\s]+@[^\s]+\.[^\s]+);")
+                        .map_err(|e| {
+                            EmlParseError::from(eml)
+                                .reason(&format!("Building `Received` regex: {}", e))
+                        })?
+                        .captures(&h)
+                        .ok_or_else(|| {
+                            EmlParseError::from(eml)
+                                .reason(&format!("Received header {} didn't match regex", h))
+                        })?
+                        .get(1)
+                        .unwrap()
+                        .as_str();
+
+                    parse_address(eml, rx)
+                        .map(|a| a.extract_single_info())?
+                        .map(|s| Mailbox::from(&s))
+                }
+                None => None,
+            },
 
             references: parse_header(eml, "References")?,
 
