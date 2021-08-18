@@ -43,7 +43,7 @@
   {/if}
 </h4>
 
-{#if emlMeta.sender && !emlMeta.from.includes(emlMeta.sender.valueOf())}
+{#if emlMeta.sender && !from.includes(formatMailAddr(emlMeta.sender))}
   <h4>
     <i>Sent by:</i>
     {formatMailAddr(emlMeta.sender)}
