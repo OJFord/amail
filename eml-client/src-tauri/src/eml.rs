@@ -151,17 +151,14 @@ impl<'o, O: MessageOwner> TryFrom<&Message<'o, O>> for EmlMeta {
                                 .reason(&format!("Building `Received` regex: {}", e))
                         })?
                         .captures(&h)
-                        .ok_or_else(|| {
-                            EmlParseError::from(eml)
-                                .reason(&format!("Received header {} didn't match regex", h))
-                        })?
-                        .get(1)
-                        .unwrap()
-                        .as_str();
+                        .map(|m| m.get(1).unwrap().as_str());
 
-                    parse_address(eml, rx)
-                        .map(|a| a.extract_single_info())?
-                        .map(|s| Mailbox::from(&s))
+                    match rx {
+                        Some(a) => parse_address(eml, a)
+                            .map(|a| a.extract_single_info())?
+                            .map(|s| Mailbox::from(&s)),
+                        None => None,
+                    }
                 }
                 None => None,
             },
