@@ -6,6 +6,7 @@
 use std::convert::TryFrom;
 use std::env;
 use std::fs;
+use std::io::Write;
 use std::process::Command;
 use std::str::FromStr;
 
@@ -15,7 +16,9 @@ use email::MimeMultipartType;
 use itertools::Itertools;
 use lettre::transport::smtp;
 use lettre::Transport;
+use notmuch::Error::NotmuchError;
 use serde::Serialize;
+use tempfile::NamedTempFile;
 
 mod eml;
 mod error;
@@ -228,7 +231,45 @@ fn send_eml(
 
     let response = state.smtp.send_raw(&envelope, &eml.as_ref())?;
     match response.is_positive() {
-        true => Ok(()),
+        true => {
+            println!("[INFO] Message sent");
+            let mut file = NamedTempFile::new_in(format!("{}/sent/", state.db_path))?;
+            write!(file, "{}", eml)?;
+            println!("[TRACE] Sent message written to {}", file.path().display());
+
+            let db = state.open_db_rw()?;
+            let index_opts = db.default_indexopts::<()>()?;
+            let message = db.index_file(&file.path().as_os_str(), None)?;
+            println!("[TRACE] Sent message indexed as {}", message.id());
+
+            message.add_tag("sent")?;
+
+            let path = file.path().with_file_name::<String>(message.id().into());
+            match file.persist_noclobber(&path) {
+                Ok(_) => {
+                    println!("[TRACE] Renamed message {}, reindexing", message.id());
+                    match db.index_file(&path, None) {
+                        Err(NotmuchError(notmuch::Status::DuplicateMessageID)) => {
+                            println!("[TRACE] New path indexed");
+                            message.reindex(index_opts)?;
+                            println!("[TRACE] Message reindexed");
+                            Ok(())
+                        }
+                        _ => Err(AmailError::Other(anyhow!("Error renaming sent message"))),
+                    }
+                }
+                Err(e) => match e.file.keep() {
+                    Ok((_, pathbuf)) => Err(AmailError::Other(anyhow!(
+                        "Failed to persist sent mail, kept at {}",
+                        pathbuf.display()
+                    ))),
+                    Err(_) => Err(AmailError::Other(anyhow!(
+                        "Failed to persist or keep sent mail: {}",
+                        eml
+                    ))),
+                },
+            }
+        }
         false => Err(anyhow!(
             "SMTP error {}: {}",
             response.code,
