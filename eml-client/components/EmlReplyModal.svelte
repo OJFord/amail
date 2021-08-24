@@ -75,7 +75,10 @@
       }
     `;
 
-  const toggle = () => (isOpen = !isOpen);
+  const toggle = () => {
+    isOpen = !isOpen;
+    return Promise.resolve(isOpen);
+  };
 
   let confirm = false;
   const toggleConfirm = () => (confirm = !confirm);
@@ -91,7 +94,9 @@
 </script>
 
 <Modal {isOpen} class="modal-lg">
-  <ModalHeader {toggle}>
+  <ModalHeader
+    toggle={() => toggle().then((open) => (open ? null : (confirm = false)))}
+  >
     {#if confirm}Sure?{:else}Reply{/if}
   </ModalHeader>
   <ModalBody>
