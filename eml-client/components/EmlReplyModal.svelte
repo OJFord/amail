@@ -17,31 +17,6 @@
   export let emlMeta;
   export let isOpen;
 
-  let replyMeta;
-  const refreshMeta = () =>
-    (replyMeta = {
-      from: emlMeta.to,
-      to: emlMeta.reply_to ? emlMeta.reply_to : emlMeta.from,
-      cc: emlMeta.cc || [],
-      bcc: emlMeta.bcc || [],
-      subject: emlMeta.subject,
-    });
-  $: isOpen, refreshMeta();
-
-  // prettier-ignore
-  $: replyEml = dedent`
-    Message-ID: <${new Date().toISOString()}.${emlMeta.thread_id}.${replyMeta.from.address}>
-    From: ${replyMeta.from.map(formatMailAddr).join(",")}
-    To: ${replyMeta.to.map(formatMailAddr).join(",")}
-    Cc: ${replyMeta.cc.map(formatMailAddr).join(",")}
-    Bcc: ${replyMeta.bcc.map(formatMailAddr).join(",")}
-    In-Reply-To: ${emlMeta.id}
-    References: ${emlMeta.references || ""} ${emlMeta.id}
-    Subject: ${replyMeta.subject}
-
-    ${body}
-  `;
-
   $: ogDate = new Date(emlMeta.timestamp * 1000).toLocaleString("en-GB", {
     weekday: "short",
     day: "numeric",
@@ -59,7 +34,7 @@
         .map((a) => a.content)[0]
     : null;
 
-  $: body =
+  $: bodyTemplate =
     "\r\n\r\n" +
     dedent`
       On ${ogDate} (GMT), ${emlMeta.from
@@ -74,6 +49,36 @@
           : "[no plaintext]"
       }
     `;
+
+  let body = bodyTemplate;
+  let replyMeta;
+
+  const refreshMeta = () => {
+    body = bodyTemplate;
+    replyMeta = {
+      from: emlMeta.to,
+      to: emlMeta.reply_to ? emlMeta.reply_to : emlMeta.from,
+      cc: emlMeta.cc || [],
+      bcc: emlMeta.bcc || [],
+      subject: emlMeta.subject,
+    };
+  };
+
+  $: isOpen, refreshMeta();
+
+  // prettier-ignore
+  $: replyEml = dedent`
+    Message-ID: <${new Date().toISOString()}.${emlMeta.thread_id}.${replyMeta.from.address}>
+    From: ${replyMeta.from.map(formatMailAddr).join(",")}
+    To: ${replyMeta.to.map(formatMailAddr).join(",")}
+    Cc: ${replyMeta.cc.map(formatMailAddr).join(",")}
+    Bcc: ${replyMeta.bcc.map(formatMailAddr).join(",")}
+    In-Reply-To: ${emlMeta.id}
+    References: ${emlMeta.references || ""} ${emlMeta.id}
+    Subject: ${replyMeta.subject}
+
+    ${body}
+  `;
 
   const toggle = () => {
     isOpen = !isOpen;

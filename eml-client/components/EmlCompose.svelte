@@ -7,7 +7,7 @@
   import * as api from "../api.js";
   import EmlAddresses from "./EmlAddresses.svelte";
 
-  export let body = "";
+  export let body;
   export let emlMeta;
 
   let sysName;
@@ -21,4 +21,4 @@
 
 <EmlAddresses bind:emlMeta editable={true} />
 
-<Input type="textarea" name="body" value={body} rows="25" />
+<Input type="textarea" name="body" bind:value={body} rows="25" />
