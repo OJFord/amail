@@ -17,15 +17,9 @@
   export let emlMeta;
   export let isOpen;
 
-  $: ogDate = new Date(emlMeta.timestamp * 1000).toLocaleString("en-GB", {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-    second: "numeric",
-  });
+  const rfc5322Date = (date) => date.toGMTString();
+
+  $: ogDate = rfc5322Date(new Date(emlMeta.timestamp * 1000));
 
   $: ogPlain = emlBody
     ? [emlBody]
@@ -37,9 +31,7 @@
   $: bodyTemplate =
     "\r\n\r\n" +
     dedent`
-      On ${ogDate} (GMT), ${emlMeta.from
-      .map((m) => m.address)
-      .join(" & ")} wrote:
+      On ${ogDate}, ${emlMeta.from.map((m) => m.address).join(" & ")} wrote:
       ${
         ogPlain
           ? ogPlain
@@ -68,7 +60,8 @@
 
   // prettier-ignore
   $: replyEml = dedent`
-    Message-ID: <${new Date().toISOString()}.${emlMeta.thread_id}.${replyMeta.from.address}>
+    Message-ID: <${new Date().toISOString()}.${emlMeta.id_thread}.${replyMeta.from[0].address}>
+    Date: ${rfc5322Date(new Date())}
     From: ${replyMeta.from.map(formatMailAddr).join(",")}
     To: ${replyMeta.to.map(formatMailAddr).join(",")}
     Cc: ${replyMeta.cc.map(formatMailAddr).join(",")}
