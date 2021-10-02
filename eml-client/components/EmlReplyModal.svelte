@@ -69,9 +69,7 @@
     In-Reply-To: ${emlMeta.id}
     References: ${emlMeta.references || ""} ${emlMeta.id}
     Subject: ${replyMeta.subject}
-
-    ${body}
-  `;
+  ` + "\r\n\r\n" + body;
 
   const toggle = () => {
     isOpen = !isOpen;
