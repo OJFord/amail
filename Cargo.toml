@@ -1,4 +1,9 @@
 [workspace]
 members = [
+    "eml-client/src-tauri",
     "lambda-smtp-relay",
+    "notmuch-more",
 ]
+
+[patch.crates-io]
+notmuch-more = { path = "notmuch-more" }

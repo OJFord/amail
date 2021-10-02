@@ -1,22 +1,29 @@
 repos:
-- repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v3.4.0
-  hooks:
-  - id: check-merge-conflict
-  - id: check-json
-  - id: check-toml
-  - id: end-of-file-fixer
-  - id: trailing-whitespace
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1
+    hooks:
+      - id: check-merge-conflict
+      - id: check-json
+      - id: check-toml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
 
-- repo: https://github.com/doublify/pre-commit-rust
-  rev: v1.0
-  hooks:
-    - id: fmt
-    - id: cargo-check
-    - id: clippy
+  - repo: https://github.com/doublify/pre-commit-rust
+    rev: v1.0
+    hooks:
+      - id: fmt
+      - id: cargo-check
+      - id: clippy
 
-- repo: git://github.com/antonbabenko/pre-commit-terraform
-  rev: v1.47.0
-  hooks:
-  - id: terraform_fmt
-  - id: terraform_validate
+  - repo: git://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.50.0
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_validate
+
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: "v2.3.2"
+    hooks:
+      - id: prettier
+        additional_dependencies:
+          - prettier-plugin-svelte@2.3.1
