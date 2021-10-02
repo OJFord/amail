@@ -225,11 +225,11 @@ fn send_eml(
     let envelope = lettre::Envelope::new(
         Some(lettre::Address::from_str(&from)?),
         to.iter()
-            .map(|ref e| lettre::Address::from_str(e))
+            .map(|e| lettre::Address::from_str(e))
             .collect::<Result<_, _>>()?,
     )?;
 
-    let response = state.smtp.send_raw(&envelope, &eml.as_ref())?;
+    let response = state.smtp.send_raw(&envelope, eml.as_ref())?;
     match response.is_positive() {
         true => {
             println!("[INFO] Message sent");

@@ -58,7 +58,7 @@ fn handler(e: SimpleEmailEvent, _: Context) -> Result<Output, HandlerError> {
 
     info!("Relaying {}", message_id);
 
-    relay_eml(&mut smtp, &s3, &message_id);
+    relay_eml(&mut smtp, &s3, message_id);
     Ok(Output {})
 }
 
