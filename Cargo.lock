@@ -38,17 +38,9 @@ version = "0.0.0"
 dependencies = [
  "ammonia",
  "anyhow",
- "email",
- "itertools 0.10.1",
- "lettre",
- "mailparse",
  "notmuch-more",
- "regex",
- "serde",
- "serde_json",
  "tauri",
  "tauri-build",
- "tempfile",
  "thiserror",
  "whoami",
 ]
