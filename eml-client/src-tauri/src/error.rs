@@ -1,74 +1,13 @@
-use serde::Deserialize;
-use serde::Serialize;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
 pub enum AmailError {
     #[error(transparent)]
-    Infallible(#[from] std::convert::Infallible),
-    #[error(transparent)]
-    IoError {
-        #[from]
-        source: std::io::Error,
-    },
-    #[error(transparent)]
-    LettreAddressError(#[from] lettre::address::AddressError),
-    #[error(transparent)]
-    LettreError(#[from] lettre::error::Error),
-    #[error(transparent)]
-    LettreSmtpError(#[from] lettre::transport::smtp::error::Error),
-    #[error(transparent)]
-    NotMuchError(#[from] notmuch::Error),
-    #[error(transparent)]
-    ParseError(#[from] mailparse::MailParseError),
-    #[error(transparent)]
-    MimeError(#[from] email::results::ParsingError),
-    #[error(transparent)]
-    Utf8Error(#[from] std::str::Utf8Error),
-    #[error(transparent)]
-    Other(#[from] anyhow::Error),
+    NotmuchMoreError(#[from] notmuch_more::NotmuchMoreError),
 }
 
 impl From<AmailError> for tauri::InvokeError {
     fn from(e: AmailError) -> tauri::InvokeError {
         Self::from(format!("{}", e))
-    }
-}
-
-#[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct EmlParseError {
-    pub id: Option<String>,
-    pub reason: String,
-    pub within: Option<String>,
-}
-
-impl EmlParseError {
-    pub fn new() -> Self {
-        Self {
-            id: None,
-            reason: "Unknown".into(),
-            within: None,
-        }
-    }
-
-    pub fn id(mut self, id: String) -> Self {
-        self.id = Some(id);
-        self
-    }
-
-    pub fn reason(mut self, reason: &str) -> Self {
-        self.reason = reason.into();
-        self
-    }
-
-    pub fn within(mut self, within: &str) -> Self {
-        self.within = Some(within.into());
-        self
-    }
-}
-
-impl<O: notmuch::MessageOwner> From<&notmuch::Message<'_, O>> for EmlParseError {
-    fn from(m: &notmuch::Message<O>) -> Self {
-        Self::new().id(m.id().into())
     }
 }

@@ -42,7 +42,7 @@ dependencies = [
  "itertools 0.10.1",
  "lettre",
  "mailparse",
- "notmuch",
+ "notmuch-more",
  "regex",
  "serde",
  "serde_json",
@@ -2615,6 +2615,23 @@ checksum = "bccc64ef9ae09b901c203ab01fdb88477e54574c18d604aa9e9192be7d1c09a7"
 dependencies = [
  "libc",
  "supercow",
+]
+
+[[package]]
+name = "notmuch-more"
+version = "0.0.0"
+dependencies = [
+ "ammonia",
+ "anyhow",
+ "email",
+ "itertools 0.10.1",
+ "lettre",
+ "mailparse",
+ "notmuch",
+ "regex",
+ "serde",
+ "tempfile",
+ "thiserror",
 ]
 
 [[package]]
