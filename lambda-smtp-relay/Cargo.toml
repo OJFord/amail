@@ -1,7 +1,11 @@
 [package]
-name = "lambda-smtp-relay"
-edition = "2018"
+name = "amail-lambda-smtp-relay"
 version = "0.1.0"
+description = "Amail incoming SMTP relay"
+edition = "2018"
+authors = ["Oliver Ford"]
+license-file = "../LICENCE"
+repository = "https://github.com/OJFord/amail"
 
 [target.x86_64-unknown-linux-musl]
 linker = "x86_64-linux-musl-gcc"

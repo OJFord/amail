@@ -46,6 +46,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "amail-lambda-smtp-relay"
+version = "0.1.0"
+dependencies = [
+ "aws_lambda_events",
+ "futures 0.3.15",
+ "lambda_runtime",
+ "lettre",
+ "log",
+ "rusoto_core",
+ "rusoto_s3",
+ "rustls 0.16.0",
+ "serde",
+ "serde_derive",
+ "stderrlog",
+ "tokio 0.2.25",
+ "webpki-roots",
+]
+
+[[package]]
 name = "ammonia"
 version = "3.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2056,25 +2075,6 @@ dependencies = [
  "html5ever",
  "matches",
  "selectors",
-]
-
-[[package]]
-name = "lambda-smtp-relay"
-version = "0.1.0"
-dependencies = [
- "aws_lambda_events",
- "futures 0.3.15",
- "lambda_runtime",
- "lettre",
- "log",
- "rusoto_core",
- "rusoto_s3",
- "rustls 0.16.0",
- "serde",
- "serde_derive",
- "stderrlog",
- "tokio 0.2.25",
- "webpki-roots",
 ]
 
 [[package]]
