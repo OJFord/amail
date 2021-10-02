@@ -33,7 +33,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "amail-eml-client"
+name = "amail"
 version = "0.0.0"
 dependencies = [
  "ammonia",

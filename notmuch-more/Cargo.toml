@@ -4,7 +4,7 @@ version = "0.0.0"
 description = "Not much more than notmuch library bindings (but a little)"
 edition = "2018"
 authors = ["Oliver Ford"]
-license = ""
+license-file = "../LICENCE"
 repository = "https://github.com/OJFord/amail"
 
 [dependencies]

@@ -1,11 +1,11 @@
 [package]
-name = "amail-eml-client"
+name = "amail"
 version = "0.0.0"
 description = "AMail EML client"
 authors = ["Oliver Ford"]
-license = ""
+license = "../LICENCE"
 repository = "https://github.com/OJFord/amail"
-default-run = "amail-eml-client"
+default-run = "amail"
 edition = "2018"
 build = "src/build.rs"
 
