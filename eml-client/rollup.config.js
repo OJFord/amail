@@ -3,64 +3,17 @@ import css from "rollup-plugin-css-only";
 import json from "@rollup/plugin-json";
 import livereload from "rollup-plugin-livereload";
 import resolve from "@rollup/plugin-node-resolve";
+import serve from 'rollup-plugin-serve';
 import scss from "rollup-plugin-scss";
 import svelte from "rollup-plugin-svelte";
 import sveltePreprocess from "svelte-preprocess";
 import { terser } from "rollup-plugin-terser";
 
-const watch = Boolean(process.env.ROLLUP_WATCH);
-const production = !process.env.DEBUG;
+const watch = process.env.ROLLUP_WATCH === "true";
+const production = process.env.DEBUG !== "true";
+
 const distDir = "dist";
-
-const PORT = (Math.random() * (65535 - 1024) + 1024).toFixed(0);
-
-let renderer;
-let server;
-
-function exit() {
-  if (renderer) renderer.kill(0);
-  if (server) server.kill(0);
-  process.exit(0);
-}
-
-function render() {
-  return {
-    writeBundle() {
-      if (renderer) return;
-      renderer = require("child_process").spawn(
-        "yarn",
-        [
-          "tauri",
-          "dev",
-          `--config={"build": {"devPath": "http://localhost:${PORT}"}}`,
-        ],
-        {
-          stdio: [process.stdin, process.stdout, process.stderr],
-        }
-      );
-      renderer.on("exit", exit);
-    },
-  };
-}
-
-function serve() {
-  return {
-    writeBundle() {
-      if (server) return;
-      server = require("child_process").spawn(
-        "yarn",
-        ["sirv", "--dev", `--port=${PORT}`, "--no-clear", "dist"],
-        {
-          stdio: [process.stdin, process.stdout, process.stderr],
-        }
-      );
-
-      server.on("exit", exit);
-      process.on("SIGTERM", exit);
-      process.on("exit", exit);
-    },
-  };
-}
+const port = process.env.PORT;
 
 export default {
   input: "index.js",
@@ -90,9 +43,14 @@ export default {
       dedupe: ["svelte"],
     }),
     commonjs(),
-    !production && watch && serve(),
-    !production && watch && livereload(distDir),
-    !production && watch && render(),
+    !production && watch && serve({
+        contentBase: distDir,
+        host: "localhost",
+        port,
+    }) && livereload({
+        delay: 0,
+        watch: distDir,
+    }),
     production && terser(),
   ],
 

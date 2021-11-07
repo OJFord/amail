@@ -4,9 +4,9 @@
     "version": "0.0.0"
   },
   "build": {
-    "distDir": "../dist",
-    "beforeDevCommand": "",
-    "beforeBuildCommand": ""
+    "beforeDevCommand": "rm -r dist/build ; DEBUG=true PORT=42411 yarn --cwd=.. rollup --config --watch",
+    "devPath": "http://localhost:42411",
+    "distDir": "../dist"
   },
   "tauri": {
     "bundle": {
