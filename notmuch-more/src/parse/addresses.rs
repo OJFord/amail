@@ -1,4 +1,5 @@
 use std::convert::TryFrom;
+use std::fmt::Display;
 
 use mailparse::MailAddr;
 use notmuch::Message;
@@ -13,6 +14,12 @@ use super::EmlParseError;
 pub struct Mailbox {
     pub name: String,
     pub address: String,
+}
+
+impl From<&Mailbox> for String {
+    fn from(mbox: &Mailbox) -> Self {
+        format!("{} <{}>", mbox.name, mbox.address)
+    }
 }
 
 impl From<&mailparse::SingleInfo> for Mailbox {
@@ -43,6 +50,31 @@ impl TryFrom<&MailAddr> for Mailbox {
 pub enum EmlAddr {
     Single(Mailbox),
     Group { name: String, members: Vec<Mailbox> },
+}
+
+impl From<&EmlAddr> for String {
+    fn from(addr: &EmlAddr) -> Self {
+        match addr {
+            EmlAddr::Single(mbox) => String::from(mbox),
+            EmlAddr::Group { name, members } => {
+                format!(
+                    "{}: {};",
+                    name,
+                    members
+                        .iter()
+                        .map(String::from)
+                        .collect::<Vec<String>>()
+                        .join(", ")
+                )
+            }
+        }
+    }
+}
+
+impl Display for EmlAddr {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}", String::from(self))
+    }
 }
 
 impl TryFrom<&MailAddr> for EmlAddr {
@@ -82,5 +114,55 @@ pub(crate) fn parse_optional_address_list<O: MessageOwner>(
                 .collect::<Result<_, _>>()?,
         )),
         None => Ok(None),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn simple_mailbox_string() {
+        let mbox = Mailbox {
+            name: "Gregory House".into(),
+            address: "diagnostics@pph.com".into(),
+        };
+
+        assert_eq!(&String::from(&mbox), "Gregory House <diagnostics@pph.com>");
+    }
+
+    #[test]
+    fn single_addr_string() {
+        let single = EmlAddr::Single(Mailbox {
+            name: "Gregory House".into(),
+            address: "diagnostics@pph.com".into(),
+        });
+
+        assert_eq!(
+            &String::from(&single),
+            "Gregory House <diagnostics@pph.com>",
+        );
+    }
+
+    #[test]
+    fn group_addr_string() {
+        let group = EmlAddr::Group {
+            name: "Docs".into(),
+            members: vec![
+                Mailbox {
+                    name: "Gregory House".into(),
+                    address: "diagnostics@pph.com".into(),
+                },
+                Mailbox {
+                    name: "Lisa Cuddy".into(),
+                    address: "ceo@pph.com".into(),
+                },
+            ],
+        };
+
+        assert_eq!(
+            &String::from(&group),
+            "Docs: Gregory House <diagnostics@pph.com>, Lisa Cuddy <ceo@pph.com>;",
+        );
     }
 }

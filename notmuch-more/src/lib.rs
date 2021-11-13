@@ -1,3 +1,4 @@
+pub mod compose;
 pub mod database;
 pub mod error;
 pub mod parse;

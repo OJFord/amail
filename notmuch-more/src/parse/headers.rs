@@ -12,7 +12,7 @@ use super::EmlAddr;
 use super::EmlParseError;
 use super::Mailbox;
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct EmlMeta {
     pub cc: Option<Vec<EmlAddr>>,
     pub bcc: Option<Vec<EmlAddr>>,

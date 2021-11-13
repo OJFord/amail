@@ -59,7 +59,7 @@ fn list_tags(state: tauri::State<State>) -> Result<Vec<String>, AmailError> {
 #[tauri::command]
 fn view_eml(state: tauri::State<State>, id: String) -> Result<EmlBody, AmailError> {
     let db = state.db.open_ro()?;
-    Ok(parse::parse_eml(&db, id)?)
+    Ok(parse::parse_eml(&db, id)?.1)
 }
 
 #[tauri::command]

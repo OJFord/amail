@@ -2680,6 +2680,7 @@ version = "0.0.0"
 dependencies = [
  "ammonia",
  "anyhow",
+ "chrono",
  "email",
  "itertools",
  "lettre",
