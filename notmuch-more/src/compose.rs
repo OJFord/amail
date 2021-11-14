@@ -37,7 +37,7 @@ fn format_message_id(meta: &EmlMeta) -> String {
 
 fn template_body(meta: &EmlMeta, body: &EmlBody) -> String {
     format!(
-        "\n\r\n\rOn {}, {} wrote:\n\r{}",
+        "\r\n\r\nOn {}, {} wrote:\r\n{}",
         DateTime::<Utc>::from_utc(NaiveDateTime::from_timestamp(meta.timestamp, 0), Utc)
             .to_rfc2822(),
         meta.from
@@ -103,6 +103,28 @@ pub fn template_reply(db: &Database, id: String) -> Result<ReplyTemplate, Notmuc
     })
 }
 
+pub fn rfc5322_fields(fields: &HashMap<String, String>) -> String {
+    itertools::sorted(fields.iter())
+        .map(|(k, v)| format!("{}: {}", k, v))
+        .join("\r\n")
+}
+
+pub fn rfc5322_body(body: &str) -> String {
+    body.lines()
+        .map(|l| {
+            l.chars()
+                .collect::<Vec<char>>()
+                .chunks(78)
+                .map(|l| l.iter().collect::<String>())
+                .join("\r\n")
+        })
+        .join("\r\n")
+}
+
+pub fn rfc5322_message(fields: &HashMap<String, String>, body: &str) -> String {
+    format!("{}\r\n\r\n{}", rfc5322_fields(fields), rfc5322_body(body))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -110,7 +132,7 @@ mod tests {
     use std::default::Default;
 
     #[test]
-    fn simple_body() {
+    fn simple_body_template() {
         let meta = EmlMeta {
             from: vec![Mailbox {
                 name: "Enid Blyton".into(),
@@ -127,7 +149,56 @@ mod tests {
 
         assert_eq!(
             template_body(&meta, &body),
-            "\n\r\n\rOn Fri, 13 Feb 2009 23:31:30 +0000, Enid Blyton <enid@blyt.on> wrote:\n\rFive Write Some Rust",
+            "\r\n\r\nOn Fri, 13 Feb 2009 23:31:30 +0000, Enid Blyton <enid@blyt.on> wrote:\r\nFive Write Some Rust",
         );
+    }
+
+    #[test]
+    fn simple_rfc5322_fields() {
+        assert_eq!(
+            rfc5322_fields(&HashMap::from([
+                ("Subject".into(), "blah".into()),
+                ("To".into(), "foo@bar.com".into()),
+            ])),
+            "Subject: blah\r\nTo: foo@bar.com",
+        )
+    }
+
+    #[test]
+    fn rfc5322_body_no_linebreak() {
+        let body = ".".repeat(78);
+        assert_eq!(rfc5322_body(&body), ".".repeat(78))
+    }
+
+    #[test]
+    fn rfc5322_body_force_linebreak() {
+        let body = ".".repeat(80);
+        assert_eq!(
+            rfc5322_body(&body),
+            format!("{}\r\n{}", ".".repeat(78), ".".repeat(2)),
+        )
+    }
+
+    #[test]
+    fn rfc5322_body_with_extant_linebreaks() {
+        let body = "hi there, yes, look:\r\n```\r\nfoo\r\n```\r\n\r\nMany thanks,";
+        assert_eq!(rfc5322_body(body), body)
+    }
+
+    #[test]
+    fn rfc5322_body_with_extant_and_new_linebreaks() {
+        let body = format!(
+            "hi there, yes, look:\r\n```\r\nfo{}\r\n```\r\n\r\nMany thanks,",
+            "o".repeat(200)
+        );
+        assert_eq!(
+            rfc5322_body(&body),
+            format!(
+                "hi there, yes, look:\r\n```\r\nfo{}\r\n{}\r\n{}\r\n```\r\n\r\nMany thanks,",
+                "o".repeat(76),
+                "o".repeat(78),
+                "o".repeat(46),
+            )
+        )
     }
 }

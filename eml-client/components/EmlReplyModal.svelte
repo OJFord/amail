@@ -29,7 +29,7 @@
     : null;
 
   $: bodyTemplate =
-    "\r\n\r\n" +
+    "\n\r\n\r" +
     dedent`
       On ${ogDate}, ${emlMeta.from.map((m) => m.address).join(" & ")} wrote:
       ${
