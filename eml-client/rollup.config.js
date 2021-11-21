@@ -3,7 +3,7 @@ import css from "rollup-plugin-css-only";
 import json from "@rollup/plugin-json";
 import livereload from "rollup-plugin-livereload";
 import resolve from "@rollup/plugin-node-resolve";
-import serve from 'rollup-plugin-serve';
+import serve from "rollup-plugin-serve";
 import scss from "rollup-plugin-scss";
 import svelte from "rollup-plugin-svelte";
 import sveltePreprocess from "svelte-preprocess";
@@ -43,14 +43,17 @@ export default {
       dedupe: ["svelte"],
     }),
     commonjs(),
-    !production && watch && serve({
+    !production &&
+      watch &&
+      serve({
         contentBase: distDir,
         host: "localhost",
         port,
-    }) && livereload({
+      }) &&
+      livereload({
         delay: 0,
         watch: distDir,
-    }),
+      }),
     production && terser(),
   ],
 

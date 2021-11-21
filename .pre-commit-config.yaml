@@ -16,7 +16,7 @@ repos:
       - id: clippy
 
   - repo: git://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.56.0
+    rev: v1.58.0
     hooks:
       - id: terraform_fmt
       - id: terraform_validate
@@ -27,3 +27,12 @@ repos:
       - id: prettier
         additional_dependencies:
           - prettier-plugin-svelte@2.3.1
+
+  - repo: local
+    hooks:
+      - id: cargo-test
+        name: Cargo test
+        language: system
+        entry: cargo test
+        files: ^.*\.rs
+        pass_filenames: false

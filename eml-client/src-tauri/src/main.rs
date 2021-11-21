@@ -82,13 +82,13 @@ fn send_eml(
         &db,
         headers
             .get("To")
-            .ok_or(anyhow!("Missing To header"))?
-            .split(",")
+            .ok_or_else(|| anyhow!("Missing To header"))?
+            .split(',')
             .map(String::from)
             .collect(),
         headers
             .get("From")
-            .ok_or(anyhow!("Missing From header"))?
+            .ok_or_else(|| anyhow!("Missing From header"))?
             .into(),
         compose::rfc5322_message(&headers, &body),
     )?)
