@@ -1,6 +1,7 @@
 use itertools::Itertools;
 use std::collections::HashMap;
 
+use anyhow::anyhow;
 use chrono::DateTime;
 use chrono::Local;
 use chrono::NaiveDateTime;
@@ -107,7 +108,10 @@ pub fn template_reply(db: &Database, id: String) -> Result<ReplyTemplate, Notmuc
 
 pub fn rfc5322_fields(fields: &HashMap<String, String>) -> String {
     itertools::sorted(fields.iter())
-        .map(|(k, v)| format!("{}: {}", k, v))
+        .map(|(k, v)| match k.as_str() {
+            "Bcc" => "Bcc:".into(),
+            _ => format!("{}: {}", k, v),
+        })
         .join("\r\n")
 }
 
@@ -125,6 +129,52 @@ pub fn rfc5322_body(body: &str) -> String {
 
 pub fn rfc5322_message(fields: &HashMap<String, String>, body: &str) -> String {
     format!("{}\r\n\r\n{}", rfc5322_fields(fields), rfc5322_body(body))
+}
+
+pub fn rfc5322_sender(fields: &HashMap<String, String>) -> Result<String, NotmuchMoreError> {
+    if let Some(sender) = fields.get("Sender") {
+        let mboxes = parse::parse_address(sender)?;
+        if mboxes.len() != 1 {
+            return Err(NotmuchMoreError::Other(anyhow!(
+                "Must have exactly one Sender (if present)"
+            )));
+        }
+        return Ok(mboxes[0].address.clone());
+    }
+
+    let mboxes = parse::parse_address(
+        fields
+            .get("From")
+            .ok_or_else(|| anyhow!("Missing From header"))?,
+    )?;
+    if mboxes.len() > 1 {
+        return Err(NotmuchMoreError::Other(anyhow!(
+            "Must set Sender if multiple From addresses"
+        )));
+    }
+    if mboxes.is_empty() {
+        return Err(NotmuchMoreError::Other(anyhow!("Missing From address")));
+    }
+
+    Ok(mboxes[0].address.clone())
+}
+
+pub fn rfc5322_destinations(
+    fields: &HashMap<String, String>,
+) -> Result<Vec<String>, NotmuchMoreError> {
+    let mboxes_from = |f| {
+        fields
+            .get(f)
+            .map(|a| parse::parse_address(a))
+            .unwrap_or_else(|| Ok(vec![]))
+    };
+
+    Ok(mboxes_from("To")?
+        .iter()
+        .chain(mboxes_from("Cc")?.iter())
+        .chain(mboxes_from("Bcc")?.iter())
+        .map(|m| m.address.clone())
+        .collect())
 }
 
 #[cfg(test)]
@@ -201,6 +251,17 @@ mod tests {
                 "o".repeat(78),
                 "o".repeat(46),
             )
+        )
+    }
+
+    #[test]
+    fn rfc5322_fields_bcc_blind() {
+        assert_eq!(
+            rfc5322_fields(&HashMap::from([
+                ("Bcc".into(), "foo@bar.com".into()),
+                ("To".into(), "bar@foo.com".into()),
+            ])),
+            "Bcc:\r\nTo: bar@foo.com",
         )
     }
 }

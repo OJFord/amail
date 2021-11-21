@@ -16,6 +16,16 @@ pub use body::EmlBody;
 pub use error::EmlParseError;
 pub use headers::EmlMeta;
 
+pub fn parse_address(addr: &str) -> Result<Vec<Mailbox>, NotmuchMoreError> {
+    let mboxes = mailparse::addrparse(addr)
+        .map_err(|e| anyhow!("Failed to parse address {}: {}", addr, e))?
+        .iter()
+        .map(Mailbox::try_from)
+        .collect::<Result<Vec<Mailbox>, EmlParseError>>();
+
+    Ok(mboxes.map_err(|e| anyhow!("Failed to parse address: {:?}", e))?)
+}
+
 pub fn parse_eml(db: &Database, id: String) -> Result<(EmlMeta, EmlBody), NotmuchMoreError> {
     println!("Opening id:{}", id);
     let msg = db
@@ -82,5 +92,20 @@ mod tests {
         };
 
         assert_eq!(plaintext(&eml), Some("plaintext!".into()));
+    }
+
+    #[test]
+    fn simple_addr() {
+        let addr = "Foo Bar <foo@bar.com>";
+
+        let mboxes = parse_address(addr).unwrap();
+
+        assert_eq!(
+            mboxes[0],
+            Mailbox {
+                name: "Foo Bar".into(),
+                address: "foo@bar.com".into(),
+            }
+        );
     }
 }

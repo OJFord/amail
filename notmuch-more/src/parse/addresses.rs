@@ -10,7 +10,7 @@ use serde::Serialize;
 use super::headers::parse_header;
 use super::EmlParseError;
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 pub struct Mailbox {
     pub name: String,
     pub address: String,

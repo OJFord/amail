@@ -7,7 +7,6 @@ use std::collections::HashMap;
 use std::env;
 use std::process::Command;
 
-use anyhow::anyhow;
 use notmuch_more::compose;
 use notmuch_more::parse;
 use notmuch_more::parse::EmlBody;
@@ -78,18 +77,11 @@ fn send_eml(
     body: String,
 ) -> Result<(), AmailError> {
     let db = state.db.open_rw()?;
+
     Ok(state.smtp.send(
         &db,
-        headers
-            .get("To")
-            .ok_or_else(|| anyhow!("Missing To header"))?
-            .split(',')
-            .map(String::from)
-            .collect(),
-        headers
-            .get("From")
-            .ok_or_else(|| anyhow!("Missing From header"))?
-            .into(),
+        compose::rfc5322_destinations(&headers)?,
+        compose::rfc5322_sender(&headers)?,
         compose::rfc5322_message(&headers, &body),
     )?)
 }
