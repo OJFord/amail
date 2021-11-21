@@ -12,7 +12,7 @@
           .split(",")
           .map(
             (addr) =>
-              addr.match(/((?<name>.+)(?: <))?(?<address>.+@[^>]+)>?/).groups
+              addr.match(/((?<name>.+)(?: <))?(?<address>[^<]+@[^>]+)>?/).groups
           )
       : [];
 </script>
