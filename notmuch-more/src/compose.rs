@@ -6,6 +6,7 @@ use chrono::Local;
 use chrono::NaiveDateTime;
 use chrono::Utc;
 use notmuch::Database;
+use serde::Serialize;
 
 use crate::parse;
 use crate::NotmuchMoreError;
@@ -13,6 +14,7 @@ use parse::EmlAddr;
 use parse::EmlBody;
 use parse::EmlMeta;
 
+#[derive(Clone, Debug, Default, Serialize)]
 pub struct ReplyTemplate {
     pub headers: HashMap<&'static str, String>,
     pub body: String,

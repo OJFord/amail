@@ -3,9 +3,12 @@
     windows_subsystem = "windows"
 )]
 
+use std::collections::HashMap;
 use std::env;
 use std::process::Command;
 
+use anyhow::anyhow;
+use notmuch_more::compose;
 use notmuch_more::parse;
 use notmuch_more::parse::EmlBody;
 use notmuch_more::parse::EmlMeta;
@@ -71,12 +74,42 @@ fn get_name() -> String {
 #[tauri::command]
 fn send_eml(
     state: tauri::State<State>,
-    to: Vec<String>,
-    from: String,
-    eml: String,
+    headers: HashMap<String, String>,
+    body: String,
 ) -> Result<(), AmailError> {
     let db = state.db.open_rw()?;
-    Ok(state.smtp.send(&db, to, from, eml)?)
+    Ok(state.smtp.send(
+        &db,
+        headers
+            .get("To")
+            .ok_or(anyhow!("Missing To header"))?
+            .split(",")
+            .map(String::from)
+            .collect(),
+        headers
+            .get("From")
+            .ok_or(anyhow!("Missing From header"))?
+            .into(),
+        compose::rfc5322_message(&headers, &body),
+    )?)
+}
+
+#[tauri::command]
+fn get_reply_template(
+    state: tauri::State<State>,
+    id: String,
+) -> Result<compose::ReplyTemplate, AmailError> {
+    let db = state.db.open_rw()?;
+    Ok(compose::template_reply(&db, id)?)
+}
+
+#[tauri::command]
+fn preview_eml(
+    _: tauri::State<State>,
+    headers: HashMap<String, String>,
+    body: String,
+) -> Result<String, AmailError> {
+    Ok(compose::rfc5322_message(&headers, &body))
 }
 
 fn main() {
@@ -103,8 +136,10 @@ fn main() {
             apply_tag,
             count_matches,
             get_name,
+            get_reply_template,
             list_eml,
             list_tags,
+            preview_eml,
             rm_tag,
             send_eml,
             view_eml,

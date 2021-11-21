@@ -4,6 +4,8 @@ use thiserror::Error;
 pub enum AmailError {
     #[error(transparent)]
     NotmuchMoreError(#[from] notmuch_more::NotmuchMoreError),
+    #[error(transparent)]
+    Other(#[from] anyhow::Error),
 }
 
 impl From<AmailError> for tauri::InvokeError {

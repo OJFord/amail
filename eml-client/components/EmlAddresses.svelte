@@ -8,11 +8,13 @@
 
   export const parseAddr = (addrList) =>
     addrList
-      .split(",")
-      .map(
-        (addr) =>
-          addr.match(/((?<name>.+)(?: <))?(?<address>.+@[^>]+)>?/).groups
-      );
+      ? addrList
+          .split(",")
+          .map(
+            (addr) =>
+              addr.match(/((?<name>.+)(?: <))?(?<address>.+@[^>]+)>?/).groups
+          )
+      : [];
 </script>
 
 <script>

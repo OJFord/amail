@@ -117,7 +117,7 @@
 
     <Col xs="1" class="align-left">
       <Button class="" on:click={() => (replyModalOpen = true)}>Reply</Button>
-      <EmlReplyModal {emlMeta} emlBody={body} bind:isOpen={replyModalOpen} />
+      <EmlReplyModal {emlMeta} bind:isOpen={replyModalOpen} />
     </Col>
   </Row>
 
