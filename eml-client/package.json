@@ -24,7 +24,7 @@
     "@tauri-apps/api": "^1.0.0-beta.4"
   },
   "engines": {
-    "node": "^16.0.0"
+    "node": "^17.0.0"
   },
   "private": true
 }
