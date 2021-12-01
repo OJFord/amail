@@ -14,10 +14,11 @@ use crate::NotmuchMoreError;
 use parse::EmlAddr;
 use parse::EmlBody;
 use parse::EmlMeta;
+use parse::Rfc5322Fields;
 
 #[derive(Clone, Debug, Default, Serialize)]
 pub struct ReplyTemplate {
-    pub headers: HashMap<&'static str, String>,
+    pub headers: Rfc5322Fields,
     pub body: String,
 }
 
@@ -52,14 +53,16 @@ fn template_body(meta: &EmlMeta, body: &EmlBody) -> String {
 }
 
 pub fn template_reply(db: &Database, id: String) -> Result<ReplyTemplate, NotmuchMoreError> {
-    let (meta, msg) = parse::parse_eml(db, id)?;
+    let (reply_to_meta, msg) = parse::parse_eml(db, id)?;
+
     Ok(ReplyTemplate {
-        headers: HashMap::from([
-            ("Message-ID", format_message_id(&meta)),
-            ("Date", Local::now().to_rfc2822()),
+        headers: Rfc5322Fields::from([
+            ("Message-ID".into(), format_message_id(&reply_to_meta)),
+            ("Date".into(), Local::now().to_rfc2822()),
             (
-                "From",
-                meta.to
+                "From".into(),
+                reply_to_meta
+                    .to
                     .as_ref()
                     .unwrap_or(&vec![])
                     .iter()
@@ -67,16 +70,17 @@ pub fn template_reply(db: &Database, id: String) -> Result<ReplyTemplate, Notmuc
                     .join(","),
             ),
             (
-                "To",
-                match meta.reply_to.as_ref() {
+                "To".into(),
+                match reply_to_meta.reply_to.as_ref() {
                     Some(to) => to.iter().map(String::from).collect::<Vec<String>>(),
-                    None => meta.from.iter().map(String::from).collect(),
+                    None => reply_to_meta.from.iter().map(String::from).collect(),
                 }
                 .join(","),
             ),
             (
-                "Cc",
-                meta.cc
+                "Cc".into(),
+                reply_to_meta
+                    .cc
                     .as_ref()
                     .unwrap_or(&vec![])
                     .iter()
@@ -84,29 +88,33 @@ pub fn template_reply(db: &Database, id: String) -> Result<ReplyTemplate, Notmuc
                     .collect::<Vec<String>>()
                     .join(","),
             ),
-            ("Bcc", "".into()),
-            ("In-Reply-To", meta.id.clone()),
+            ("Bcc".into(), "".into()),
+            ("In-Reply-To".into(), reply_to_meta.id.clone()),
             (
-                "References",
+                "References".into(),
                 format!(
                     "{} {}",
-                    meta.references.as_ref().unwrap_or(&String::from("")),
-                    meta.id.clone()
+                    reply_to_meta
+                        .references
+                        .as_ref()
+                        .unwrap_or(&String::from("")),
+                    reply_to_meta.id.clone()
                 ),
             ),
             (
-                "Subject",
-                meta.subject
+                "Subject".into(),
+                reply_to_meta
+                    .subject
                     .as_ref()
                     .map(|s| s.to_string())
                     .unwrap_or_else(|| "".into()),
             ),
         ]),
-        body: template_body(&meta, &msg),
+        body: template_body(&reply_to_meta, &msg),
     })
 }
 
-pub fn rfc5322_fields(fields: &HashMap<String, String>) -> String {
+pub fn rfc5322_fields(fields: &Rfc5322Fields) -> String {
     itertools::sorted(fields.iter())
         .map(|(k, v)| match k.as_str() {
             "Bcc" => "Bcc:".into(),
@@ -127,11 +135,11 @@ pub fn rfc5322_body(body: &str) -> String {
         .join("\r\n")
 }
 
-pub fn rfc5322_message(fields: &HashMap<String, String>, body: &str) -> String {
+pub fn rfc5322_message(fields: &Rfc5322Fields, body: &str) -> String {
     format!("{}\r\n\r\n{}", rfc5322_fields(fields), rfc5322_body(body))
 }
 
-pub fn rfc5322_sender(fields: &HashMap<String, String>) -> Result<String, NotmuchMoreError> {
+pub fn rfc5322_sender(fields: &Rfc5322Fields) -> Result<String, NotmuchMoreError> {
     if let Some(sender) = fields.get("Sender") {
         let mboxes = parse::parse_address(sender)?;
         if mboxes.len() != 1 {
@@ -159,9 +167,7 @@ pub fn rfc5322_sender(fields: &HashMap<String, String>) -> Result<String, Notmuc
     Ok(mboxes[0].address.clone())
 }
 
-pub fn rfc5322_destinations(
-    fields: &HashMap<String, String>,
-) -> Result<Vec<String>, NotmuchMoreError> {
+pub fn rfc5322_destinations(fields: &Rfc5322Fields) -> Result<Vec<String>, NotmuchMoreError> {
     let mboxes_from = |f| {
         fields
             .get(f)
@@ -203,65 +209,5 @@ mod tests {
             template_body(&meta, &body),
             "\r\n\r\nOn Fri, 13 Feb 2009 23:31:30 +0000, Enid Blyton <enid@blyt.on> wrote:\r\nFive Write Some Rust",
         );
-    }
-
-    #[test]
-    fn simple_rfc5322_fields() {
-        assert_eq!(
-            rfc5322_fields(&HashMap::from([
-                ("Subject".into(), "blah".into()),
-                ("To".into(), "foo@bar.com".into()),
-            ])),
-            "Subject: blah\r\nTo: foo@bar.com",
-        )
-    }
-
-    #[test]
-    fn rfc5322_body_no_linebreak() {
-        let body = ".".repeat(78);
-        assert_eq!(rfc5322_body(&body), ".".repeat(78))
-    }
-
-    #[test]
-    fn rfc5322_body_force_linebreak() {
-        let body = ".".repeat(80);
-        assert_eq!(
-            rfc5322_body(&body),
-            format!("{}\r\n{}", ".".repeat(78), ".".repeat(2)),
-        )
-    }
-
-    #[test]
-    fn rfc5322_body_with_extant_linebreaks() {
-        let body = "hi there, yes, look:\r\n```\r\nfoo\r\n```\r\n\r\nMany thanks,";
-        assert_eq!(rfc5322_body(body), body)
-    }
-
-    #[test]
-    fn rfc5322_body_with_extant_and_new_linebreaks() {
-        let body = format!(
-            "hi there, yes, look:\r\n```\r\nfo{}\r\n```\r\n\r\nMany thanks,",
-            "o".repeat(200)
-        );
-        assert_eq!(
-            rfc5322_body(&body),
-            format!(
-                "hi there, yes, look:\r\n```\r\nfo{}\r\n{}\r\n{}\r\n```\r\n\r\nMany thanks,",
-                "o".repeat(76),
-                "o".repeat(78),
-                "o".repeat(46),
-            )
-        )
-    }
-
-    #[test]
-    fn rfc5322_fields_bcc_blind() {
-        assert_eq!(
-            rfc5322_fields(&HashMap::from([
-                ("Bcc".into(), "foo@bar.com".into()),
-                ("To".into(), "bar@foo.com".into()),
-            ])),
-            "Bcc:\r\nTo: bar@foo.com",
-        )
     }
 }

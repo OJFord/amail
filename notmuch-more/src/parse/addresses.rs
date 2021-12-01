@@ -91,7 +91,7 @@ impl TryFrom<&MailAddr> for EmlAddr {
     }
 }
 
-pub(crate) fn parse_address<O: MessageOwner>(
+pub(crate) fn parse_address_header<O: MessageOwner>(
     eml: &Message<'_, O>,
     header: &str,
 ) -> Result<mailparse::MailAddrList, EmlParseError> {
@@ -102,13 +102,13 @@ pub(crate) fn parse_address<O: MessageOwner>(
     })
 }
 
-pub(crate) fn parse_optional_address_list<O: MessageOwner>(
+pub(crate) fn parse_optional_address_list_header<O: MessageOwner>(
     eml: &Message<'_, O>,
     header: &str,
 ) -> Result<Option<Vec<EmlAddr>>, EmlParseError> {
     match parse_header(eml, header)? {
         Some(h) => Ok(Some(
-            parse_address(eml, &h)?
+            parse_address_header(eml, &h)?
                 .iter()
                 .map(EmlAddr::try_from)
                 .collect::<Result<_, _>>()?,
