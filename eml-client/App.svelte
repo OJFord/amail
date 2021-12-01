@@ -169,7 +169,7 @@
   </Row>
 </Container>
 
-<style type="text/scss">
+<style lang="scss">
   h2.tag {
     margin-right: 0.3rem;
   }
