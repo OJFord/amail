@@ -9,23 +9,17 @@
   } from "sveltestrap";
 
   import * as api from "../api.js";
-  import { parseAddr } from "./EmlAddresses.svelte";
   import EmlCompose from "./EmlCompose.svelte";
 
   export let emlMeta;
   export let isOpen;
 
-  let confirm, headers, body, replyMeta;
+  let body, confirm, replyMeta;
   const refreshMeta = async () => {
-    ({ headers, body } = await api.getReplyTemplate(emlMeta.id));
-    replyMeta = {
-      from: parseAddr(headers.From),
-      to: parseAddr(headers.To),
-      cc: parseAddr(headers.Cc) ?? [],
-      bcc: parseAddr(headers.Bcc) ?? [],
-      subject: headers.Subject,
-    };
     confirm = null;
+    console.debug(`getting template for reply to ${emlMeta.id}`);
+    ({ meta: replyMeta, body } = await api.getReplyTemplate(emlMeta.id));
+    console.debug(replyMeta);
   };
 
   $: if (isOpen) {

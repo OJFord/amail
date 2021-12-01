@@ -1,11 +1,11 @@
-use itertools::Itertools;
-use std::collections::HashMap;
+use std::convert::TryInto;
 
 use anyhow::anyhow;
 use chrono::DateTime;
 use chrono::Local;
 use chrono::NaiveDateTime;
 use chrono::Utc;
+use itertools::Itertools;
 use notmuch::Database;
 use serde::Serialize;
 
@@ -14,11 +14,12 @@ use crate::NotmuchMoreError;
 use parse::EmlAddr;
 use parse::EmlBody;
 use parse::EmlMeta;
+use parse::EmlParseError;
 use parse::Rfc5322Fields;
 
 #[derive(Clone, Debug, Default, Serialize)]
 pub struct ReplyTemplate {
-    pub headers: Rfc5322Fields,
+    pub meta: EmlMeta,
     pub body: String,
 }
 
@@ -56,7 +57,7 @@ pub fn template_reply(db: &Database, id: String) -> Result<ReplyTemplate, Notmuc
     let (reply_to_meta, msg) = parse::parse_eml(db, id)?;
 
     Ok(ReplyTemplate {
-        headers: Rfc5322Fields::from([
+        meta: Rfc5322Fields::from([
             ("Message-ID".into(), format_message_id(&reply_to_meta)),
             ("Date".into(), Local::now().to_rfc2822()),
             (
@@ -109,7 +110,9 @@ pub fn template_reply(db: &Database, id: String) -> Result<ReplyTemplate, Notmuc
                     .map(|s| s.to_string())
                     .unwrap_or_else(|| "".into()),
             ),
-        ]),
+        ])
+        .try_into()
+        .map_err(|e: EmlParseError| anyhow!("Parsing failed: {}", e.reason))?,
         body: template_body(&reply_to_meta, &msg),
     })
 }
