@@ -1,7 +1,8 @@
 use serde::Deserialize;
 use serde::Serialize;
+use thiserror::Error;
 
-#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, Error, Serialize, Deserialize)]
 pub struct EmlParseError {
     pub id: Option<String>,
     pub reason: String,
@@ -30,6 +31,22 @@ impl EmlParseError {
     pub fn within(mut self, within: &str) -> Self {
         self.within = Some(within.into());
         self
+    }
+}
+
+impl std::fmt::Display for EmlParseError {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
+        let unknown_eml: String = "email".into();
+        let eml = self.id.as_ref().unwrap_or(&unknown_eml);
+        write!(
+            f,
+            "Error parsing {}: {}",
+            self.within
+                .as_ref()
+                .map(|w| format!("{}'s {}", eml, w))
+                .unwrap_or_else(|| eml.into()),
+            self.reason
+        )
     }
 }
 

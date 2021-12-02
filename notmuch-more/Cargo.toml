@@ -11,6 +11,7 @@ repository = "https://github.com/OJFord/amail"
 ammonia = "^3.1.2"
 anyhow = "^1.0"
 chrono = "^0.4.19"
+delegate = "^0.6.1"
 email = "^0.0.21"
 itertools = "^0.10.1"
 lettre = {version = "=0.10.0-alpha.1", default_features = false, features= ["builder", "rustls-tls", "smtp-transport"] }

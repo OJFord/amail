@@ -3,7 +3,6 @@
     windows_subsystem = "windows"
 )]
 
-use std::collections::HashMap;
 use std::env;
 use std::process::Command;
 
@@ -71,18 +70,14 @@ fn get_name() -> String {
 }
 
 #[tauri::command]
-fn send_eml(
-    state: tauri::State<State>,
-    headers: HashMap<String, String>,
-    body: String,
-) -> Result<(), AmailError> {
+fn send_eml(state: tauri::State<State>, meta: EmlMeta, body: String) -> Result<(), AmailError> {
     let db = state.db.open_rw()?;
 
     Ok(state.smtp.send(
         &db,
-        compose::rfc5322_destinations(&headers)?,
-        compose::rfc5322_sender(&headers)?,
-        compose::rfc5322_message(&headers, &body),
+        meta.destinations()?,
+        meta.resolve_sender()?,
+        meta.format_message(&body),
     )?)
 }
 
@@ -96,12 +91,8 @@ fn get_reply_template(
 }
 
 #[tauri::command]
-fn preview_eml(
-    _: tauri::State<State>,
-    headers: HashMap<String, String>,
-    body: String,
-) -> Result<String, AmailError> {
-    Ok(compose::rfc5322_message(&headers, &body))
+fn preview_eml(_: tauri::State<State>, meta: EmlMeta, body: String) -> Result<String, AmailError> {
+    Ok(meta.format_message(&body))
 }
 
 fn main() {

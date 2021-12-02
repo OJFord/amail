@@ -16,6 +16,22 @@ pub struct Mailbox {
     pub address: String,
 }
 
+impl TryFrom<&EmlAddr> for Mailbox {
+    type Error = EmlParseError;
+
+    fn try_from(addr: &EmlAddr) -> Result<Self, Self::Error> {
+        match addr {
+            EmlAddr::Single(a) => Ok(Self {
+                name: a.name.clone(),
+                address: a.address.clone(),
+            }),
+            EmlAddr::Group { name, .. } => {
+                Err(EmlParseError::new().reason(&format!("Not a single mailbox: {}", name)))
+            }
+        }
+    }
+}
+
 impl From<&Mailbox> for String {
     fn from(mbox: &Mailbox) -> Self {
         format!("{} <{}>", mbox.name, mbox.address)
