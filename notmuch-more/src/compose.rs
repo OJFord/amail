@@ -52,7 +52,7 @@ pub fn template_reply(db: &Database, id: String) -> Result<ReplyTemplate, Notmuc
     );
     reply_fields.in_reply_to(&reply_to_meta.id);
     reply_fields.references(&format!(
-        "{} {}",
+        "{} <{}>",
         &reply_to_meta.references.as_ref().unwrap_or(&String::new()),
         &reply_to_meta.id
     ));
