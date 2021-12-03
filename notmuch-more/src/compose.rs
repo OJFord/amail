@@ -37,8 +37,10 @@ fn template_body(meta: &EmlMeta, body: &EmlBody) -> String {
 }
 
 pub fn template_reply(db: &Database, id: String) -> Result<ReplyTemplate, NotmuchMoreError> {
+    println!("[TRACE] templating reply");
     let (reply_to_meta, msg) = parse::parse_eml(db, id)?;
 
+    println!("[TRACE] building Rfc5322Fields");
     let mut reply_fields = Rfc5322Fields::from(&reply_to_meta);
     reply_fields.date(&Local::now());
     reply_fields.message_id(
@@ -55,6 +57,7 @@ pub fn template_reply(db: &Database, id: String) -> Result<ReplyTemplate, Notmuc
         &reply_to_meta.id
     ));
 
+    println!("[TRACE] swapping reply's from addr");
     if let Some(original_to) = &reply_to_meta.to {
         let from: Vec<Mailbox> = original_to
             .iter()
@@ -65,6 +68,7 @@ pub fn template_reply(db: &Database, id: String) -> Result<ReplyTemplate, Notmuc
         reply_fields.from_addr(&from);
     }
 
+    println!("[TRACE] swapping reply's to addr");
     let from_addrs = reply_to_meta
         .from
         .iter()

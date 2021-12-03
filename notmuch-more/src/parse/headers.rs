@@ -380,33 +380,41 @@ impl TryInto<EmlMeta> for Rfc5322Fields {
 
     fn try_into(self) -> Result<EmlMeta, Self::Error> {
         Ok(EmlMeta {
-            bcc: Some(
-                mailparse::addrparse(self.get("Bcc").ok_or_else(EmlParseError::new)?)
-                    .map_err(|e| Self::Error::new().reason(&e.to_string()))?
+            bcc: match self.get("Bcc") {
+                Some(bcc) => Some(
+                    mailparse::addrparse(bcc)
+                        .map_err(|e| Self::Error::new().within("Bcc").reason(&e.to_string()))?
+                        .iter()
+                        .map(|a| Mailbox::try_from(a).map(EmlAddr::Single))
+                        .collect::<Result<Vec<_>, _>>()?,
+                ),
+                _ => None,
+            },
+            cc: match self.get("Cc") {
+                Some(cc) => Some(
+                    mailparse::addrparse(cc)
+                        .map_err(|e| Self::Error::new().within("Cc").reason(&e.to_string()))?
+                        .iter()
+                        .map(|a| Mailbox::try_from(a).map(EmlAddr::Single))
+                        .collect::<Result<_, _>>()?,
+                ),
+                _ => None,
+            },
+            from: match self.get("From") {
+                Some(from) => Ok(mailparse::addrparse(from)
+                    .map_err(|e| Self::Error::new().within("From").reason(&e.to_string()))?
                     .iter()
-                    .map(|a| Mailbox::try_from(a).map(EmlAddr::Single))
-                    .collect::<Result<Vec<_>, _>>()?,
-            ),
-            cc: Some(
-                mailparse::addrparse(self.get("Cc").ok_or_else(EmlParseError::new)?)
-                    .map_err(|e| Self::Error::new().reason(&e.to_string()))?
-                    .iter()
-                    .map(|a| Mailbox::try_from(a).map(EmlAddr::Single))
-                    .collect::<Result<_, _>>()?,
-            ),
-            from: mailparse::addrparse(self.get("From").ok_or_else(EmlParseError::new)?)
-                .map_err(|e| Self::Error::new().reason(&e.to_string()))?
-                .iter()
-                .map(Mailbox::try_from)
-                .collect::<Result<_, _>>()?,
+                    .map(Mailbox::try_from)
+                    .collect::<Result<_, _>>()?),
+                _ => Err(Self::Error::new().within("From").reason("Missing header")),
+            }?,
             id: "".into(),
             id_thread: "".into(),
             received_by: None,
             references: self.get("References").cloned(),
             reply_to: {
-                let addrs =
-                    mailparse::addrparse(self.get("Reply-To").ok_or_else(EmlParseError::new)?)
-                        .map_err(|e| Self::Error::new().reason(&e.to_string()))?;
+                let addrs = mailparse::addrparse(self.get("Reply-To").unwrap_or(&"".into()))
+                    .map_err(|e| Self::Error::new().within("Reply-To").reason(&e.to_string()))?;
 
                 match addrs.iter().count() {
                     0 => None,
@@ -419,14 +427,15 @@ impl TryInto<EmlMeta> for Rfc5322Fields {
                 }
             },
             sender: {
-                let addrs =
-                    mailparse::addrparse(self.get("Sender").ok_or_else(EmlParseError::new)?)
-                        .map_err(|e| Self::Error::new().reason(&e.to_string()))?;
+                let addrs = mailparse::addrparse(self.get("Sender").unwrap_or(&"".into()))
+                    .map_err(|e| Self::Error::new().within("Sender").reason(&e.to_string()))?;
 
                 match addrs.iter().count() {
                     0 => Ok(None),
                     1 => Ok(Some(Mailbox::try_from(&addrs[0])?)),
-                    _ => Err(Self::Error::new().reason("Too many Senders")),
+                    _ => Err(Self::Error::new()
+                        .within("Sender")
+                        .reason("Too many Senders")),
                 }?
             },
             subject: self.get("Subject").cloned(),
@@ -435,8 +444,8 @@ impl TryInto<EmlMeta> for Rfc5322Fields {
                 .map(|d| d.timestamp())
                 .unwrap_or(0),
             to: {
-                let addrs = mailparse::addrparse(self.get("To").ok_or_else(EmlParseError::new)?)
-                    .map_err(|e| Self::Error::new().reason(&e.to_string()))?;
+                let addrs = mailparse::addrparse(self.get("To").unwrap_or(&"".into()))
+                    .map_err(|e| Self::Error::new().within("To").reason(&e.to_string()))?;
 
                 match addrs.iter().count() {
                     0 => None,
