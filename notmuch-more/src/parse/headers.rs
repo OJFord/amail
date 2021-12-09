@@ -234,15 +234,10 @@ impl Rfc5322Fields {
     }
 
     fn format_body(body: &str) -> String {
-        body.lines()
-            .map(|l| {
-                l.chars()
-                    .collect::<Vec<char>>()
-                    .chunks(78)
-                    .map(|l| l.iter().collect::<String>())
-                    .join("\r\n")
-            })
-            .join("\r\n")
+        Regex::new(r"(^|[^\r])\n")
+            .unwrap()
+            .replace_all(&textwrap::fill(body, 78), "$1\r\n")
+            .into()
     }
 
     pub fn format_message(&self, body: &str) -> String {
@@ -507,7 +502,7 @@ mod tests {
     #[test]
     fn rfc5322_body_with_extant_linebreaks() {
         let body = "hi there, yes, look:\r\n```\r\nfoo\r\n```\r\n\r\nMany thanks,";
-        assert_eq!(Rfc5322Fields::format_body(&body), body)
+        assert_eq!(Rfc5322Fields::format_body(body), body)
     }
 
     #[test]
@@ -525,6 +520,20 @@ mod tests {
                 "o".repeat(46),
             )
         )
+    }
+
+    #[test]
+    fn rfc5322_body_no_break_word() {
+        let body = format!("{} word word word.", ".".repeat(75));
+        assert_eq!(
+            Rfc5322Fields::format_body(&body),
+            format!("{}\r\nword word word.", ".".repeat(75))
+        )
+    }
+
+    #[test]
+    fn rfc5322_body_crlf() {
+        assert_eq!(Rfc5322Fields::format_body("\n"), "\r\n")
     }
 
     #[test]
