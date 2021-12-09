@@ -41,11 +41,16 @@ pub fn template_reply(db: &Database, id: String) -> Result<ReplyTemplate, Notmuc
     let (reply_to_meta, msg) = parse::parse_eml(db, id)?;
 
     println!("[TRACE] building Rfc5322Fields");
-    let mut reply_fields = Rfc5322Fields::from(&reply_to_meta);
+    let mut reply_fields = Rfc5322Fields::new();
+    reply_fields.subject(reply_to_meta.subject.as_deref().unwrap_or(""));
+    if let Some(cc) = &reply_to_meta.cc {
+        reply_fields.cc(cc);
+    }
+
     reply_fields.date(&Local::now());
     reply_fields.message_id(
         &reply_fields.format_message_id_for_destination(
-            &reply_fields
+            &reply_to_meta
                 .resolve_reply_to()
                 .map_err(|e| anyhow!("Failed to parse: {}", e))?,
         ),

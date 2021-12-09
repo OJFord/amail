@@ -28,6 +28,7 @@ pub struct EmlMeta {
     pub from: Vec<Mailbox>,
     pub id: String,
     pub id_thread: String,
+    pub in_reply_to: Option<String>,
     pub received_by: Option<Mailbox>,
     pub references: Option<String>,
     pub reply_to: Option<Vec<EmlAddr>>,
@@ -45,6 +46,10 @@ impl EmlMeta {
 
     pub fn format_message(&self, body: &str) -> String {
         Rfc5322Fields::from(self).format_message(body)
+    }
+
+    pub fn resolve_reply_to(&self) -> Result<String, EmlParseError> {
+        Rfc5322Fields::from(self).resolve_reply_to()
     }
 
     pub fn resolve_sender(&self) -> Result<String, EmlParseError> {
@@ -92,6 +97,8 @@ impl<'o, O: MessageOwner> TryFrom<&Message<'o, O>> for EmlMeta {
             id: eml.id().to_string(),
 
             id_thread: eml.thread_id().to_string(),
+
+            in_reply_to: parse_header(eml, "In-Reply-To")?,
 
             received_by: match parse_header(eml, "Received")? {
                 Some(h) => {
@@ -333,6 +340,10 @@ impl From<&EmlMeta> for Rfc5322Fields {
             fields.bcc(bcc);
         }
 
+        if let Some(in_reply_to) = &meta.in_reply_to {
+            fields.in_reply_to(in_reply_to);
+        }
+
         if let Some(references) = &meta.references {
             fields.references(references);
         }
@@ -410,6 +421,7 @@ impl TryInto<EmlMeta> for Rfc5322Fields {
             }?,
             id: "".into(),
             id_thread: "".into(),
+            in_reply_to: self.get("In-Reply-To").cloned(),
             received_by: None,
             references: self.get("References").cloned(),
             reply_to: {
