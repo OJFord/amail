@@ -28,6 +28,7 @@
   const dispatch = createEventDispatcher();
 
   let emlSelected = null;
+  let specialQueries = [];
   let tagQueries = [];
   let querySelected = "tag:inbox and not tag:spam";
 
@@ -40,7 +41,7 @@
 
   const refreshTagList = () => {
     api.listTags().then((tagList) => {
-      tagQueries = tagList.map((t) => {
+      const allTagQueries = tagList.map((t) => {
         let query = ["inbox", "sent"].includes(t)
           ? `tag:${t}`
           : `tag:${t} and tag:inbox`;
@@ -64,6 +65,12 @@
           unreadCount: (tagQueries.find((e) => e.name == t) ?? {}).unreadCount,
         });
       });
+
+      const specials = ["inbox", "unread", "sent", "spam"]; // ordered
+      specialQueries = specials.map((n) =>
+        allTagQueries.find((e) => e.name == n)
+      );
+      tagQueries = allTagQueries.filter((t) => !specials.includes(t.name));
     });
 
     const arraySetEqual = (a, b) =>
@@ -100,6 +107,17 @@
   <Row class="flex-fill" style="min-height: 0;">
     <Col xs="1" class="border mh-100 scroll">
       <Nav vertical pills>
+        {#each specialQueries as tag}
+          <NavQueryItem
+            name={tag.name}
+            unreadCount={tag.unreadCount}
+            selected={tag.query == querySelected}
+            on:select={() => (querySelected = tag.query)}
+          />
+        {/each}
+
+        <hr />
+
         {#each tagQueries.filter((t) => t.totalCount > 0) as tag}
           <NavQueryItem
             name={tag.name}
@@ -116,7 +134,7 @@
         <Col>
           <Search
             bind:querySelected
-            quietQueries={tagQueries.map((t) => t.query)}
+            quietQueries={specialQueries.concat(tagQueries).map((t) => t.query)}
           />
         </Col>
 
