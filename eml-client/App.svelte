@@ -28,7 +28,7 @@
 
   let emlSelected = null;
   let tagQueries = [];
-  let querySelected = "tag:inbox";
+  let querySelected = "tag:inbox and not tag:spam";
 
   let newEmlModalOpen = false;
 
@@ -40,9 +40,11 @@
   const refreshTagList = () => {
     api.listTags().then((tagList) => {
       tagQueries = tagList.map((t) => {
-        const query = ["inbox", "sent"].includes(t)
+        let query = ["inbox", "sent"].includes(t)
           ? `tag:${t}`
           : `tag:${t} and tag:inbox`;
+
+        if (t != "spam") query += " and not tag:spam";
 
         api.countMatches(`(${query}) and tag:unread`).then((c) => {
           const tIdx = tagQueries.findIndex((e) => e.name == t);
