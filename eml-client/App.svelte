@@ -20,6 +20,7 @@
   import EmlList from "./components/EmlList.svelte";
   import EmlNewModal from "./components/EmlNewModal.svelte";
   import Eml from "./components/Eml.svelte";
+  import NavQueryItem from "./components/NavQueryItem.svelte";
   import Search from "./components/Search.svelte";
   import TagsSelect from "./components/TagsSelect.svelte";
   import TagQueryModal from "./components/TagQueryModal.svelte";
@@ -100,22 +101,12 @@
     <Col xs="1" class="border mh-100 scroll">
       <Nav vertical pills>
         {#each tagQueries.filter((t) => t.totalCount > 0) as tag}
-          <NavItem>
-            <NavLink
-              active={tag.query == querySelected}
-              on:click={() => (querySelected = tag.query)}
-            >
-              <Icon icon={faTag} />
-              <h2 class="tag">
-                <span>{tag.name}</span>
-              </h2>
-              {#if tag.unreadCount > 0}
-                <Badge color="info" style="font-size: 0.6rem;">
-                  {tag.unreadCount}
-                </Badge>
-              {/if}
-            </NavLink>
-          </NavItem>
+          <NavQueryItem
+            name={tag.name}
+            unreadCount={tag.unreadCount}
+            selected={tag.query == querySelected}
+            on:select={() => (querySelected = tag.query)}
+          />
         {/each}
       </Nav>
     </Col>
@@ -179,9 +170,3 @@
     <Col class="mh-100" style="min-height: 1rem;" />
   </Row>
 </Container>
-
-<style lang="scss">
-  h2.tag {
-    margin-right: 0.3rem;
-  }
-</style>
