@@ -48,21 +48,9 @@
 
         if (t != "spam") query += " and not tag:spam";
 
-        api.countMatches(`(${query}) and tag:unread`).then((c) => {
-          const tIdx = tagQueries.findIndex((e) => e.name == t);
-          if (tIdx != -1) tagQueries[tIdx].unreadCount = c;
-        });
-
-        api.countMatches(query).then((c) => {
-          const tIdx = tagQueries.findIndex((e) => e.name == t);
-          if (tIdx != -1) tagQueries[tIdx].totalCount = c;
-        });
-
         return Object({
           name: t,
           query,
-          totalCount: (tagQueries.find((e) => e.name == t) ?? {}).totalCount,
-          unreadCount: (tagQueries.find((e) => e.name == t) ?? {}).unreadCount,
         });
       });
 
@@ -108,23 +96,31 @@
     <Col xs="1" class="border mh-100 scroll">
       <Nav vertical pills>
         {#each specialQueries as tag}
-          <NavQueryItem
-            name={tag.name}
-            unreadCount={tag.unreadCount}
-            selected={tag.query == querySelected}
-            on:select={() => (querySelected = tag.query)}
-          />
+          {#await api.countMatches(`${tag.query} and tag:unread`) then unreadCount}
+            <NavQueryItem
+              name={tag.name}
+              {unreadCount}
+              selected={tag.query == querySelected}
+              on:select={() => (querySelected = tag.query)}
+            />
+          {/await}
         {/each}
 
         <hr />
 
-        {#each tagQueries.filter((t) => t.totalCount > 0) as tag}
-          <NavQueryItem
-            name={tag.name}
-            unreadCount={tag.unreadCount}
-            selected={tag.query == querySelected}
-            on:select={() => (querySelected = tag.query)}
-          />
+        {#each tagQueries as tag}
+          {#await api.countMatches(tag.query) then totalCount}
+            {#if totalCount > 0}
+              {#await api.countMatches(`${tag.query} and tag:unread`) then unreadCount}
+                <NavQueryItem
+                  name={tag.name}
+                  {unreadCount}
+                  selected={tag.query == querySelected}
+                  on:select={() => (querySelected = tag.query)}
+                />
+              {/await}
+            {/if}
+          {/await}
         {/each}
       </Nav>
     </Col>
