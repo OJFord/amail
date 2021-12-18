@@ -74,7 +74,7 @@
   </h4>
 {/if}
 
-{#if emlMeta.cc}
+{#if emlMeta.cc || editable}
   <h4>
     <i>Cc:</i>
     {#if editable}
@@ -89,7 +89,7 @@
   </h4>
 {/if}
 
-{#if emlMeta.bcc}
+{#if emlMeta.bcc || editable}
   <h4>
     <i>Bcc:</i>
     {#if editable}
