@@ -21,4 +21,9 @@
 
 <EmlAddresses bind:emlMeta editable={true} />
 
+<h4>
+  <i>Subject:</i>
+  <Input name="subject" bind:value={emlMeta.subject} />
+</h4>
+
 <Input type="textarea" name="body" bind:value={body} rows="25" />

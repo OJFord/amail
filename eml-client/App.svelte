@@ -1,9 +1,11 @@
 <script>
   import Icon from "fa-svelte";
   import { createEventDispatcher } from "svelte";
+  import { faEdit } from "@fortawesome/free-solid-svg-icons/faEdit";
   import { faTag } from "@fortawesome/free-solid-svg-icons/faTag";
   import {
     Badge,
+    Button,
     Col,
     Container,
     Nav,
@@ -16,6 +18,7 @@
 
   import * as api from "./api.js";
   import EmlList from "./components/EmlList.svelte";
+  import EmlNewModal from "./components/EmlNewModal.svelte";
   import Eml from "./components/Eml.svelte";
   import Search from "./components/Search.svelte";
   import TagsSelect from "./components/TagsSelect.svelte";
@@ -26,6 +29,8 @@
   let emlSelected = null;
   let tagQueries = [];
   let querySelected = "tag:inbox";
+
+  let newEmlModalOpen = false;
 
   let tagModalOpen = false;
   let tagSelected;
@@ -82,6 +87,10 @@
   <Row class="flex-shrink-0">
     <Navbar color="primary">
       <NavbarBrand><h1>Amail</h1></NavbarBrand>
+      <Button on:click={() => (newEmlModalOpen = true)}>
+        <Icon icon={faEdit} />
+      </Button>
+      <EmlNewModal bind:isOpen={newEmlModalOpen} />
     </Navbar>
   </Row>
 
