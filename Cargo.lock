@@ -4165,6 +4165,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "79a0579dcc6fb883fe90dd3c66d76b8b8f4a1786e1e915e314b2017a500ede09"
 dependencies = [
  "attohttpc",
+ "base64 0.13.0",
  "bincode",
  "cfg_aliases",
  "dirs-next",

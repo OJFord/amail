@@ -1,4 +1,7 @@
 <script>
+  import * as dialog from "@tauri-apps/api/dialog";
+  import * as fs from "@tauri-apps/api/fs";
+  import * as path from "@tauri-apps/api/path";
   import Icon from "fa-svelte";
   import { faEye } from "@fortawesome/free-solid-svg-icons/faEye";
   import { faFileDownload } from "@fortawesome/free-solid-svg-icons/faFileDownload";
@@ -16,9 +19,24 @@
 
   export let part;
 
-  const href = `data:${part.mimetype};charset=utf-8,${encodeURIComponent(
-    part.content_encoded
-  )}`;
+  const save = () => {
+    return path
+      .downloadDir()
+      .then((downloadDir) =>
+        dialog.save({
+          defaultPath: `${downloadDir}/${part.filename}`,
+        })
+      )
+      .then((path) => {
+        if (path)
+          return fs.writeBinaryFile({
+            contents: part.content_encoded,
+            path,
+          });
+        // else cancelled, that's ok
+      })
+      .catch(() => console.error("failed to save attachment"));
+  };
 </script>
 
 <span class="attachment">
@@ -40,8 +58,7 @@
         </Col>
 
         <Col class="d-flex justify-content-center">
-          <!-- not yet implemented: https://github.com/tauri-apps/wry/issues/349 -->
-          <Button download={part.filename} {href} outline>
+          <Button on:click={save} outline>
             <Icon icon={faFileDownload} />
           </Button>
         </Col>

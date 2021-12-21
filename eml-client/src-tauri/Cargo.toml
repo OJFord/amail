@@ -16,7 +16,7 @@ tauri-build = { version = "^1.0.0-beta.2" }
 ammonia = "^3.1.2"
 anyhow = "^1.0"
 notmuch-more = "^0.0.0"
-tauri = { version = "^1.0.0-beta.4", features = ["shell-open"] }
+tauri = { version = "^1.0.0-beta.4", features = ["dialog-save", "fs-write-binary-file", "path-all", "shell-open"] }
 thiserror = "^1.0.26"
 whoami = "^1.1.2"
 

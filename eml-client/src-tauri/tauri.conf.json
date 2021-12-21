@@ -48,6 +48,15 @@
       "active": false
     },
     "allowlist": {
+      "dialog": {
+        "save": true
+      },
+      "fs": {
+        "writeBinaryFile": true
+      },
+      "path": {
+        "all": true
+      },
       "shell": {
         "open": true
       }
