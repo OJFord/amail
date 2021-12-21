@@ -48,7 +48,9 @@
       "active": false
     },
     "allowlist": {
-      "all": true
+      "shell": {
+        "open": true
+      }
     },
     "windows": [
       {
