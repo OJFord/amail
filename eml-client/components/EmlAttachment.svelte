@@ -12,9 +12,13 @@
     CardBody,
     CardFooter,
     Col,
+    Modal,
+    ModalBody,
+    ModalHeader,
     Row,
     //
   } from "sveltestrap";
+  import PdfAttachmentViewer from "./PdfAttachmentViewer.svelte";
   import EmlBodyPart from "./EmlBodyPart.svelte";
 
   export let part;
@@ -37,7 +41,16 @@
       })
       .catch(() => console.error("failed to save attachment"));
   };
+
+  let previewOpen = false;
+  const previewToggle = () => (previewOpen = !previewOpen);
 </script>
+
+<svelte:window
+  on:keydown={(ev) => {
+    if (ev.key == "Escape") previewOpen = false;
+  }}
+/>
 
 <span class="attachment">
   <Card>
@@ -52,9 +65,24 @@
     <CardFooter>
       <Row>
         <Col class="d-flex justify-content-center">
-          <Button outline>
+          <Button on:click={previewToggle} outline>
             <Icon icon={faEye} />
           </Button>
+
+          {#if part.mimetype == "application/pdf"}
+            <Modal
+              isOpen={previewOpen}
+              fullscreen={true}
+              contentClassName="bg-transparent"
+            >
+              <ModalHeader toggle={previewToggle} class="bg-secondary">
+                {part.filename}
+              </ModalHeader>
+              <ModalBody>
+                <PdfAttachmentViewer b64Data={part.content_base64} />
+              </ModalBody>
+            </Modal>
+          {/if}
         </Col>
 
         <Col class="d-flex justify-content-center">

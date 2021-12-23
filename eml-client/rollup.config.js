@@ -21,6 +21,7 @@ export default {
   output: {
     file: `${distDir}/build/bundle.js`,
     format: "iife",
+    inlineDynamicImports: true,
     name: "app",
     sourcemap: !production,
   },

@@ -2984,6 +2984,11 @@ path-type@^4.0.0:
   resolved "https://registry.yarnpkg.com/path-type/-/path-type-4.0.0.tgz#84ed01c0a7ba380afe09d90a8c180dcd9d03043b"
   integrity sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==
 
+pdfjs-dist@^2.10.377:
+  version "2.12.313"
+  resolved "https://registry.yarnpkg.com/pdfjs-dist/-/pdfjs-dist-2.12.313.tgz#62f2273737bb956267ae2e02cdfaddcb1099819c"
+  integrity sha512-1x6iXO4Qnv6Eb+YFdN5JdUzt4pAkxSp3aLAYPX93eQCyg/m7QFzXVWJHJVtoW48CI8HCXju4dSkhQZwoheL5mA==
+
 peek-readable@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/peek-readable/-/peek-readable-4.0.1.tgz#9a045f291db254111c3412c1ce4fec27ddd4d202"
@@ -3905,6 +3910,13 @@ supports-color@^7.0.0, supports-color@^7.1.0:
   integrity sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==
   dependencies:
     has-flag "^4.0.0"
+
+svelte-pdfjs@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/svelte-pdfjs/-/svelte-pdfjs-0.1.0.tgz#4b2a0110db836213f0727a33d5ece61e44a97edf"
+  integrity sha512-q3bksY43T+wX8q1BMHDu0qZjua2MizOwMIdwUVxJ2+HAzL+tOOvNxZABrXYe0qk9L/SVTAfy0RPyYjjnoH6KYQ==
+  dependencies:
+    pdfjs-dist "^2.10.377"
 
 svelte-preprocess@^4.7.4:
   version "4.9.8"

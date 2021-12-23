@@ -10,6 +10,7 @@ use crate::NotmuchMoreError;
 pub struct EmlBody {
     pub alternatives: Vec<EmlBody>,
     pub content: String,
+    pub content_base64: Option<String>,
     pub content_encoded: Option<Vec<u8>>,
     pub disposition: String,
     pub extra: Vec<EmlBody>,
@@ -38,6 +39,13 @@ pub(crate) fn parse_body_part(part: &mailparse::ParsedMail) -> Result<EmlBody, N
                     .rm_tag_attributes("img", &["src"])
                     .clean(&part.get_body()?)
                     .to_string(),
+                content_base64: match part.get_body_encoded() {
+                    mailparse::body::Body::Base64(body) => {
+                        String::from_utf8(body.get_raw().into()).map_or_else(|_| None, Some)
+                    }
+                    _ => None,
+                },
+                content_encoded: Some(part.get_body_raw()?),
                 disposition: format!("{:?}", content_disp.disposition),
                 filename: content_disp.params.get("filename").map(|f| f.into()),
                 is_cleaned_html: true,
@@ -47,6 +55,12 @@ pub(crate) fn parse_body_part(part: &mailparse::ParsedMail) -> Result<EmlBody, N
             }),
             _ => Ok(EmlBody {
                 content: part.get_body()?,
+                content_base64: match part.get_body_encoded() {
+                    mailparse::body::Body::Base64(body) => {
+                        String::from_utf8(body.get_raw().into()).map_or_else(|_| None, Some)
+                    }
+                    _ => None,
+                },
                 content_encoded: Some(part.get_body_raw()?),
                 disposition: format!("{:?}", content_disp.disposition),
                 filename: content_disp.params.get("filename").map(|f| f.into()),
