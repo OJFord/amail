@@ -14,6 +14,7 @@
             (addr) =>
               addr.match(/((?<name>.+)(?: <))?(?<address>[^<]+@[^>]+)>?/).groups
           )
+          .map(({ name = "", address }) => Object({ name, address }))
       : [];
 </script>
 
