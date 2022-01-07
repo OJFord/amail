@@ -18,6 +18,7 @@
   import EmlBodyPart from "./EmlBodyPart.svelte";
   import EmlReplyModal from "./EmlReplyModal.svelte";
   import TagBadges from "./TagBadges.svelte";
+  import VCalSummary from "./VCalSummary.svelte";
 
   export let emlMeta;
 
@@ -59,6 +60,12 @@
     <EmlAddresses {emlMeta} />
 
     <h2>{emlMeta.subject}</h2>
+
+    {#each alts
+      .filter((a) => a.mimetype == "text/calendar")
+      .map((v) => v.content) as vcal}
+      <VCalSummary {vcal} primaryEventSummary={emlMeta.subject} />
+    {/each}
 
     <TagBadges tags={emlMeta.tags} />
   </Row>

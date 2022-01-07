@@ -1,4 +1,6 @@
 <script>
+  import VCalSummary from "./VCalSummary.svelte";
+
   export let part;
 
   const friendlySize = (s) => {
@@ -18,6 +20,8 @@
   {#each part.content.split(/\r\n\r\n/) as para}
     <pre>{para}</pre>
   {/each}
+{:else if part.mimetype == "text/calendar"}
+  <VCalSummary vcal={part.content} full={true} />
 {:else}
   {#if part.size}{friendlySize(part.size)}of{/if}
   <em>{part.mimetype}</em> content
