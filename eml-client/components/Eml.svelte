@@ -98,11 +98,20 @@
     </Col>
 
     <Col xs="1" class="align-left">
-      <Button
-        on:click={() => api.rmTag(`id:${emlMeta.id}`, "inbox").then(dispatch)}
-      >
-        Archive
-      </Button>
+      {#if emlMeta.tags.includes("inbox")}
+        <Button
+          on:click={() => api.rmTag(`id:${emlMeta.id}`, "inbox").then(dispatch)}
+        >
+          Archive
+        </Button>
+      {:else}
+        <Button
+          on:click={() =>
+            api.applyTag(`id:${emlMeta.id}`, "inbox").then(dispatch)}
+        >
+          Unarchive
+        </Button>
+      {/if}
     </Col>
 
     <Col xs="1" class="align-left">
