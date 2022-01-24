@@ -51,6 +51,11 @@
       .filter((e) => e.disposition == "Inline");
 
   let replyModalOpen = false;
+
+  let content;
+  $: if (content && emlMeta.id) {
+    content.scrollTop = 0;
+  }
 </script>
 
 {#if body == null}
@@ -139,7 +144,7 @@
 
   <hr class="border-bottom" />
 
-  <Row class="flex-fill mh-100 scroll">
+  <Row class="flex-fill mh-100 scroll" bind:inner={content}>
     <div class="body">
       {#each inlines as part}
         <EmlBodyPart {part} />

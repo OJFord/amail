@@ -20,7 +20,7 @@
     "svelte": "^3.39.0",
     "svelte-pdfjs": "^0.1.0",
     "svelte-preprocess": "^4.7.4",
-    "sveltestrap": "^5.4.0"
+    "sveltestrap": "^5.8.3"
   },
   "dependencies": {
     "@tauri-apps/api": "^1.0.0-beta.4"
