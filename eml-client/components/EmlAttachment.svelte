@@ -31,15 +31,26 @@
           defaultPath: `${downloadDir}/${part.filename}`,
         })
       )
-      .then((path) => {
+      .then((selectedPath) =>
+        path
+          .homeDir()
+          .then((homeDir) => [
+            Number(Object.keys(fs.Dir).find((k) => fs.Dir[k] == "Home")),
+            selectedPath?.replace(new RegExp(`^${homeDir}`), ""),
+          ])
+      )
+      .then(([dir, path]) => {
         if (path)
-          return fs.writeBinaryFile({
-            contents: part.content_encoded,
-            path,
-          });
+          return fs.writeBinaryFile(
+            {
+              contents: part.content_encoded,
+              path,
+            },
+            { dir: 11 }
+          );
         // else cancelled, that's ok
       })
-      .catch(() => console.error("failed to save attachment"));
+      .catch((e) => console.error(`failed to save attachment: ${e}`));
   };
 
   let previewOpen = false;

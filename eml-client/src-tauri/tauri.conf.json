@@ -52,7 +52,8 @@
         "save": true
       },
       "fs": {
-        "writeBinaryFile": true
+        "writeFile": true,
+        "scope": ["$HOME/*"]
       },
       "path": {
         "all": true
