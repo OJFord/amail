@@ -12,7 +12,7 @@
 
   $: docUrl = `data:application/pdf;charset=US-ASCII;base64,${b64Data}`;
   let pageNumber = 1;
-  let zoomLevel = 2;
+  let scale = 2;
 
   $: atBeginning = pageNumber == 1;
   $: atEnd = false; // TODO: no way to tell?
@@ -33,7 +33,7 @@
 
 <Document file={docUrl}>
   <div>
-    <Page {zoomLevel} {pageNumber} />
+    <Page {scale} num={pageNumber} />
 
     {#if pageNumber > 1}
       <span
