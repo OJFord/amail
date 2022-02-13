@@ -11,11 +11,12 @@
   export let b64Data;
 
   $: docUrl = `data:application/pdf;charset=US-ASCII;base64,${b64Data}`;
+  let doc;
   let pageNumber = 1;
   let scale = 2;
 
   $: atBeginning = pageNumber == 1;
-  $: atEnd = false; // TODO: no way to tell?
+  $: atEnd = pageNumber == doc?.numPages;
 
   const handleKey = (ev) => {
     switch (ev.key) {
@@ -31,11 +32,11 @@
 
 <svelte:window on:keydown={handleKey} />
 
-<Document file={docUrl}>
+<Document file={docUrl} on:loadsuccess={(ev) => (doc = ev.detail)}>
   <div>
     <Page {scale} num={pageNumber} />
 
-    {#if pageNumber > 1}
+    {#if !atBeginning}
       <span
         class="page-turn-btn page-turn-left"
         on:click={() => handleKey({ key: "ArrowLeft" })}
@@ -44,12 +45,14 @@
       </span>
     {/if}
 
-    <span
-      class="page-turn-btn page-turn-right"
-      on:click={() => handleKey({ key: "ArrowRight" })}
-    >
-      <Icon icon={faArrowRight} />
-    </span>
+    {#if !atEnd}
+      <span
+        class="page-turn-btn page-turn-right"
+        on:click={() => handleKey({ key: "ArrowRight" })}
+      >
+        <Icon icon={faArrowRight} />
+      </span>
+    {/if}
   </div>
 </Document>
 
