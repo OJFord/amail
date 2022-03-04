@@ -75,7 +75,7 @@
     <TagBadges tags={emlMeta.tags} />
   </Row>
 
-  <Row>
+  <Row class="border-bottom p-1">
     <Col xs="1" class="align-left">
       {#if !selectedAlt}
         <Spinner />
@@ -141,8 +141,6 @@
       <EmlReplyModal {emlMeta} bind:isOpen={replyModalOpen} />
     </Col>
   </Row>
-
-  <hr class="border-bottom" />
 
   <Row class="flex-fill mh-100 scroll" bind:inner={content}>
     <div class="body">
