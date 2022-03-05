@@ -74,6 +74,7 @@ fn send_eml(
     state: tauri::State<State>,
     meta: EmlMeta,
     body: String,
+    attachments: Vec<compose::Attachment>,
 ) -> Result<(), AmailError> {
     let db = state.db.open_rw()?;
 
@@ -81,7 +82,7 @@ fn send_eml(
         &db,
         meta.destinations()?,
         meta.resolve_sender()?,
-        compose::format_message(&meta, body)?,
+        compose::format_message(&meta, body, attachments)?,
     )?)
 }
 
@@ -99,8 +100,9 @@ fn preview_eml(
     _: tauri::State<State>,
     meta: EmlMeta,
     body: String,
+    attachments: Vec<compose::Attachment>,
 ) -> Result<String, AmailError> {
-    Ok(compose::format_message(&meta, body)?)
+    Ok(compose::format_message(&meta, body, attachments)?)
 }
 
 fn main() {

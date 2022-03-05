@@ -49,6 +49,7 @@
     },
     "allowlist": {
       "dialog": {
+        "open": true,
         "save": true
       },
       "fs": {
