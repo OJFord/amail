@@ -1,0 +1,32 @@
+name: pre-commit
+
+on:
+  pull_request:
+  push:
+    branches:
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-python@v2
+
+      - name: Install pre-commit
+        run: python -m pip install pre-commit
+
+      - name: Set up pre-commit
+        run: pre-commit install --install-hooks
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          # From tauri's Actions workflow
+          sudo apt-get install -y libgtk-3-dev webkit2gtk-4.0 libappindicator3-dev librsvg2-dev patchelf
+          sudo apt-get install -y libnotmuch-dev
+
+      - name: Run pre-commit hooks
+        run: pre-commit run --all-files
