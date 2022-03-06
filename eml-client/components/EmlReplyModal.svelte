@@ -41,7 +41,7 @@
   const send = () => api.sendEml(replyMeta, body).then(toggle);
 </script>
 
-<Modal {isOpen} class="modal-lg">
+<Modal {isOpen} class="modal-lg" scrollable>
   <ModalHeader
     toggle={() => toggle().then((open) => (open ? null : (confirm = false)))}
   >

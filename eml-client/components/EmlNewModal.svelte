@@ -38,7 +38,7 @@
   const send = () => api.sendEml(emlMeta, body, attachments).then(toggle);
 </script>
 
-<Modal {isOpen} class="modal-lg">
+<Modal {isOpen} class="modal-lg" scrollable>
   <ModalHeader
     toggle={() => toggle().then((open) => (open ? null : (confirm = false)))}
   >
