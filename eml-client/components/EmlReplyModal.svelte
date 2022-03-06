@@ -14,8 +14,9 @@
   export let emlMeta;
   export let isOpen;
 
-  let body, confirm, replyMeta;
+  let attachments, body, confirm, replyMeta;
   const refreshMeta = async () => {
+    attachments = [];
     confirm = null;
     console.debug(`getting template for reply to ${emlMeta.id}`);
     ({ meta: replyMeta, body } = await api.getReplyTemplate(emlMeta.id));
@@ -40,7 +41,7 @@
   const send = () => api.sendEml(replyMeta, body).then(toggle);
 </script>
 
-<Modal {isOpen} class="modal-lg">
+<Modal {isOpen} class="modal-lg" scrollable>
   <ModalHeader
     toggle={() => toggle().then((open) => (open ? null : (confirm = false)))}
   >
@@ -50,7 +51,7 @@
     {#if confirm != null}
       <pre>{confirm}</pre>
     {:else if replyMeta}
-      <EmlCompose bind:emlMeta={replyMeta} bind:body />
+      <EmlCompose bind:emlMeta={replyMeta} bind:body bind:attachments />
     {/if}
   </ModalBody>
 

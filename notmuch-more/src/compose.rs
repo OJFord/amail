@@ -1,12 +1,15 @@
 use std::convert::TryFrom;
 use std::convert::TryInto;
+use std::fs;
 
 use anyhow::anyhow;
 use chrono::DateTime;
 use chrono::Local;
 use chrono::NaiveDateTime;
 use chrono::Utc;
+use itertools::Itertools;
 use notmuch::Database;
+use serde::Deserialize;
 use serde::Serialize;
 
 use crate::parse;
@@ -21,6 +24,58 @@ use parse::Rfc5322Fields;
 pub struct ReplyTemplate {
     pub meta: EmlMeta,
     pub body: String,
+}
+
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+pub struct Attachment {
+    pub name: String,
+    pub path: String,
+}
+
+fn format_part(
+    boundary: &str,
+    ctype: &str,
+    ctencoding: &str,
+    disposition: &str,
+    content: &str,
+) -> String {
+    format!(
+        "--{}\r\nContent-Type: {}\r\nContent-Transfer-Encoding: {}\r\nContent-Disposition: {}\r\n\r\n{}\r\n\r\n",
+        boundary,
+        ctype,
+        ctencoding,
+        disposition,
+        content,
+    )
+}
+
+pub fn format_message(
+    meta: &EmlMeta,
+    body: String,
+    attachments: Vec<Attachment>,
+) -> Result<String, NotmuchMoreError> {
+    let boundary = "amail-boundary";
+    let mut parts: Vec<String> = vec![format_part(
+        boundary,
+        "text/plain; charset=utf-8",
+        "8bit",
+        "inline",
+        &body,
+    )];
+
+    for attachment in attachments {
+        parts.push(format_part(
+            boundary,
+            mime_guess::from_path(&attachment.path)
+                .first_or_octet_stream()
+                .essence_str(),
+            "base64",
+            &format!("attachment; filename={}", attachment.name),
+            &base64::encode(fs::read(&attachment.path)?),
+        ));
+    }
+
+    Ok(Rfc5322Fields::from(meta).format_message(&parts.iter().join(""), boundary))
 }
 
 fn template_body(meta: &EmlMeta, body: &EmlBody) -> String {

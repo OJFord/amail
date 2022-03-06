@@ -22,6 +22,7 @@
     to: [],
   };
   let body = "";
+  let attachments = [];
   let confirm;
 
   const toggle = () => {
@@ -31,25 +32,25 @@
 
   const toggleConfirm = async () => {
     if (confirm) confirm = null;
-    else confirm = await api.previewEml(emlMeta, body);
+    else confirm = await api.previewEml(emlMeta, body, attachments);
   };
 
-  const send = () => api.sendEml(emlMeta, body).then(toggle);
+  const send = () => api.sendEml(emlMeta, body, attachments).then(toggle);
 </script>
 
-<Modal {isOpen} class="modal-lg">
+<Modal {isOpen} class="modal-lg" scrollable>
   <ModalHeader
     toggle={() => toggle().then((open) => (open ? null : (confirm = false)))}
   >
     {#if confirm}Sure?{/if}
   </ModalHeader>
   <ModalBody>
-    {#if confirm != null}
+    {#if confirm}
       <pre>
         {confirm}
       </pre>
     {:else}
-      <EmlCompose bind:emlMeta bind:body />
+      <EmlCompose bind:emlMeta bind:body bind:attachments />
     {/if}
   </ModalBody>
 

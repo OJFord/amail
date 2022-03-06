@@ -21,10 +21,10 @@ export const rmTag = (query, tag) =>
     .invoke("rm_tag", { query, tag })
     .then(() => Promise.resolve("tagsUpdated", { tags: [tag] }));
 
-export const previewEml = (meta, body) =>
-  tauri.invoke("preview_eml", { meta, body });
+export const previewEml = (meta, body, attachments = []) =>
+  tauri.invoke("preview_eml", { meta, body, attachments });
 
-export const sendEml = (meta, body) => tauri.invoke("send_eml", { meta, body });
+export const sendEml = (meta, body, attachments = []) => tauri.invoke("send_eml", { meta, body, attachments });
 
 export const tagList = () => tauri.invoke("list_tags");
 

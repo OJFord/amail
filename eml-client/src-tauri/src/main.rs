@@ -70,14 +70,19 @@ fn get_name() -> String {
 }
 
 #[tauri::command]
-fn send_eml(state: tauri::State<State>, meta: EmlMeta, body: String) -> Result<(), AmailError> {
+fn send_eml(
+    state: tauri::State<State>,
+    meta: EmlMeta,
+    body: String,
+    attachments: Vec<compose::Attachment>,
+) -> Result<(), AmailError> {
     let db = state.db.open_rw()?;
 
     Ok(state.smtp.send(
         &db,
         meta.destinations()?,
         meta.resolve_sender()?,
-        meta.format_message(&body),
+        compose::format_message(&meta, body, attachments)?,
     )?)
 }
 
@@ -91,8 +96,13 @@ fn get_reply_template(
 }
 
 #[tauri::command]
-fn preview_eml(_: tauri::State<State>, meta: EmlMeta, body: String) -> Result<String, AmailError> {
-    Ok(meta.format_message(&body))
+fn preview_eml(
+    _: tauri::State<State>,
+    meta: EmlMeta,
+    body: String,
+    attachments: Vec<compose::Attachment>,
+) -> Result<String, AmailError> {
+    Ok(compose::format_message(&meta, body, attachments)?)
 }
 
 fn main() {
