@@ -44,10 +44,6 @@ impl EmlMeta {
         Rfc5322Fields::from(self).destinations()
     }
 
-    pub fn format_message(&self, body: &str) -> String {
-        Rfc5322Fields::from(self).format_message(body)
-    }
-
     pub fn resolve_reply_to(&self) -> Result<String, EmlParseError> {
         Rfc5322Fields::from(self).resolve_reply_to()
     }
@@ -240,11 +236,13 @@ impl Rfc5322Fields {
             .into()
     }
 
-    pub fn format_message(&self, body: &str) -> String {
+    pub fn format_message(&self, body: &str, boundary: &str) -> String {
         format!(
-            "{}\r\n\r\n{}",
+            "{}\r\nContent-Type: multipart/mixed; boundary={}\r\n\r\n{}\r\n--{}--",
             self.format_fields(),
-            Self::format_body(body)
+            boundary,
+            Self::format_body(body),
+            boundary,
         )
     }
 

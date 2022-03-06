@@ -6,6 +6,7 @@ use chrono::DateTime;
 use chrono::Local;
 use chrono::NaiveDateTime;
 use chrono::Utc;
+use itertools::Itertools;
 use notmuch::Database;
 use serde::Serialize;
 
@@ -21,6 +22,39 @@ use parse::Rfc5322Fields;
 pub struct ReplyTemplate {
     pub meta: EmlMeta,
     pub body: String,
+}
+
+fn format_part(
+    boundary: &str,
+    ctype: &str,
+    ctencoding: &str,
+    disposition: &str,
+    content: &str,
+) -> String {
+    format!(
+        "--{}\r\nContent-Type: {}\r\nContent-Transfer-Encoding: {}\r\nContent-Disposition: {}\r\n\r\n{}\r\n\r\n",
+        boundary,
+        ctype,
+        ctencoding,
+        disposition,
+        content,
+    )
+}
+
+pub fn format_message(
+    meta: &EmlMeta,
+    body: String,
+) -> Result<String, NotmuchMoreError> {
+    let boundary = "amail-boundary";
+    let mut parts: Vec<String> = vec![format_part(
+        boundary,
+        "text/plain; charset=utf-8",
+        "8bit",
+        "inline",
+        &body,
+    )];
+
+    Ok(Rfc5322Fields::from(meta).format_message(&parts.iter().join(""), boundary))
 }
 
 fn template_body(meta: &EmlMeta, body: &EmlBody) -> String {
