@@ -44,7 +44,7 @@
     {#if confirm}Sure?{/if}
   </ModalHeader>
   <ModalBody>
-    {#if confirm != null}
+    {#if confirm}
       <pre>
         {confirm}
       </pre>
