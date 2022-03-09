@@ -22,8 +22,13 @@
   {/each}
 {:else if part.mimetype == "text/calendar"}
   <VCalSummary vcal={part.content} full={true} />
+{:else if part.mimetype.startsWith("image/")}
+  <img
+    src={`data:${part.mimetype};base64,${part.content_base64}`}
+    alt={part.filename}
+  />
 {:else}
-  {#if part.size}{friendlySize(part.size)}of{/if}
+  {#if part.size}{friendlySize(part.size)} of {/if}
   <em>{part.mimetype}</em> content
 {/if}
 
