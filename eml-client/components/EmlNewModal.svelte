@@ -46,9 +46,7 @@
   </ModalHeader>
   <ModalBody>
     {#if confirm}
-      <pre>
-        {confirm}
-      </pre>
+      <pre>{confirm}</pre>
     {:else}
       <EmlCompose bind:emlMeta bind:body bind:attachments />
     {/if}
