@@ -6,6 +6,32 @@ $h5-font-size: 0.6rem;
 $h6-font-size: 0.4rem;
 
 @import "./node_modules/bootswatch/dist/flatly/variables";
+
+@import "./node_modules/bootstrap-scss/_functions";
+@import "./node_modules/bootstrap-scss/_variables";
+@import "./node_modules/bootstrap-scss/_utilities";
+
+$utilities: map-merge(
+  $utilities,
+  (
+    "viewport-height":
+      map-merge(
+        map-get($utilities, "viewport-height"),
+        (
+          values:
+            map-merge(
+              map-get(map-get($utilities, "viewport-height"), "values"),
+              (
+                25: 25vh,
+                50: 50vh,
+                75: 75vh,
+              )
+            ),
+        )
+      ),
+  )
+);
+
 @import "./node_modules/bootstrap-scss/bootstrap";
 @import "./node_modules/bootswatch/dist/flatly/bootswatch";
 

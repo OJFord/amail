@@ -22,7 +22,7 @@
   <DropdownToggle caret>
     <Icon icon={faTags} />
   </DropdownToggle>
-  <DropdownMenu>
+  <DropdownMenu class="vh-50 overflow-scroll">
     {#each tags as tag}
       <DropdownItem
         on:click={() => {
