@@ -27,7 +27,7 @@
       from.name ? from : { ...from, name: sysName }
     );
 
-  const removeAttachment = () =>
+  const removeAttachment = (attachment) =>
     (attachments = attachments.filter((a) => a.path != attachment.path));
 
   const addAttachment = () => {
