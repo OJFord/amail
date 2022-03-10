@@ -229,19 +229,12 @@ impl Rfc5322Fields {
             .join("\r\n")
     }
 
-    fn format_body(body: &str) -> String {
-        Regex::new(r"(^|[^\r])\n")
-            .unwrap()
-            .replace_all(&textwrap::fill(body, 78), "$1\r\n")
-            .into()
-    }
-
     pub fn format_message(&self, body: &str, boundary: &str) -> String {
         format!(
             "{}\r\nContent-Type: multipart/mixed; boundary={}\r\n\r\n{}\r\n--{}--",
             self.format_fields(),
             boundary,
-            Self::format_body(body),
+            body,
             boundary,
         )
     }
@@ -480,58 +473,6 @@ mod tests {
             .format_fields(),
             "Subject: blah\r\nTo: foo@bar.com",
         )
-    }
-
-    #[test]
-    fn rfc5322_body_no_linebreak() {
-        let body = ".".repeat(78);
-        assert_eq!(Rfc5322Fields::format_body(&body), ".".repeat(78))
-    }
-
-    #[test]
-    fn rfc5322_body_force_linebreak() {
-        let body = ".".repeat(80);
-        assert_eq!(
-            Rfc5322Fields::format_body(&body),
-            format!("{}\r\n{}", ".".repeat(78), ".".repeat(2)),
-        )
-    }
-
-    #[test]
-    fn rfc5322_body_with_extant_linebreaks() {
-        let body = "hi there, yes, look:\r\n```\r\nfoo\r\n```\r\n\r\nMany thanks,";
-        assert_eq!(Rfc5322Fields::format_body(body), body)
-    }
-
-    #[test]
-    fn rfc5322_body_with_extant_and_new_linebreaks() {
-        let body = format!(
-            "hi there, yes, look:\r\n```\r\nfo{}\r\n```\r\n\r\nMany thanks,",
-            "o".repeat(200)
-        );
-        assert_eq!(
-            Rfc5322Fields::format_body(&body),
-            format!(
-                "hi there, yes, look:\r\n```\r\nfo{}\r\n{}\r\n{}\r\n```\r\n\r\nMany thanks,",
-                "o".repeat(76),
-                "o".repeat(78),
-                "o".repeat(46),
-            )
-        )
-    }
-
-    #[test]
-    fn rfc5322_body_no_break_word() {
-        let body = format!("{} word word word.", ".".repeat(75));
-        assert_eq!(
-            Rfc5322Fields::format_body(&body),
-            format!("{}\r\nword word word.", ".".repeat(75))
-        )
-    }
-
-    #[test]
-    fn rfc5322_body_crlf() {
-        assert_eq!(Rfc5322Fields::format_body("\n"), "\r\n")
     }
 
     #[test]
