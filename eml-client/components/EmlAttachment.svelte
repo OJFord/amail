@@ -23,6 +23,13 @@
 
   export let part;
 
+  const previewable = (mimetype) => {
+    return [
+      "application/pdf",
+      //
+    ].some((m) => m == mimetype);
+  };
+
   const save = () => {
     return path
       .downloadDir()
@@ -76,11 +83,11 @@
     <CardFooter>
       <Row>
         <Col class="d-flex justify-content-center">
-          <Button on:click={previewToggle} outline>
-            <Icon icon={faEye} />
-          </Button>
+          {#if previewable(part.mimetype)}
+            <Button on:click={previewToggle} outline>
+              <Icon icon={faEye} />
+            </Button>
 
-          {#if part.mimetype == "application/pdf"}
             <Modal
               isOpen={previewOpen}
               fullscreen={true}
@@ -90,7 +97,9 @@
                 {part.filename}
               </ModalHeader>
               <ModalBody>
-                <PdfAttachmentViewer b64Data={part.content_base64} />
+                {#if part.mimetype == "application/pdf"}
+                  <PdfAttachmentViewer b64Data={part.content_base64} />
+                {/if}
               </ModalBody>
             </Modal>
           {/if}
