@@ -35,10 +35,10 @@
 
   const toggleConfirm = async () => {
     if (confirm) confirm = null;
-    else confirm = await api.previewEml(replyMeta, body);
+    else confirm = await api.previewEml(replyMeta, body, attachments);
   };
 
-  const send = () => api.sendEml(replyMeta, body).then(toggle);
+  const send = () => api.sendEml(replyMeta, body, attachments).then(toggle);
 </script>
 
 <Modal {isOpen} class="modal-lg" scrollable>
