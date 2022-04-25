@@ -13,17 +13,26 @@
 
   export let isOpen;
 
-  let emlMeta = {
-    from: [],
-    id: "",
-    id_thread: "",
-    tags: [],
-    timestamp: Number((Date.now() / 1000).toFixed()),
-    to: [],
-  };
-  let body = "";
-  let attachments = [];
+  let emlMeta;
+  let body;
+  let attachments;
   let confirm;
+
+  const init = () => {
+    emlMeta = {
+      from: [],
+      id: "",
+      id_thread: "",
+      tags: [],
+      timestamp: Number((Date.now() / 1000).toFixed()),
+      to: [],
+    };
+    body = "";
+    attachments = [];
+    confirm = null;
+  };
+
+  init();
 
   const toggle = () => {
     isOpen = !isOpen;
@@ -35,7 +44,8 @@
     else confirm = await api.previewEml(emlMeta, body, attachments);
   };
 
-  const send = () => api.sendEml(emlMeta, body, attachments).then(toggle);
+  const send = () =>
+    api.sendEml(emlMeta, body, attachments).then(toggle).then(init);
 </script>
 
 <Modal {isOpen} class="modal-lg" scrollable>
