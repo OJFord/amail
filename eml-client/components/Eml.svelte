@@ -76,7 +76,7 @@
   </Row>
 
   <Row class="border-bottom p-1">
-    <Col xs="1" class="align-left">
+    <Col xs="1" class="align-left text-nowrap">
       {#if !selectedAlt}
         <Spinner />
       {:else}
@@ -102,7 +102,7 @@
       {/if}
     </Col>
 
-    <Col xs="1" class="align-left">
+    <Col xs="1" class="align-left text-nowrap">
       {#if emlMeta.tags.includes("inbox")}
         <Button
           on:click={() => api.rmTag(`id:${emlMeta.id}`, "inbox").then(dispatch)}
@@ -119,7 +119,7 @@
       {/if}
     </Col>
 
-    <Col xs="1" class="align-left">
+    <Col xs="1" class="align-left text-nowrap">
       {#if !emlMeta.tags.includes("spam")}
         <Button
           on:click={() =>
@@ -136,7 +136,7 @@
       {/if}
     </Col>
 
-    <Col xs="1" class="align-left">
+    <Col xs="1" class="align-left text-nowrap">
       <Button class="" on:click={() => (replyModalOpen = true)}>Reply</Button>
       <EmlReplyModal {emlMeta} bind:isOpen={replyModalOpen} />
     </Col>
