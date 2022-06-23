@@ -2,6 +2,7 @@ use anyhow::anyhow;
 use email::mimeheaders::MimeContentType;
 use email::MimeMultipartType;
 use itertools::Itertools;
+use regex::Regex;
 use serde::Serialize;
 
 use crate::NotmuchMoreError;
@@ -34,11 +35,17 @@ pub(crate) fn parse_body_part(part: &mailparse::ParsedMail) -> Result<EmlBody, N
     match MimeMultipartType::from_content_type(mimect) {
         None => match part.ctype.mimetype.as_str() {
             "text/html" => Ok(EmlBody {
-                content: ammonia::Builder::default()
-                    .set_tag_attribute_value("a", "target", "_blank")
-                    .rm_tag_attributes("img", &["src"])
-                    .clean(&part.get_body()?)
-                    .to_string(),
+                content: {
+                    let b = ammonia::Builder::default()
+                        .set_tag_attribute_value("a", "target", "_blank")
+                        .rm_tag_attributes("img", &["src"])
+                        .clean(&part.get_body()?);
+
+                    Regex::new("href=\"([^\"]+)")
+                        .unwrap()
+                        .replace_all(&b.to_string(), "href=\"$1\" title=\"$1\"")
+                        .into()
+                },
                 content_base64: match part.get_body_encoded() {
                     mailparse::body::Body::Base64(body) => {
                         String::from_utf8(body.get_raw().into()).map_or_else(|_| None, Some)
