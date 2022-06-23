@@ -34,7 +34,7 @@ impl TryFrom<&EmlAddr> for Mailbox {
 
 impl From<&Mailbox> for String {
     fn from(mbox: &Mailbox) -> Self {
-        format!("{} <{}>", mbox.name, mbox.address)
+        format!("\"{}\" <{}>", mbox.name, mbox.address)
     }
 }
 
