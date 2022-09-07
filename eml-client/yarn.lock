@@ -410,10 +410,10 @@ binary-extensions@^2.0.0:
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-2.2.0.tgz#75f502eeaf9ffde42fc98829645be4ea76bd9e2d"
   integrity sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==
 
-bootstrap-scss@5.1.*:
-  version "5.1.3"
-  resolved "https://registry.yarnpkg.com/bootstrap-scss/-/bootstrap-scss-5.1.3.tgz#c6ee5abcb3f91aebf594fe3ef1f45c78673196d5"
-  integrity sha512-vgj+bNDlS6Lzu7u+TGgN+P7YI45pS/ujKGznA8WIm74XnPK6LehhV8ueXjvjQxJ1MiYChLyDSb03b+ZCu59Evg==
+bootstrap-scss@5.2.*:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/bootstrap-scss/-/bootstrap-scss-5.2.0.tgz#75575f77ee656220676dc8173eb468c402795d93"
+  integrity sha512-PUTeWpr8JqkvXcPeX/pGvmLxD7mgAuE16/ZyViV8Is85FcSh7WNrzhc/dbhLazrB5+Du7Hz5GhNBkUyVG7N7lw==
 
 bootswatch@^5.0.2:
   version "5.2.0"
