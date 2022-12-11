@@ -49,6 +49,7 @@ resource "aws_ses_domain_dkim" "dkim" {
   domain = each.value.domain
 }
 
+# DKIM here (i.e. even if outgoing module disabled) since it's now used for verification.
 resource "cloudflare_record" "dkim" {
   for_each = {
     for domain_i in setproduct(var.domains, range(local.num_ses_dkim_tokens))
@@ -65,12 +66,35 @@ resource "cloudflare_record" "dkim" {
 }
 
 resource "cloudflare_record" "spf" {
+  for_each = {
+    for pair in setproduct(values(local.email_domain_zones), ["@", "*"])
+    : "${pair[0].zone}-${pair[1]}" => {
+      zone_id = pair[0].id
+      name    = pair[1]
+    }
+  }
+
+  zone_id = each.value.zone_id
+  type    = "TXT"
+  name    = each.value.name
+  value   = "v=spf1 -all"
+}
+
+# DMARC here to ensure fail if outgoing module disabled.
+resource "cloudflare_record" "dmarc" {
   for_each = local.email_domain_zones
 
   zone_id = each.value.id
   type    = "TXT"
-  name    = "@"
-  value   = "v=spf1 include:amazonses.com ~all"
+  name    = "_dmarc"
+  value = trimspace(join("; ", [
+    "v=DMARC1",
+    "p=reject",
+    "sp=reject",
+    "adkim=s",
+    "aspf=${var.modules.outgoing ? "r" : "s"}",
+    "" # trailing ;
+  ]))
 }
 
 data "aws_region" "current" {}
@@ -214,5 +238,6 @@ module "outgoing" {
   source = "./outgoing"
   count  = var.modules.outgoing ? 1 : 0
 
-  aws_iam_path = local.aws_iam_path
+  aws_iam_path       = local.aws_iam_path
+  email_domain_zones = values(local.email_domain_zones)
 }

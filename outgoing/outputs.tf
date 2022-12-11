@@ -1,5 +1,3 @@
-data "aws_region" "current" {}
-
 output "smtp" {
   value = {
     host = "email-smtp.${data.aws_region.current.name}.amazonaws.com"
