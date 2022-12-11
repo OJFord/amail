@@ -93,6 +93,21 @@ resource "cloudflare_record" "dmarc" {
     "sp=reject",
     "adkim=s",
     "aspf=${var.modules.outgoing ? "r" : "s"}",
+    "rua=${join(",", [for addr in var.outgoing.monitoring.dmarc.aggregates : "mailto:${addr}"])}",
+    "ruf=${join(",", [for addr in var.outgoing.monitoring.dmarc.forensics : "mailto:${addr}"])}",
+    "" # trailing ;
+  ]))
+}
+
+resource "cloudflare_record" "tlsrpt" {
+  for_each = local.email_domain_zones
+
+  zone_id = each.value.id
+  type    = "TXT"
+  name    = "_smtp._tls"
+  value = trimspace(join("; ", [
+    "v=TLSRPTv1",
+    "rua=${join(",", [for addr in var.outgoing.monitoring.tls : "mailto:${addr}"])}",
     "" # trailing ;
   ]))
 }

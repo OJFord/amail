@@ -17,8 +17,31 @@ variable "modules" {
   })
 }
 
+variable "outgoing" {
+  description = "Outgoing module options"
+  type = object({
+    monitoring = object({
+      dmarc = object({
+        aggregates = list(string)
+        forensics  = list(string)
+      })
+      tls = list(string)
+    })
+  })
+
+  default = {
+    monitoring = {
+      dmarc = {
+        aggregates = []
+        forensics  = []
+      }
+      tls = []
+    }
+  }
+}
+
 variable "smtp_relay" {
-  description = "SMTP relay options"
+  description = "SMTP relay module options"
   type = object({
     kms_key = object({
       arn = string
