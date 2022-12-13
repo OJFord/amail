@@ -108,7 +108,7 @@ fn preview_eml(
 fn main() {
     let mut db_path = String::from_utf8(
         Command::new("notmuch")
-            .args(&["config", "get", "database.path"])
+            .args(["config", "get", "database.path"])
             .output()
             .expect("Failed to find notmuch database.path")
             .stdout,

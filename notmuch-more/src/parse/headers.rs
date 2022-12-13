@@ -169,6 +169,7 @@ impl Rfc5322Fields {
         self
     }
 
+    #[allow(clippy::wrong_self_convention)]
     pub fn from_addr(&mut self, from: &[Mailbox]) -> &mut Self {
         self.insert("From".into(), from.iter().map(String::from).join(","));
         self
@@ -249,10 +250,11 @@ impl Rfc5322Fields {
         let dt = self
             .get("Date")
             .map(|d| {
-                DateTime::parse_from_rfc2822(d)
-                    .unwrap_or_else(|_| Utc::now().with_timezone(&FixedOffset::east(0)))
+                DateTime::parse_from_rfc2822(d).unwrap_or_else(|_| {
+                    Utc::now().with_timezone(&FixedOffset::east_opt(0).unwrap())
+                })
             })
-            .unwrap_or_else(|| Utc::now().with_timezone(&FixedOffset::east(0)));
+            .unwrap_or_else(|| Utc::now().with_timezone(&FixedOffset::east_opt(0).unwrap()));
         format!("<{}.{}.{}>", dt.timestamp(), "unknown", dest)
     }
 
@@ -364,7 +366,7 @@ impl From<&EmlMeta> for Rfc5322Fields {
         }));
 
         fields.date(&DateTime::<Utc>::from_utc(
-            NaiveDateTime::from_timestamp(meta.timestamp, 0),
+            NaiveDateTime::from_timestamp_opt(meta.timestamp, 0).unwrap(),
             Utc,
         ));
 

@@ -99,8 +99,11 @@ pub fn format_message(
 fn template_body(meta: &EmlMeta, body: &EmlBody) -> String {
     format!(
         "\r\n\r\nOn {}, {} wrote:\r\n{}",
-        DateTime::<Utc>::from_utc(NaiveDateTime::from_timestamp(meta.timestamp, 0), Utc)
-            .to_rfc2822(),
+        DateTime::<Utc>::from_utc(
+            NaiveDateTime::from_timestamp_opt(meta.timestamp, 0).unwrap(),
+            Utc
+        )
+        .to_rfc2822(),
         meta.from
             .last()
             .map(String::from)
