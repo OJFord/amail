@@ -4,6 +4,12 @@ variable "aws_iam_path_prefix" {
   default     = ""
 }
 
+# Remove once https://github.com/cloudflare/terraform-provider-cloudflare/issues/1921
+variable "cloudflare_workers_subdomain" {
+  description = "Cloudflare account <subdomain>.workers.dev - https://dash.cloudflare.com/workers/subdomain"
+  type        = string
+}
+
 variable "domains" {
   description = "Domains to verify and use"
   type        = list(string)
