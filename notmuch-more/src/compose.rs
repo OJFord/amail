@@ -241,7 +241,7 @@ mod tests {
 
         assert_eq!(
             template_body(&meta, &body),
-            "\r\n\r\nOn Fri, 13 Feb 2009 23:31:30 +0000, Enid Blyton <enid@blyt.on> wrote:\r\nFive Write Some Rust",
+            "\r\n\r\nOn Fri, 13 Feb 2009 23:31:30 +0000, \"Enid Blyton\" <enid@blyt.on> wrote:\r\nFive Write Some Rust",
         );
     }
 }

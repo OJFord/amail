@@ -144,7 +144,10 @@ mod tests {
             address: "diagnostics@pph.com".into(),
         };
 
-        assert_eq!(&String::from(&mbox), "Gregory House <diagnostics@pph.com>");
+        assert_eq!(
+            &String::from(&mbox),
+            "\"Gregory House\" <diagnostics@pph.com>"
+        );
     }
 
     #[test]
@@ -156,7 +159,7 @@ mod tests {
 
         assert_eq!(
             &String::from(&single),
-            "Gregory House <diagnostics@pph.com>",
+            "\"Gregory House\" <diagnostics@pph.com>",
         );
     }
 
@@ -178,7 +181,7 @@ mod tests {
 
         assert_eq!(
             &String::from(&group),
-            "Docs: Gregory House <diagnostics@pph.com>, Lisa Cuddy <ceo@pph.com>;",
+            "Docs: \"Gregory House\" <diagnostics@pph.com>, \"Lisa Cuddy\" <ceo@pph.com>;",
         );
     }
 }

@@ -24,7 +24,8 @@ export const rmTag = (query, tag) =>
 export const previewEml = (meta, body, attachments = []) =>
   tauri.invoke("preview_eml", { meta, body, attachments });
 
-export const sendEml = (meta, body, attachments = []) => tauri.invoke("send_eml", { meta, body, attachments });
+export const sendEml = (meta, body, attachments = []) =>
+  tauri.invoke("send_eml", { meta, body, attachments });
 
 export const tagList = () => tauri.invoke("list_tags");
 
