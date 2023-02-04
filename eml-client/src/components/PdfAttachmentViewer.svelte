@@ -4,11 +4,15 @@
   import Icon from "fa-svelte";
   import {
     onMount,
+    setContext,
     //
   } from "svelte";
   import { Document, Page } from "svelte-pdfjs";
+  import { set_pdfjs_context } from "svelte-pdfjs/utils/vite";
 
   export let b64Data;
+
+  set_pdfjs_context();
 
   $: docUrl = `data:application/pdf;charset=US-ASCII;base64,${b64Data}`;
   let doc;

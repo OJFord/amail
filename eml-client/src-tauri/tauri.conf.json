@@ -4,7 +4,7 @@
     "version": "0.0.0"
   },
   "build": {
-    "beforeDevCommand": "rm -r dist/build ; DEBUG=true PORT=42411 yarn --cwd=.. rollup --config --watch",
+    "beforeDevCommand": "DEBUG=true yarn --cwd=.. vite --clearScreen=false --port=42411",
     "devPath": "http://localhost:42411",
     "distDir": "../dist"
   },
