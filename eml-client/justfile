@@ -1,2 +1,6 @@
 dev:
     cargo tauri dev
+
+lint:
+    yarn prettier --write .
+    yarn eslint --fix .

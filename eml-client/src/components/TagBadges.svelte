@@ -1,15 +1,15 @@
 <script>
   import {
     Badge,
-    //
-  } from "sveltestrap";
+  } from "sveltestrap"
 
-  export let tags;
+  export let tags
 
   const rgbForTag = (tag) => {
-    let n = tag.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0) % 256;
-    return `rgb(${n}, ${n}, ${n})`;
-  };
+    const n = tag.split("")
+      .reduce((acc, c) => acc + c.charCodeAt(0), 0) % 256
+    return `rgb(${n}, ${n}, ${n})`
+  }
 </script>
 
 <h3 class="tags">

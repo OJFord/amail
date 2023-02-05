@@ -3,18 +3,18 @@
     ListGroup,
     ListGroupItem,
     Spinner,
-    //
-  } from "sveltestrap";
+  } from "sveltestrap"
 
-  import * as api from "../api.js";
-  import EmlListItem from "./EmlListItem.svelte";
+  import * as api from "../api.js"
+  import EmlListItem from "./EmlListItem.svelte"
 
-  export let emlSelected = null;
-  export let hideTags = new Set();
-  export let query;
+  export let emlSelected = null
+  export let hideTags = new Set()
+  export let query
 
-  let emls = null;
-  $: api.listEml(query).then((emlList) => (emls = emlList));
+  let emls = null
+  $: api.listEml(query)
+    .then((emlList) => (emls = emlList))
 </script>
 
 {#if emls == null}
@@ -29,8 +29,8 @@
         color={emlMeta.Err
           ? "warning"
           : emlSelected && emlSelected.id == emlMeta.Ok.id
-          ? "secondary"
-          : ""}
+            ? "secondary"
+            : ""}
       >
         {#if emlMeta.Ok}
           <EmlListItem emlMeta={emlMeta.Ok} {hideTags} />

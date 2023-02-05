@@ -1,16 +1,15 @@
 <script>
-  export let emlMeta;
-  export let hideTags = new Set();
-  $: hideTags.add("unread");
+  export let emlMeta
+  export let hideTags = new Set()
+  $: hideTags.add("unread")
 
   import {
     Col,
     Row,
-    //
-  } from "sveltestrap";
+  } from "sveltestrap"
 
-  import RelativeDate from "./RelativeDate.svelte";
-  import TagBadges from "./TagBadges.svelte";
+  import RelativeDate from "./RelativeDate.svelte"
+  import TagBadges from "./TagBadges.svelte"
 </script>
 
 <div>
@@ -38,14 +37,16 @@
 
     <Col>
       {#if emlMeta.sender}
-        {#if emlMeta.from.map((m) => m.name).includes(emlMeta.sender.name)}
+        {#if emlMeta.from.map((m) => m.name)
+          .includes(emlMeta.sender.name)}
           {emlMeta.sender.address}
         {:else}
           {emlMeta.sender.name}
         {/if}
         <small><i>on behalf of</i></small>
       {/if}
-      {emlMeta.from.map((m) => m.name).join(", ")}
+      {emlMeta.from.map((m) => m.name)
+        .join(", ")}
     </Col>
   </Row>
 </div>

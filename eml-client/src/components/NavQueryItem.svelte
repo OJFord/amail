@@ -1,17 +1,22 @@
 <script>
-  import Icon from "fa-svelte";
-  import { createEventDispatcher } from "svelte";
-  import { faTag } from "@fortawesome/free-solid-svg-icons/faTag";
+  import Icon from "fa-svelte"
+  import {
+    createEventDispatcher,
+  } from "svelte"
+  import {
+    faTag,
+  } from "@fortawesome/free-solid-svg-icons/faTag"
   import {
     Badge,
     NavItem,
     NavLink,
-    //
-  } from "sveltestrap";
+  } from "sveltestrap"
 
-  export let name, selected, unreadCount;
+  export let name
+  export let selected
+  export let unreadCount
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher()
 </script>
 
 <NavItem>

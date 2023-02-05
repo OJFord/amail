@@ -5,45 +5,55 @@
     ModalBody,
     ModalFooter,
     ModalHeader,
-    //
-  } from "sveltestrap";
+  } from "sveltestrap"
 
-  import * as api from "../api.js";
-  import EmlCompose from "./EmlCompose.svelte";
+  import * as api from "../api.js"
+  import EmlCompose from "./EmlCompose.svelte"
 
-  export let emlMeta;
-  export let isOpen;
+  export let emlMeta
+  export let isOpen
 
-  let attachments, body, confirm, replyMeta;
+  let attachments
+  let body
+  let confirm
+  let replyMeta
+
   const refreshMeta = async () => {
-    attachments = [];
-    confirm = null;
+    attachments = []
+    confirm = null
     console.debug(`getting template for reply to ${emlMeta.id}`);
-    ({ meta: replyMeta, body } = await api.getReplyTemplate(emlMeta.id));
-    console.debug(replyMeta);
-  };
+    ({
+      meta: replyMeta, body,
+    } = await api.getReplyTemplate(emlMeta.id))
+    console.debug(replyMeta)
+  }
 
   $: if (isOpen) {
-    refreshMeta();
+    refreshMeta()
   } else {
-    replyMeta = null;
+    replyMeta = null
   }
   const toggle = () => {
-    isOpen = !isOpen;
-    return Promise.resolve(isOpen);
-  };
+    isOpen = !isOpen
+    return Promise.resolve(isOpen)
+  }
 
   const toggleConfirm = async () => {
-    if (confirm) confirm = null;
-    else confirm = await api.previewEml(replyMeta, body, attachments);
-  };
+    if (confirm) {
+      confirm = null
+    } else {
+      confirm = await api.previewEml(replyMeta, body, attachments)
+    }
+  }
 
-  const send = () => api.sendEml(replyMeta, body, attachments).then(toggle);
+  const send = () => api.sendEml(replyMeta, body, attachments)
+    .then(toggle)
 </script>
 
 <Modal {isOpen} class="modal-lg" scrollable>
   <ModalHeader
-    toggle={() => toggle().then((open) => (open ? null : (confirm = false)))}
+    toggle={() => toggle()
+      .then((open) => (open ? null : (confirm = false)))}
   >
     {#if confirm}Sure?{:else}Reply{/if}
   </ModalHeader>

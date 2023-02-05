@@ -1,8 +1,10 @@
 <script>
-  import { Input } from "sveltestrap";
+  import {
+    Input,
+  } from "sveltestrap"
 
-  export let quietQueries = [];
-  export let querySelected = null;
+  export let quietQueries = []
+  export let querySelected = null
 </script>
 
 <div class="search">
