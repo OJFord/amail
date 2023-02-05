@@ -2,7 +2,7 @@
 name = "amail-lambda-smtp-relay"
 version = "0.1.0"
 description = "Amail incoming SMTP relay"
-edition = "2018"
+edition = "2021"
 authors = ["Oliver Ford"]
 license-file = "../LICENCE"
 repository = "https://github.com/OJFord/amail"
