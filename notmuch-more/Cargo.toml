@@ -2,7 +2,7 @@
 name = "notmuch-more"
 version = "0.0.0"
 description = "Not much more than notmuch library bindings (but a little)"
-edition = "2018"
+edition = "2021"
 authors = ["Oliver Ford"]
 license-file = "../LICENCE"
 repository = "https://github.com/OJFord/amail"
