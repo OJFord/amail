@@ -1,11 +1,13 @@
 <script>
-  import Icon from "fa-svelte"
+  import {
+    FontAwesomeIcon,
+  } from "@fortawesome/svelte-fontawesome"
   import {
     createEventDispatcher,
   } from "svelte"
   import {
     faTag,
-  } from "@fortawesome/free-solid-svg-icons/faTag"
+  } from "@fortawesome/free-solid-svg-icons"
   import {
     Badge,
     NavItem,
@@ -21,7 +23,7 @@
 
 <NavItem>
   <NavLink active={selected} on:click={() => dispatch("select")}>
-    <Icon icon={faTag} />
+    <FontAwesomeIcon icon={faTag} />
     <h2 class="tag">
       <span>{name}</span>
     </h2>

@@ -1,5 +1,7 @@
 <script>
-  import Icon from "fa-svelte"
+  import {
+    FontAwesomeIcon,
+  } from "@fortawesome/svelte-fontawesome"
   import {
     createEventDispatcher,
   } from "svelte"
@@ -14,7 +16,7 @@
   } from "sveltestrap"
   import {
     faEdit,
-  } from "@fortawesome/free-solid-svg-icons/faEdit"
+  } from "@fortawesome/free-solid-svg-icons"
 
   import * as api from "./api.js"
   import Eml from "./components/Eml.svelte"
@@ -103,7 +105,7 @@
     <Navbar color="primary">
       <NavbarBrand><h1>Amail</h1></NavbarBrand>
       <Button on:click={() => (newEmlModalOpen = true)}>
-        <Icon icon={faEdit} />
+        <FontAwesomeIcon icon={faEdit} />
       </Button>
       <EmlNewModal bind:isOpen={newEmlModalOpen} />
     </Navbar>

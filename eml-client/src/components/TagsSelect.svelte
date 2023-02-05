@@ -1,8 +1,10 @@
 <script>
-  import Icon from "fa-svelte"
+  import {
+    FontAwesomeIcon,
+  } from "@fortawesome/svelte-fontawesome"
   import {
     faTags,
-  } from "@fortawesome/free-solid-svg-icons/faTags"
+  } from "@fortawesome/free-solid-svg-icons"
   import {
     createEventDispatcher,
   } from "svelte"
@@ -24,7 +26,7 @@
 
 <Dropdown>
   <DropdownToggle caret>
-    <Icon icon={faTags} />
+    <FontAwesomeIcon icon={faTags} />
   </DropdownToggle>
   <DropdownMenu class="vh-50 overflow-scroll">
     {#each tags as tag}

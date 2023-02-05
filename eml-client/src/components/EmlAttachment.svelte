@@ -2,13 +2,13 @@
   import * as dialog from "@tauri-apps/api/dialog"
   import * as fs from "@tauri-apps/api/fs"
   import * as path from "@tauri-apps/api/path"
-  import Icon from "fa-svelte"
+  import {
+    FontAwesomeIcon,
+  } from "@fortawesome/svelte-fontawesome"
   import {
     faEye,
-  } from "@fortawesome/free-solid-svg-icons/faEye"
-  import {
     faFileDownload,
-  } from "@fortawesome/free-solid-svg-icons/faFileDownload"
+  } from "@fortawesome/free-solid-svg-icons"
   import {
     Button,
     Card,
@@ -84,7 +84,7 @@
         <Col class="d-flex justify-content-center">
           {#if previewable(part.mimetype)}
             <Button on:click={previewToggle} outline>
-              <Icon icon={faEye} />
+              <FontAwesomeIcon icon={faEye} />
             </Button>
 
             <Modal
@@ -106,7 +106,7 @@
 
         <Col class="d-flex justify-content-center">
           <Button on:click={save} outline>
-            <Icon icon={faFileDownload} />
+            <FontAwesomeIcon icon={faFileDownload} />
           </Button>
         </Col>
       </Row>

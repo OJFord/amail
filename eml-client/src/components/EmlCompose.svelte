@@ -1,11 +1,11 @@
 <script>
-  import Icon from "fa-svelte"
   import {
-    faXmark,
-  } from "@fortawesome/free-solid-svg-icons/faXmark"
+    FontAwesomeIcon,
+  } from "@fortawesome/svelte-fontawesome"
   import {
     faPlus,
-  } from "@fortawesome/free-solid-svg-icons/faPlus"
+    faXmark,
+  } from "@fortawesome/free-solid-svg-icons"
   import {
     Button,
     Col,
@@ -66,14 +66,14 @@
       </Col>
       <Col>
         <Button on:click={() => removeAttachment(attachment)}>
-          <Icon icon={faXmark} />
+          <FontAwesomeIcon icon={faXmark} />
         </Button>
       </Col>
     </Row>
   {/each}
   <Row>
     <Button on:click={() => addAttachment()}>
-      <Icon icon={faPlus} on:click={() => addAttachment()} />
+      <FontAwesomeIcon icon={faPlus} on:click={() => addAttachment()} />
     </Button>
   </Row>
 </Container>
