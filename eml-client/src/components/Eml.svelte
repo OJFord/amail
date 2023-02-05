@@ -1,60 +1,72 @@
 <script>
-  import { createEventDispatcher } from "svelte";
+  import {
+    createEventDispatcher,
+  } from "svelte"
   import {
     Button,
     Col,
     Dropdown,
-    DropdownToggle,
-    DropdownMenu,
     DropdownItem,
+    DropdownMenu,
+    DropdownToggle,
     Row,
     Spinner,
-    //
-  } from "sveltestrap";
+  } from "sveltestrap"
 
-  import * as api from "../api.js";
-  import EmlAddresses from "./EmlAddresses.svelte";
-  import EmlAttachment from "./EmlAttachment.svelte";
-  import EmlBodyPart from "./EmlBodyPart.svelte";
-  import EmlReplyModal from "./EmlReplyModal.svelte";
-  import TagBadges from "./TagBadges.svelte";
-  import VCalSummary from "./VCalSummary.svelte";
+  import * as api from "../api.js"
+  import EmlAddresses from "./EmlAddresses.svelte"
+  import EmlAttachment from "./EmlAttachment.svelte"
+  import EmlBodyPart from "./EmlBodyPart.svelte"
+  import EmlReplyModal from "./EmlReplyModal.svelte"
+  import TagBadges from "./TagBadges.svelte"
+  import VCalSummary from "./VCalSummary.svelte"
 
-  export let emlMeta;
+  export let emlMeta
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher()
 
-  let body = null;
-  let selectedAlt = null;
+  let body = null
+  let selectedAlt = null
 
   const refreshDefaultSelection = (eml) => {
-    body = eml;
-    let altHtml = body.alternatives.filter((a) => a.is_cleaned_html)[0];
-    selectedAlt = !body.is_cleaned_html && altHtml ? altHtml : body;
-  };
+    body = eml
+    const altHtml = body.alternatives.filter((a) => a.is_cleaned_html)[0]
+    selectedAlt = !body.is_cleaned_html && altHtml ? altHtml : body
+  }
 
-  $: api.viewEml(emlMeta.id.valueOf()).then(refreshDefaultSelection);
+  $: api.viewEml(emlMeta.id.valueOf())
+    .then(refreshDefaultSelection)
 
-  let alts;
-  $: if (body) alts = [body].concat(body.alternatives);
+  let alts
+  $: if (body) {
+    alts = [
+      body,
+    ].concat(body.alternatives)
+  }
 
-  let attachments = [];
-  $: if (selectedAlt)
-    attachments = [selectedAlt]
+  let attachments = []
+  $: if (selectedAlt) {
+    attachments = [
+      selectedAlt,
+    ]
       .concat(selectedAlt.extra)
-      .filter((e) => e.disposition == "Attachment");
+      .filter((e) => e.disposition == "Attachment")
+  }
 
-  let inlines = [];
-  $: if (selectedAlt)
-    inlines = [selectedAlt]
+  let inlines = []
+  $: if (selectedAlt) {
+    inlines = [
+      selectedAlt,
+    ]
       .concat(selectedAlt.extra)
-      .filter((e) => e.disposition == "Inline");
+      .filter((e) => e.disposition == "Inline")
+  }
 
-  let replyModalOpen = false;
+  let replyModalOpen = false
 
-  let content;
+  let content
   $: if (content && emlMeta.id) {
-    content.scrollTop = 0;
+    content.scrollTop = 0
   }
 </script>
 
@@ -91,7 +103,7 @@
             {#each alts.filter((a) => a != selectedAlt) as alt}
               <DropdownItem
                 on:click={() => {
-                  selectedAlt = alt;
+                  selectedAlt = alt
                 }}
               >
                 {alt.mimetype}
@@ -105,14 +117,15 @@
     <Col xs="1" class="align-left text-nowrap">
       {#if emlMeta.tags.includes("inbox")}
         <Button
-          on:click={() => api.rmTag(`id:${emlMeta.id}`, "inbox").then(dispatch)}
+          on:click={() => api.rmTag(`id:${emlMeta.id}`, "inbox")
+            .then(dispatch)}
         >
           Archive
         </Button>
       {:else}
         <Button
-          on:click={() =>
-            api.applyTag(`id:${emlMeta.id}`, "inbox").then(dispatch)}
+          on:click={() => api.applyTag(`id:${emlMeta.id}`, "inbox")
+            .then(dispatch)}
         >
           Unarchive
         </Button>
@@ -122,14 +135,15 @@
     <Col xs="1" class="align-left text-nowrap">
       {#if !emlMeta.tags.includes("spam")}
         <Button
-          on:click={() =>
-            api.applyTag(`id:${emlMeta.id}`, "spam").then(dispatch)}
+          on:click={() => api.applyTag(`id:${emlMeta.id}`, "spam")
+            .then(dispatch)}
         >
           Spam
         </Button>
       {:else}
         <Button
-          on:click={() => api.rmTag(`id:${emlMeta.id}`, "spam").then(dispatch)}
+          on:click={() => api.rmTag(`id:${emlMeta.id}`, "spam")
+            .then(dispatch)}
         >
           Not spam
         </Button>

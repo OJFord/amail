@@ -1,28 +1,30 @@
 <script>
-  import { createEventDispatcher } from "svelte";
+  import {
+    createEventDispatcher,
+  } from "svelte"
   import {
     Button,
     Col,
     Modal,
-    ModalHeader,
     ModalBody,
     ModalFooter,
+    ModalHeader,
     Row,
-  } from "sveltestrap";
+  } from "sveltestrap"
 
-  import * as api from "../api.js";
+  import * as api from "../api.js"
 
-  export let isOpen;
-  export let tag;
-  export let query;
+  export let isOpen
+  export let tag
+  export let query
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher()
 
-  const toggle = () => (isOpen = !isOpen);
+  const toggle = () => (isOpen = !isOpen)
   const onRetag = (event, detail) => {
-    dispatch(event, detail);
-    toggle();
-  };
+    dispatch(event, detail)
+    toggle()
+  }
 </script>
 
 <Modal {isOpen} {toggle}>
@@ -46,14 +48,16 @@
         <span class="tag-modal-button">
           <Button
             color="success"
-            on:click={api.applyTag(query, tag).then(onRetag)}
+            on:click={api.applyTag(query, tag)
+              .then(onRetag)}
           >
             Apply to all
           </Button>
         </span>
 
         <span class="tag-modal-button">
-          <Button color="danger" on:click={api.rmTag(query, tag).then(onRetag)}>
+          <Button color="danger" on:click={api.rmTag(query, tag)
+            .then(onRetag)}>
             Remove from all
           </Button>
         </span>

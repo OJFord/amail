@@ -1,6 +1,8 @@
-import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
+import {
+  vitePreprocess,
+} from "@sveltejs/vite-plugin-svelte"
 
-const production = process.env.DEBUG !== "true";
+const production = process.env.DEBUG !== "true"
 
 export default {
   compilerOptions: {
@@ -12,4 +14,4 @@ export default {
   vitePlugin: {
     emitCss: true,
   },
-};
+}

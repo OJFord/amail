@@ -1,83 +1,100 @@
 <script>
-  import Icon from "fa-svelte";
-  import { createEventDispatcher } from "svelte";
-  import { faEdit } from "@fortawesome/free-solid-svg-icons/faEdit";
-  import { faTag } from "@fortawesome/free-solid-svg-icons/faTag";
+  import Icon from "fa-svelte"
   import {
-    Badge,
+    createEventDispatcher,
+  } from "svelte"
+  import {
     Button,
     Col,
     Container,
     Nav,
-    NavItem,
     Navbar,
     NavbarBrand,
-    NavLink,
     Row,
-  } from "sveltestrap";
+  } from "sveltestrap"
+  import {
+    faEdit,
+  } from "@fortawesome/free-solid-svg-icons/faEdit"
 
-  import * as api from "./api.js";
-  import EmlList from "./components/EmlList.svelte";
-  import EmlNewModal from "./components/EmlNewModal.svelte";
-  import Eml from "./components/Eml.svelte";
-  import NavQueryItem from "./components/NavQueryItem.svelte";
-  import Search from "./components/Search.svelte";
-  import TagsSelect from "./components/TagsSelect.svelte";
-  import TagQueryModal from "./components/TagQueryModal.svelte";
+  import * as api from "./api.js"
+  import Eml from "./components/Eml.svelte"
+  import EmlList from "./components/EmlList.svelte"
+  import EmlNewModal from "./components/EmlNewModal.svelte"
+  import NavQueryItem from "./components/NavQueryItem.svelte"
+  import Search from "./components/Search.svelte"
+  import TagQueryModal from "./components/TagQueryModal.svelte"
+  import TagsSelect from "./components/TagsSelect.svelte"
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher()
 
-  let emlSelected = null;
-  let specialQueries = [];
-  let tagQueries = [];
-  let querySelected = "tag:inbox and not tag:spam";
+  let emlSelected = null
+  let specialQueries = []
+  let tagQueries = []
+  let querySelected = "tag:inbox and not tag:spam"
 
-  let newEmlModalOpen = false;
+  let newEmlModalOpen = false
 
-  let tagModalOpen = false;
-  let tagSelected;
+  let tagModalOpen = false
+  let tagSelected
 
-  const markRead = (id) => api.rmTag(`id:${id}`, "unread").then(dispatch);
+  const markRead = (id) => api.rmTag(`id:${id}`, "unread")
+    .then(dispatch)
 
   const refreshTagList = () => {
-    api.listTags().then((tagList) => {
-      const allTagQueries = tagList.map((t) => {
-        let query = ["inbox", "sent"].includes(t)
-          ? `tag:${t}`
-          : `tag:${t} and tag:inbox`;
+    api.listTags()
+      .then((tagList) => {
+        const allTagQueries = tagList.map((t) => {
+          let query = [
+            "inbox",
+            "sent",
+          ].includes(t)
+            ? `tag:${t}`
+            : `tag:${t} and tag:inbox`
 
-        if (t != "spam") query += " and not tag:spam";
+          if (t != "spam") {
+            query += " and not tag:spam"
+          }
 
-        return Object({
-          name: t,
-          query,
-        });
-      });
+          return Object({
+            name: t,
+            query,
+          })
+        })
 
-      const specials = ["inbox", "unread", "sent", "spam"]; // ordered
-      specialQueries = specials.map((n) =>
-        allTagQueries.find((e) => e.name == n)
-      );
-      tagQueries = allTagQueries.filter((t) => !specials.includes(t.name));
-    });
+        const specials = [
+          "inbox",
+          "unread",
+          "sent",
+          "spam",
+        ] // Ordered
+        specialQueries = specials.map((n) => allTagQueries.find((e) => e.name == n),
+        )
+        tagQueries = allTagQueries.filter((t) => !specials.includes(t.name))
+      })
 
-    const arraySetEqual = (a, b) =>
-      a.length == b.length && a.every((e) => b.indexOf(e) != -1);
+    const arraySetEqual = (a, b) => a.length == b.length && a.every((e) => b.indexOf(e) != -1)
 
-    if (emlSelected)
-      api.listEml(`id:${emlSelected.id}`).then(([emlMeta]) => {
-        // update if different only to avoid recursion
-        if (!arraySetEqual(emlSelected.tags, emlMeta.Ok.tags))
-          emlSelected.tags = emlMeta.Ok.tags;
-      });
-  };
+    if (emlSelected) {
+      api.listEml(`id:${emlSelected.id}`)
+        .then(([
+          emlMeta,
+        ]) => {
+        // Update if different only to avoid recursion
+          if (!arraySetEqual(emlSelected.tags, emlMeta.Ok.tags)) {
+            emlSelected.tags = emlMeta.Ok.tags
+          }
+        })
+    }
+  }
 
-  const refreshQuery = () => (querySelected = new String(querySelected));
+  const refreshQuery = () => (querySelected = new String(querySelected))
 
-  refreshTagList();
+  refreshTagList()
 
   $: if (emlSelected != null) {
-    markRead(emlSelected.id).then(refreshQuery).then(refreshTagList);
+    markRead(emlSelected.id)
+      .then(refreshQuery)
+      .then(refreshTagList)
   }
 </script>
 
@@ -130,15 +147,16 @@
         <Col>
           <Search
             bind:querySelected
-            quietQueries={specialQueries.concat(tagQueries).map((t) => t.query)}
+            quietQueries={specialQueries.concat(tagQueries)
+              .map((t) => t.query)}
           />
         </Col>
 
         <Col xs="2">
           <TagsSelect
             on:tagSelected={(tag) => {
-              tagSelected = tag.detail;
-              tagModalOpen = true;
+              tagSelected = tag.detail
+              tagModalOpen = true
             }}
           />
         </Col>
@@ -148,8 +166,8 @@
           tag={tagSelected}
           query={querySelected}
           on:tagsUpdated={() => {
-            refreshTagList();
-            refreshQuery();
+            refreshTagList()
+            refreshQuery()
           }}
         />
       </Row>
@@ -170,8 +188,8 @@
         <Eml
           emlMeta={emlSelected}
           on:tagsUpdated={() => {
-            refreshTagList();
-            refreshQuery();
+            refreshTagList()
+            refreshQuery()
           }}
         />
       </Col>

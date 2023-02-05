@@ -1,37 +1,41 @@
 <script>
-  import { faArrowLeft } from "@fortawesome/free-solid-svg-icons/faArrowLeft";
-  import { faArrowRight } from "@fortawesome/free-solid-svg-icons/faArrowRight";
-  import Icon from "fa-svelte";
   import {
-    onMount,
-    setContext,
-    //
-  } from "svelte";
-  import { Document, Page } from "svelte-pdfjs";
-  import { set_pdfjs_context } from "svelte-pdfjs/utils/vite";
+    faArrowLeft,
+  } from "@fortawesome/free-solid-svg-icons/faArrowLeft"
+  import {
+    faArrowRight,
+  } from "@fortawesome/free-solid-svg-icons/faArrowRight"
+  import Icon from "fa-svelte"
+  import {
+    Document,
+    Page,
+  } from "svelte-pdfjs"
+  import {
+    set_pdfjs_context,
+  } from "svelte-pdfjs/utils/vite"
 
-  export let b64Data;
+  export let b64Data
 
-  set_pdfjs_context();
+  set_pdfjs_context()
 
-  $: docUrl = `data:application/pdf;charset=US-ASCII;base64,${b64Data}`;
-  let doc;
-  let pageNumber = 1;
-  let scale = 2;
+  $: docUrl = `data:application/pdf;charset=US-ASCII;base64,${b64Data}`
+  let doc
+  let pageNumber = 1
+  const scale = 2
 
-  $: atBeginning = pageNumber == 1;
-  $: atEnd = pageNumber == doc?.numPages;
+  $: atBeginning = pageNumber == 1
+  $: atEnd = pageNumber == doc?.numPages
 
   const handleKey = (ev) => {
     switch (ev.key) {
-      case "ArrowLeft":
-        pageNumber -= atBeginning ? 0 : 1;
-        break;
-      case "ArrowRight":
-        pageNumber += atEnd ? 0 : 1;
-        break;
+    case "ArrowLeft":
+      pageNumber -= atBeginning ? 0 : 1
+      break
+    case "ArrowRight":
+      pageNumber += atEnd ? 0 : 1
+      break
     }
-  };
+  }
 </script>
 
 <svelte:window on:keydown={handleKey} />
@@ -41,18 +45,26 @@
     <Page {scale} num={pageNumber} />
 
     {#if !atBeginning}
+      <!-- key event is on the window -->
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
       <span
         class="page-turn-btn page-turn-left"
-        on:click={() => handleKey({ key: "ArrowLeft" })}
+        on:click={() => handleKey({
+          key: "ArrowLeft",
+        })}
       >
         <Icon icon={faArrowLeft} />
       </span>
     {/if}
 
     {#if !atEnd}
+      <!-- key event is on the window -->
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
       <span
         class="page-turn-btn page-turn-right"
-        on:click={() => handleKey({ key: "ArrowRight" })}
+        on:click={() => handleKey({
+          key: "ArrowRight",
+        })}
       >
         <Icon icon={faArrowRight} />
       </span>

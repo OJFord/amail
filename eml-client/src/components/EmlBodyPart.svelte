@@ -1,15 +1,20 @@
 <script>
-  import VCalSummary from "./VCalSummary.svelte";
+  import VCalSummary from "./VCalSummary.svelte"
 
-  export let part;
+  export let part
 
   const friendlySize = (s) => {
-    let si;
+    let si
     for (si = 0; s > 150; si++) {
-      s /= 1000;
+      s /= 1000
     }
-    return `${s.toFixed(1)}${["", "k", "M", "G"][si]}`;
-  };
+    return `${s.toFixed(1)}${[
+      "",
+      "k",
+      "M",
+      "G",
+    ][si]}`
+  }
 </script>
 
 {#if part.is_cleaned_html}

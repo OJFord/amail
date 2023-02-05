@@ -1,72 +1,71 @@
 <script>
-  import * as dialog from "@tauri-apps/api/dialog";
-  import * as fs from "@tauri-apps/api/fs";
-  import * as path from "@tauri-apps/api/path";
-  import Icon from "fa-svelte";
-  import { faEye } from "@fortawesome/free-solid-svg-icons/faEye";
-  import { faFileDownload } from "@fortawesome/free-solid-svg-icons/faFileDownload";
+  import * as dialog from "@tauri-apps/api/dialog"
+  import * as fs from "@tauri-apps/api/fs"
+  import * as path from "@tauri-apps/api/path"
+  import Icon from "fa-svelte"
+  import {
+    faEye,
+  } from "@fortawesome/free-solid-svg-icons/faEye"
+  import {
+    faFileDownload,
+  } from "@fortawesome/free-solid-svg-icons/faFileDownload"
   import {
     Button,
     Card,
-    CardHeader,
     CardBody,
     CardFooter,
+    CardHeader,
     Col,
     Modal,
     ModalBody,
     ModalHeader,
     Row,
-    //
-  } from "sveltestrap";
-  import PdfAttachmentViewer from "./PdfAttachmentViewer.svelte";
-  import EmlBodyPart from "./EmlBodyPart.svelte";
+  } from "sveltestrap"
+  import PdfAttachmentViewer from "./PdfAttachmentViewer.svelte"
+  import EmlBodyPart from "./EmlBodyPart.svelte"
 
-  export let part;
+  export let part
 
-  const previewable = (mimetype) => {
-    return [
-      "application/pdf",
-      //
-    ].some((m) => m == mimetype);
-  };
+  const previewable = (mimetype) => [
+    "application/pdf",
+  ].some((m) => m == mimetype)
 
-  const save = () => {
-    return path
-      .downloadDir()
-      .then((downloadDir) =>
-        dialog.save({
-          defaultPath: `${downloadDir}/${part.filename}`,
-        })
-      )
-      .then((selectedPath) =>
-        path
-          .homeDir()
-          .then((homeDir) => [
-            Number(Object.keys(fs.Dir).find((k) => fs.Dir[k] == "Home")),
-            selectedPath?.replace(new RegExp(`^${homeDir}`), ""),
-          ])
-      )
-      .then(([dir, path]) => {
-        if (path)
-          return fs.writeBinaryFile(
-            {
-              contents: part.content_encoded,
-              path,
-            },
-            { dir: 11 }
-          );
-        // else cancelled, that's ok
-      })
-      .catch((e) => console.error(`failed to save attachment: ${e}`));
-  };
+  const save = async () => path
+    .downloadDir()
+    .then((downloadDir) => dialog.save({
+      defaultPath: `${downloadDir}/${part.filename}`,
+    }),
+    )
+    .then((selectedPath) => path
+      .homeDir()
+      .then((homeDir) => selectedPath?.replace(new RegExp(`^${homeDir}`), ""),
+      ),
+    )
+    .then((path) => {
+      if (path) {
+        return fs.writeBinaryFile(
+          {
+            contents: part.content_encoded,
+            path,
+          },
+          {
+            dir: 11,
+          },
+        )
+      }
+      // Else cancelled, that's ok
+    })
+    .catch((e) => console.error(`failed to save attachment: ${e}`))
 
-  let previewOpen = false;
-  const previewToggle = () => (previewOpen = !previewOpen);
+  let previewOpen = false
+  const previewToggle = () => (previewOpen = !previewOpen)
 </script>
 
 <svelte:window
   on:keydown={(ev) => {
-    if (ev.key == "Escape") previewOpen = false;
+    if (ev.key == "Escape") {
+      previewOpen = false
+    }
   }}
 />
 

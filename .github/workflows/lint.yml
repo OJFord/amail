@@ -23,10 +23,13 @@ jobs:
 
       - name: Install dependencies
         run: |
+          wget -qO - 'https://proget.makedeb.org/debian-feeds/prebuilt-mpr.pub' | gpg --dearmor | sudo tee /usr/share/keyrings/prebuilt-mpr-archive-keyring.gpg 1> /dev/null
+          echo "deb [arch=all,$(dpkg --print-architecture) signed-by=/usr/share/keyrings/prebuilt-mpr-archive-keyring.gpg] https://proget.makedeb.org prebuilt-mpr $(lsb_release -cs)" | sudo tee /etc/apt/sources.list.d/prebuilt-mpr.list
           sudo apt-get update
           # From tauri's Actions workflow
           sudo apt-get install -y libgtk-3-dev webkit2gtk-4.0 libappindicator3-dev librsvg2-dev patchelf
           sudo apt-get install -y libnotmuch-dev
+          sudo apt-get install -y just
 
       - name: Run pre-commit hooks
         run: pre-commit run --all-files

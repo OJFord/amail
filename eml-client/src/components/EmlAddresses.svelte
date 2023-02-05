@@ -1,36 +1,43 @@
 <script context="module">
-  export const formatMailAddr = (m) =>
-    m.address
-      ? m.name
-        ? `${m.name} <${m.address}>`
-        : m.address
-      : `${m.name}: ${m.members.map(formatMailAddr).join(", ")};`;
+  export const formatMailAddr = (m) => m.address
+    ? m.name
+      ? `${m.name} <${m.address}>`
+      : m.address
+    : `${m.name}: ${m.members.map(formatMailAddr)
+      .join(", ")};`
 
-  export const parseAddr = (addrList) =>
-    addrList
-      ? addrList
-          .split(",")
-          .map(
-            (addr) =>
-              addr.match(/((?<name>.+)(?: <))?(?<address>[^<]+@[^>]+)>?/).groups
-          )
-          .map(({ name = "", address }) => Object({ name, address }))
-      : [];
+  export const parseAddr = (addrList) => addrList
+    ? addrList
+      .split(",")
+      .map(
+        (addr) => addr.match(/((?<name>.+)(?: <))?(?<address>[^<]+@[^>]+)>?/).groups,
+      )
+      .map(({
+        name = "", address,
+      }) => Object({
+        name,
+        address,
+      }),
+      )
+    : []
 </script>
 
 <script>
   import {
     Input,
-    //
-  } from "sveltestrap";
+  } from "sveltestrap"
 
-  export let emlMeta;
-  export let editable = false;
+  export let emlMeta
+  export let editable = false
 
-  $: from = emlMeta.from.map(formatMailAddr).join(", ");
-  $: to = (emlMeta.to ?? []).map(formatMailAddr).join(", ");
-  $: cc = (emlMeta.cc ?? []).map(formatMailAddr).join(", ");
-  $: bcc = (emlMeta.bcc ?? []).map(formatMailAddr).join(", ");
+  $: from = emlMeta.from.map(formatMailAddr)
+    .join(", ")
+  $: to = (emlMeta.to ?? []).map(formatMailAddr)
+    .join(", ")
+  $: cc = (emlMeta.cc ?? []).map(formatMailAddr)
+    .join(", ")
+  $: bcc = (emlMeta.bcc ?? []).map(formatMailAddr)
+    .join(", ")
 </script>
 
 <h4>

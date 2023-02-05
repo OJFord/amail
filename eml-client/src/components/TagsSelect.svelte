@@ -1,21 +1,25 @@
 <script>
-  import Icon from "fa-svelte";
-  import { faTags } from "@fortawesome/free-solid-svg-icons/faTags";
-  import { createEventDispatcher } from "svelte";
+  import Icon from "fa-svelte"
+  import {
+    faTags,
+  } from "@fortawesome/free-solid-svg-icons/faTags"
+  import {
+    createEventDispatcher,
+  } from "svelte"
   import {
     Dropdown,
     DropdownItem,
     DropdownMenu,
     DropdownToggle,
-    //
-  } from "sveltestrap";
+  } from "sveltestrap"
 
-  import * as api from "../api.js";
+  import * as api from "../api.js"
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher()
 
-  let tags = [];
-  api.tagList().then((ts) => (tags = ts));
+  let tags = []
+  api.tagList()
+    .then((ts) => (tags = ts))
 </script>
 
 <Dropdown>
@@ -26,7 +30,7 @@
     {#each tags as tag}
       <DropdownItem
         on:click={() => {
-          dispatch("tagSelected", tag);
+          dispatch("tagSelected", tag)
         }}
       >
         {tag}
