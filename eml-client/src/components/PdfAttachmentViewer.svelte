@@ -1,11 +1,11 @@
 <script>
   import {
     faArrowLeft,
-  } from "@fortawesome/free-solid-svg-icons/faArrowLeft"
-  import {
     faArrowRight,
-  } from "@fortawesome/free-solid-svg-icons/faArrowRight"
-  import Icon from "fa-svelte"
+  } from "@fortawesome/free-solid-svg-icons"
+  import {
+    FontAwesomeIcon,
+  } from "@fortawesome/svelte-fontawesome"
   import {
     Document,
     Page,
@@ -53,7 +53,7 @@
           key: "ArrowLeft",
         })}
       >
-        <Icon icon={faArrowLeft} />
+        <FontAwesomeIcon icon={faArrowLeft} />
       </span>
     {/if}
 
@@ -66,7 +66,7 @@
           key: "ArrowRight",
         })}
       >
-        <Icon icon={faArrowRight} />
+        <FontAwesomeIcon icon={faArrowRight} />
       </span>
     {/if}
   </div>
