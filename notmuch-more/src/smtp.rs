@@ -43,7 +43,7 @@ impl Smtp {
             true => {
                 println!("[INFO] Message sent");
                 let mut file = NamedTempFile::new_in(format!("{}/sent/", db.path().display()))?;
-                write!(file, "{}", eml)?;
+                write!(file, "{eml}")?;
                 println!("[TRACE] Sent message written to {}", file.path().display());
 
                 let index_opts = db.default_indexopts::<()>()?;

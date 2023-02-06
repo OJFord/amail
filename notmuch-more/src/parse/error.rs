@@ -43,7 +43,7 @@ impl std::fmt::Display for EmlParseError {
             "Error parsing {}: {}",
             self.within
                 .as_ref()
-                .map(|w| format!("{}'s {}", eml, w))
+                .map(|w| format!("{eml}'s {w}"))
                 .unwrap_or_else(|| eml.into()),
             self.reason
         )

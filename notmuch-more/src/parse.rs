@@ -29,13 +29,13 @@ pub fn parse_address(addr: &str) -> Result<Vec<Mailbox>, NotmuchMoreError> {
 }
 
 pub fn parse_eml(db: &Database, id: String) -> Result<(EmlMeta, EmlBody), NotmuchMoreError> {
-    println!("Opening id:{}", id);
+    println!("Opening id:{id}");
     let msg = db
         .find_message(&id)?
         .ok_or_else(|| anyhow!("Message {} not found", id))?;
     let contents = &std::fs::read(msg.filename())?;
 
-    println!("Parsing id:{}", id);
+    println!("Parsing id:{id}");
     let meta =
         EmlMeta::try_from(&msg).map_err(|e| anyhow!("Could not parse {}: {}", id, e.reason))?;
     let body = body::parse_body_part(&mailparse::parse_mail(contents)?)?;
