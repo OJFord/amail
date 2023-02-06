@@ -84,6 +84,14 @@
       <VCalSummary {vcal} primaryEventSummary={emlMeta.subject} />
     {/each}
 
+    <span>
+      {Intl.DateTimeFormat("en-GB", {
+        dateStyle: "short",
+        timeStyle: "long",
+      })
+        .format(new Date(emlMeta.timestamp * 1000))}
+    </span>
+
     <TagBadges tags={emlMeta.tags} />
   </Row>
 
