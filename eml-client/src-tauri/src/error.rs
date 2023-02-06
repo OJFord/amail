@@ -12,6 +12,6 @@ pub enum AmailError {
 
 impl From<AmailError> for tauri::InvokeError {
     fn from(e: AmailError) -> tauri::InvokeError {
-        Self::from(format!("{}", e))
+        Self::from(format!("{e}"))
     }
 }

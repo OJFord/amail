@@ -101,7 +101,7 @@ impl<'o, O: MessageOwner> TryFrom<&Message<'o, O>> for EmlMeta {
                     let rx = Regex::new(r"for ([^\s]+@[^\s]+\.[^\s]+);")
                         .map_err(|e| {
                             EmlParseError::from(eml)
-                                .reason(&format!("Building `Received` regex: {}", e))
+                                .reason(&format!("Building `Received` regex: {e}"))
                         })?
                         .captures(&h)
                         .map(|m| m.get(1).unwrap().as_str());
@@ -225,25 +225,22 @@ impl Rfc5322Fields {
         itertools::sorted(self.iter())
             .map(|(k, v)| match k.as_str() {
                 "Bcc" => "Bcc:".into(),
-                _ => format!("{}: {}", k, v),
+                _ => format!("{k}: {v}"),
             })
             .join("\r\n")
     }
 
     pub fn format_message(&self, body: &str, boundary: &str) -> String {
         format!(
-            "{}\r\nContent-Type: multipart/mixed; boundary={}\r\n\r\n{}\r\n--{}--",
+            "{}\r\nContent-Type: multipart/mixed; boundary={boundary}\r\n\r\n{body}\r\n--{boundary}--",
             self.format_fields(),
-            boundary,
-            body,
-            boundary,
         )
     }
 
     pub fn format_message_id_for_destination(&self, dest: &str) -> String {
         if let Some(curr) = self.get("Message-ID") {
             if let Ok(re) = Regex::new(r"^<(?P<t>.*)\.(?P<id>.*)\.(?P<d>.*)>$") {
-                return re.replace(curr, format!("<$t.$id.{}>", dest)).into();
+                return re.replace(curr, format!("<$t.$id.{dest}>")).into();
             }
         }
 
@@ -255,7 +252,7 @@ impl Rfc5322Fields {
                 })
             })
             .unwrap_or_else(|| Utc::now().with_timezone(&FixedOffset::east_opt(0).unwrap()));
-        format!("<{}.{}.{}>", dt.timestamp(), "unknown", dest)
+        format!("<{}.unknown.{dest}>", dt.timestamp())
     }
 
     pub fn resolve_reply_to(&self) -> Result<String, EmlParseError> {
@@ -271,7 +268,7 @@ impl Rfc5322Fields {
     pub fn resolve_sender(&self) -> Result<String, EmlParseError> {
         if let Some(sender) = self.get("Sender") {
             let mboxes = parse_address(sender).map_err(|e| {
-                EmlParseError::new().reason(&format!("Failed to parse address: {}", e))
+                EmlParseError::new().reason(&format!("Failed to parse address: {e}"))
             })?;
             if mboxes.len() != 1 {
                 return Err(
@@ -285,7 +282,7 @@ impl Rfc5322Fields {
             self.get("From")
                 .ok_or_else(|| EmlParseError::new().reason("Missing From header"))?,
         )
-        .map_err(|e| EmlParseError::new().reason(&format!("Failed to parse address: {}", e)))?;
+        .map_err(|e| EmlParseError::new().reason(&format!("Failed to parse address: {e}")))?;
         if mboxes.len() > 1 {
             return Err(EmlParseError::new().reason("Must set Sender if multiple From addresses"));
         }
@@ -301,7 +298,7 @@ impl Rfc5322Fields {
             self.get(f)
                 .map(|a| {
                     parse_address(a).map_err(|e| {
-                        EmlParseError::new().reason(&format!("Failed to parse address: {}", e))
+                        EmlParseError::new().reason(&format!("Failed to parse address: {e}"))
                     })
                 })
                 .unwrap_or_else(|| Ok(vec![]))

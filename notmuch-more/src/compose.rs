@@ -41,12 +41,7 @@ fn format_part(
     content: &str,
 ) -> String {
     format!(
-        "--{}\r\nContent-Type: {}\r\nContent-Transfer-Encoding: {}\r\nContent-Disposition: {}\r\n\r\n{}\r\n\r\n",
-        boundary,
-        ctype,
-        ctencoding,
-        disposition,
-        content,
+        "--{boundary}\r\nContent-Type: {ctype}\r\nContent-Transfer-Encoding: {ctencoding}\r\nContent-Disposition: {disposition}\r\n\r\n{content}\r\n\r\n",
     )
 }
 
@@ -128,7 +123,7 @@ pub fn template_reply(db: &Database, id: String) -> Result<ReplyTemplate, Notmuc
         &reply_fields.format_message_id_for_destination(
             &reply_to_meta
                 .resolve_reply_to()
-                .map_err(|e| anyhow!("Failed to parse: {}", e))?,
+                .map_err(|e| anyhow!("Failed to parse: {e}"))?,
         ),
     );
     reply_fields.in_reply_to(&format!("<{}>", &reply_to_meta.id));
@@ -144,7 +139,7 @@ pub fn template_reply(db: &Database, id: String) -> Result<ReplyTemplate, Notmuc
             .iter()
             .map(Mailbox::try_from)
             .collect::<Result<_, _>>()
-            .map_err(|e| anyhow!("Failed to parse: {}", e))?;
+            .map_err(|e| anyhow!("Failed to parse: {e}"))?;
 
         reply_fields.from_addr(&from);
     }
@@ -163,7 +158,7 @@ pub fn template_reply(db: &Database, id: String) -> Result<ReplyTemplate, Notmuc
     Ok(ReplyTemplate {
         meta: reply_fields
             .try_into()
-            .map_err(|e| anyhow!("Failed to parse: {}", e))?,
+            .map_err(|e| anyhow!("Failed to parse: {e}"))?,
         body: template_body(&reply_to_meta, &msg),
     })
 }

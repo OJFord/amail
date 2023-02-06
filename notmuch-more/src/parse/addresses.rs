@@ -26,7 +26,7 @@ impl TryFrom<&EmlAddr> for Mailbox {
                 address: a.address.clone(),
             }),
             EmlAddr::Group { name, .. } => {
-                Err(EmlParseError::new().reason(&format!("Not a single mailbox: {}", name)))
+                Err(EmlParseError::new().reason(&format!("Not a single mailbox: {name}")))
             }
         }
     }
