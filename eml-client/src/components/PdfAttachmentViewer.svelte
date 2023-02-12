@@ -45,34 +45,30 @@
     <Page {scale} num={pageNumber} />
 
     {#if !atBeginning}
-      <!-- key event is on the window -->
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <span
+      <button
         class="page-turn-btn page-turn-left"
         on:click={() => handleKey({
           key: "ArrowLeft",
         })}
       >
-        <FontAwesomeIcon icon={faArrowLeft} />
-      </span>
+        <FontAwesomeIcon icon={faArrowLeft} size="6x" />
+      </button>
     {/if}
 
     {#if !atEnd}
-      <!-- key event is on the window -->
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <span
+      <button
         class="page-turn-btn page-turn-right"
         on:click={() => handleKey({
           key: "ArrowRight",
         })}
       >
-        <FontAwesomeIcon icon={faArrowRight} />
-      </span>
+        <FontAwesomeIcon icon={faArrowRight} size="6x" />
+      </button>
     {/if}
   </div>
 </Document>
 
-<style>
+<style lang="scss">
   div {
     display: grid;
     place-items: center;
@@ -85,12 +81,13 @@
     height: 100%;
     width: 50%;
     padding: 10%;
+    border: 0;
 
-    font-size: 16em;
-    opacity: 0.5;
+    opacity: 0;
   }
 
   .page-turn-btn:hover {
+    opacity: 0.5;
     background-color: rgba(255, 255, 255, 30);
   }
 
