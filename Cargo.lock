@@ -89,7 +89,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "stderrlog",
- "tokio 0.2.25",
+ "tokio 1.25.0",
  "webpki-roots 0.19.0",
 ]
 
