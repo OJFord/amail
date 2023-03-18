@@ -1,0 +1,48 @@
+version: 2
+
+updates:
+  - package-ecosystem: cargo
+    directory: /
+    schedule:
+      interval: weekly
+    labels:
+      - type/dependencies
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    labels:
+      - type/dependencies
+
+  - package-ecosystem: terraform
+    directory: /
+    schedule:
+      interval: weekly
+    labels:
+      - component/core
+      - type/dependencies
+
+  - package-ecosystem: yarn
+    directory: /eml-client/
+    schedule:
+      interval: weekly
+    labels:
+      - component/client
+      - type/dependencies
+
+  - package-ecosystem: terraform
+    directory: /lambda-smtp-relay/
+    schedule:
+      interval: weekly
+    labels:
+      - component/lambda-smtp-relay
+      - type/dependencies
+
+  - package-ecosystem: terraform
+    directory: /outgoing/
+    schedule:
+      interval: weekly
+    labels:
+      - component/outgoing
+      - type/dependencies
