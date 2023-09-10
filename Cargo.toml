@@ -4,6 +4,7 @@ members = [
     "lambda-smtp-relay",
     "notmuch-more",
 ]
+resolver = "2"
 
 [patch.crates-io]
 notmuch-more = { path = "notmuch-more" }
