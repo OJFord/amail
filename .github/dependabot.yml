@@ -23,7 +23,7 @@ updates:
       - component/core
       - type/dependencies
 
-  - package-ecosystem: yarn
+  - package-ecosystem: npm
     directory: /eml-client/
     schedule:
       interval: weekly
