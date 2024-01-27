@@ -366,10 +366,10 @@ bootstrap-scss@5.2.*:
   resolved "https://registry.yarnpkg.com/bootstrap-scss/-/bootstrap-scss-5.2.3.tgz#3c26b523a4af25c7f1de26b14999b149244fd7c3"
   integrity sha512-3lU/QMvW3VAgPwefBDSI90FY71ShuT7QxIna4sz5ksE7gVIUpNWe5/VjCiHroeyyTz9pIMlSE65V7nLJqq9Cmg==
 
-bootswatch@^5.0.2:
-  version "5.2.3"
-  resolved "https://registry.yarnpkg.com/bootswatch/-/bootswatch-5.2.3.tgz#a12bef6ea1a54f1b5b55b472c11a846d1cb77239"
-  integrity sha512-tvnW15WoOY2sEp1uT1ITDQiJy2TekQa+K+Q28WDXibleIxsY0nAoC9IylbnUPD7Q5vkCIclOuBHLVBblJYYPSA==
+bootswatch@^5.3.2:
+  version "5.3.2"
+  resolved "https://registry.yarnpkg.com/bootswatch/-/bootswatch-5.3.2.tgz#b59aa9d37671cb25dd781e4a6d6773008d6c9356"
+  integrity sha512-r05xOSLSx7MJvjpk/uoU8wPYgkPHWLV+uenLaRsS7yBsqSUcWYPjeUkz+tmrRv6s1eFxkF08NvQfBSSPCTyYaA==
 
 brace-expansion@^1.1.7:
   version "1.1.11"
