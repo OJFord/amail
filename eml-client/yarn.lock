@@ -764,6 +764,11 @@ eslint@^8.33.0:
     strip-json-comments "^3.1.0"
     text-table "^0.2.0"
 
+esm-env@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/esm-env/-/esm-env-1.0.0.tgz#b124b40b180711690a4cb9b00d16573391950413"
+  integrity sha512-Cf6VksWPsTuW01vU9Mk/3vRue91Zevka5SjyNf3nEpokFRuqt/KjUQoGAwq9qMmhpLTHmXzSIrFRw8zxWzmFBA==
+
 espree@^9.0.0, espree@^9.4.0:
   version "9.4.1"
   resolved "https://registry.yarnpkg.com/espree/-/espree-9.4.1.tgz#51d6092615567a2c2cff7833445e37c28c0065bd"
@@ -1804,10 +1809,13 @@ svelte-hmr@^0.15.1:
   resolved "https://registry.yarnpkg.com/svelte-hmr/-/svelte-hmr-0.15.1.tgz#d11d878a0bbb12ec1cba030f580cd2049f4ec86b"
   integrity sha512-BiKB4RZ8YSwRKCNVdNxK/GfY+r4Kjgp9jCLEy0DuqAKfmQtpL38cQK3afdpjw4sqSs4PLi3jIPJIFp259NkZtA==
 
-svelte-pdfjs@^0.6.1:
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/svelte-pdfjs/-/svelte-pdfjs-0.6.1.tgz#edc37a6f4808721571073ae2f35478b4271e406d"
-  integrity sha512-MeCQTA32PmIindQ0Sz3a+NTjgliLGFKoPO+xdJ+roM2FAwdKV0nDf3MHrtCLNPwbe+93MPqba/rEoTaxou0nSQ==
+svelte-pdfjs@^0.6.3:
+  version "0.6.3"
+  resolved "https://registry.yarnpkg.com/svelte-pdfjs/-/svelte-pdfjs-0.6.3.tgz#46e8f6760e4cf3ba91d7da8578409977aa18832a"
+  integrity sha512-3TbHeJ59/NYQi0PP/Kit7omOuwn6DEfSbqWLVifXfIRE9X2Nu0KUEPtd87fT3NGakuGpmkJy0kf6ynq8q7swuQ==
+  dependencies:
+    esm-env "^1.0.0"
+    pdfjs-dist "3.0.279"
 
 svelte@^3.39.0:
   version "3.55.1"
