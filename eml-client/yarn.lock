@@ -151,10 +151,10 @@
   dependencies:
     "@fortawesome/fontawesome-common-types" "6.5.1"
 
-"@fortawesome/svelte-fontawesome@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@fortawesome/svelte-fontawesome/-/svelte-fontawesome-0.2.0.tgz#87e31b9aa7132c875298894cfef334b117bf3e5e"
-  integrity sha512-ri61lOqne8JtftoTW1AEnFAAlrTnKg0JvC8MiUJiEWhLu3wcbh7QwIytfs6YFRImVYOmK/OxcA9EWj+Ei8NM4g==
+"@fortawesome/svelte-fontawesome@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@fortawesome/svelte-fontawesome/-/svelte-fontawesome-0.2.1.tgz#7700a9aa71c2db57682ecac3749b84d0f745b218"
+  integrity sha512-GDGMow2poIHaT0y02EcMDAjWSy0OYbY0BLORDRp5eZBh8EckFyNvMjhTgWsTp4b/gyWrP9jNRYOXVaWAQFnK3g==
 
 "@humanwhocodes/config-array@^0.11.8":
   version "0.11.8"
