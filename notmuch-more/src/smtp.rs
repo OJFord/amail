@@ -2,6 +2,7 @@ use std::io::Write;
 use std::str::FromStr;
 
 use anyhow::anyhow;
+use itertools::Itertools;
 use lettre::transport::smtp;
 use lettre::Transport;
 use notmuch::Database;
@@ -31,7 +32,7 @@ impl Smtp {
         from: String,
         eml: String,
     ) -> Result<(), NotmuchMoreError> {
-        let envelope = lettre::Envelope::new(
+        let envelope = lettre::address::Envelope::new(
             Some(lettre::Address::from_str(&from)?),
             to.iter()
                 .map(|e| lettre::Address::from_str(e))
@@ -82,8 +83,8 @@ impl Smtp {
             }
             false => Err(anyhow!(
                 "SMTP error {}: {}",
-                response.code,
-                response.message.join("\n")
+                response.code(),
+                response.message().join("\n")
             )
             .into()),
         }

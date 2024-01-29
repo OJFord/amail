@@ -14,7 +14,7 @@ pub enum NotmuchMoreError {
     #[error(transparent)]
     LettreError(#[from] lettre::error::Error),
     #[error(transparent)]
-    LettreSmtpError(#[from] lettre::transport::smtp::error::Error),
+    LettreSmtpError(#[from] lettre::transport::smtp::Error),
     #[error(transparent)]
     NotMuchError(#[from] notmuch::Error),
     #[error(transparent)]

@@ -89,8 +89,8 @@ async fn relay_eml(smtp: &mut smtp::SmtpTransport, s3: &S3Client, message_id: &s
     )
     .expect("Malformed $RELAY_ENVELOPE_FROM");
 
-    let envelope =
-        lettre::Envelope::new(Some(relay_from), vec![relay_to]).expect("Failed to build envelope");
+    let envelope = lettre::address::Envelope::new(Some(relay_from), vec![relay_to])
+        .expect("Failed to build envelope");
 
     smtp.send_raw(&envelope, &content)
         .unwrap_or_else(|_| panic!("Failed to send {message_id}"));
