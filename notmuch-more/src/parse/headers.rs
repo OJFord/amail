@@ -4,7 +4,7 @@ use std::convert::TryInto;
 
 use chrono::DateTime;
 use chrono::FixedOffset;
-use chrono::NaiveDateTime;
+use chrono::TimeZone;
 use chrono::Utc;
 use delegate::delegate;
 use itertools::Itertools;
@@ -362,10 +362,7 @@ impl From<&EmlMeta> for Rfc5322Fields {
             }
         }));
 
-        fields.date(&DateTime::<Utc>::from_utc(
-            NaiveDateTime::from_timestamp_opt(meta.timestamp, 0).unwrap(),
-            Utc,
-        ));
+        fields.date(&Utc.timestamp_opt(meta.timestamp, 0).unwrap());
 
         fields
     }

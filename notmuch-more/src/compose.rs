@@ -3,9 +3,9 @@ use std::convert::TryInto;
 use std::fs;
 
 use anyhow::anyhow;
-use chrono::DateTime;
+use base64::{engine::general_purpose::STANDARD as BASE64_STANDARD, Engine as _};
 use chrono::Local;
-use chrono::NaiveDateTime;
+use chrono::TimeZone;
 use chrono::Utc;
 use itertools::Itertools;
 use notmuch::Database;
@@ -84,7 +84,7 @@ pub fn format_message(
                 .essence_str(),
             "base64",
             &format!("attachment; filename={}", attachment.name),
-            &format_attachment(&base64::encode(fs::read(&attachment.path)?)),
+            &format_attachment(&BASE64_STANDARD.encode(&fs::read(&attachment.path)?)),
         ));
     }
 
@@ -94,11 +94,7 @@ pub fn format_message(
 fn template_body(meta: &EmlMeta, body: &EmlBody) -> String {
     format!(
         "\r\n\r\nOn {}, {} wrote:\r\n{}",
-        DateTime::<Utc>::from_utc(
-            NaiveDateTime::from_timestamp_opt(meta.timestamp, 0).unwrap(),
-            Utc
-        )
-        .to_rfc2822(),
+        Utc.timestamp_opt(meta.timestamp, 0).unwrap().to_rfc2822(),
         meta.from
             .last()
             .map(String::from)
