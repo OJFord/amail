@@ -48,7 +48,7 @@ pub(crate) fn parse_body_part(part: &mailparse::ParsedMail) -> Result<EmlBody, N
                 },
                 content_base64: match part.get_body_encoded() {
                     mailparse::body::Body::Base64(body) => {
-                        String::from_utf8(body.get_raw().into()).map_or_else(|_| None, Some)
+                        String::from_utf8(body.get_raw().into()).ok()
                     }
                     _ => None,
                 },
@@ -64,7 +64,7 @@ pub(crate) fn parse_body_part(part: &mailparse::ParsedMail) -> Result<EmlBody, N
                 content: part.get_body()?,
                 content_base64: match part.get_body_encoded() {
                     mailparse::body::Body::Base64(body) => {
-                        String::from_utf8(body.get_raw().into()).map_or_else(|_| None, Some)
+                        String::from_utf8(body.get_raw().into()).ok()
                     }
                     _ => None,
                 },
