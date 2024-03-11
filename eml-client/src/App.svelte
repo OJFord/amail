@@ -69,7 +69,8 @@
           "sent",
           "spam",
         ] // Ordered
-        specialQueries = specials.map((n) => allTagQueries.find((e) => e.name == n),
+        specialQueries = specials.flatMap(
+          (n) => allTagQueries.find((e) => e.name == n) ?? [],
         )
         tagQueries = allTagQueries.filter((t) => !specials.includes(t.name))
       })
