@@ -3,7 +3,6 @@ use std::fmt::Display;
 
 use mailparse::MailAddr;
 use notmuch::Message;
-use notmuch::MessageOwner;
 use serde::Deserialize;
 use serde::Serialize;
 
@@ -107,8 +106,8 @@ impl TryFrom<&MailAddr> for EmlAddr {
     }
 }
 
-pub(crate) fn parse_address_header<O: MessageOwner>(
-    eml: &Message<'_, O>,
+pub(crate) fn parse_address_header(
+    eml: &Message,
     header: &str,
 ) -> Result<mailparse::MailAddrList, EmlParseError> {
     mailparse::addrparse(header).map_err(|e| {
@@ -118,8 +117,8 @@ pub(crate) fn parse_address_header<O: MessageOwner>(
     })
 }
 
-pub(crate) fn parse_optional_address_list_header<O: MessageOwner>(
-    eml: &Message<'_, O>,
+pub(crate) fn parse_optional_address_list_header(
+    eml: &Message,
     header: &str,
 ) -> Result<Option<Vec<EmlAddr>>, EmlParseError> {
     match parse_header(eml, header)? {

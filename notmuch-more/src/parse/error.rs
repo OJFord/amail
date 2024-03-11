@@ -50,8 +50,8 @@ impl std::fmt::Display for EmlParseError {
     }
 }
 
-impl<O: notmuch::MessageOwner> From<&notmuch::Message<'_, O>> for EmlParseError {
-    fn from(m: &notmuch::Message<O>) -> Self {
+impl From<&notmuch::Message> for EmlParseError {
+    fn from(m: &notmuch::Message) -> Self {
         Self::new().id(m.id().into())
     }
 }

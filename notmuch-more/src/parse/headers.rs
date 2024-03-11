@@ -9,7 +9,6 @@ use chrono::Utc;
 use delegate::delegate;
 use itertools::Itertools;
 use notmuch::Message;
-use notmuch::MessageOwner;
 use regex::Regex;
 use serde::Deserialize;
 use serde::Serialize;
@@ -53,10 +52,7 @@ impl EmlMeta {
     }
 }
 
-pub(crate) fn parse_header<O: MessageOwner>(
-    eml: &Message<'_, O>,
-    header: &str,
-) -> Result<Option<String>, EmlParseError> {
+pub(crate) fn parse_header(eml: &Message, header: &str) -> Result<Option<String>, EmlParseError> {
     match eml.header(header) {
         Ok(Some(h)) => Ok(Some(h.into())),
         Ok(None) => Ok(None),
@@ -66,20 +62,17 @@ pub(crate) fn parse_header<O: MessageOwner>(
     }
 }
 
-pub(crate) fn must_parse_header<O: MessageOwner>(
-    eml: &Message<'_, O>,
-    header: &str,
-) -> Result<String, EmlParseError> {
+pub(crate) fn must_parse_header(eml: &Message, header: &str) -> Result<String, EmlParseError> {
     match parse_header(eml, header)? {
         Some(h) => Ok(h),
         None => Err(EmlParseError::from(eml).within(header).reason("Missing")),
     }
 }
 
-impl<'o, O: MessageOwner> TryFrom<&Message<'o, O>> for EmlMeta {
+impl TryFrom<&Message> for EmlMeta {
     type Error = EmlParseError;
 
-    fn try_from(eml: &Message<O>) -> Result<Self, Self::Error> {
+    fn try_from(eml: &Message) -> Result<Self, Self::Error> {
         Ok(EmlMeta {
             bcc: parse_optional_address_list_header(eml, "Bcc")?,
 
