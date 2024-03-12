@@ -1,15 +1,13 @@
 #[macro_use]
 extern crate log;
 
-use std::boxed::Box;
 use std::env;
-use std::error::Error;
 use std::str::FromStr;
 
 use aws_lambda_events::event::ses::SimpleEmailEvent;
-use lambda_runtime::error::HandlerError;
-use lambda_runtime::lambda;
-use lambda_runtime::Context;
+use lambda_runtime::service_fn;
+use lambda_runtime::Error;
+use lambda_runtime::LambdaEvent;
 use lettre::transport::smtp;
 use lettre::Transport;
 use rusoto_core::Region;
@@ -22,7 +20,8 @@ use tokio::io::AsyncReadExt;
 #[derive(Serialize)]
 struct Output {}
 
-fn main() -> Result<(), Box<dyn Error>> {
+#[tokio::main]
+async fn main() -> Result<(), Error> {
     stderrlog::new()
         .modules(vec![module_path!(), "lettre"])
         .verbosity(2)
@@ -30,11 +29,10 @@ fn main() -> Result<(), Box<dyn Error>> {
         .init()
         .unwrap();
 
-    lambda!(handler);
-    Ok(())
+    lambda_runtime::run(service_fn(handler)).await
 }
 
-fn handler(e: SimpleEmailEvent, _: Context) -> Result<Output, HandlerError> {
+async fn handler(e: LambdaEvent<SimpleEmailEvent>) -> Result<Output, Error> {
     let region = env::var("S3_REGION")
         .expect("Missing $S3_REGION")
         .parse::<Region>()
@@ -50,7 +48,7 @@ fn handler(e: SimpleEmailEvent, _: Context) -> Result<Output, HandlerError> {
         ))
         .build();
 
-    let mail_event = &e.records[0].ses.mail;
+    let mail_event = &e.payload.records[0].ses.mail;
     let message_id = mail_event
         .message_id
         .as_ref()
@@ -58,11 +56,10 @@ fn handler(e: SimpleEmailEvent, _: Context) -> Result<Output, HandlerError> {
 
     info!("Relaying {}", message_id);
 
-    relay_eml(&mut smtp, &s3, message_id);
+    relay_eml(&mut smtp, &s3, message_id).await;
     Ok(Output {})
 }
 
-#[tokio::main]
 async fn relay_eml(smtp: &mut smtp::SmtpTransport, s3: &S3Client, message_id: &str) {
     let mut content = Vec::new();
     s3.get_object(GetObjectRequest {

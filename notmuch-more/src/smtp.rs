@@ -47,8 +47,8 @@ impl Smtp {
                 write!(file, "{eml}")?;
                 println!("[TRACE] Sent message written to {}", file.path().display());
 
-                let index_opts = db.default_indexopts::<()>()?;
-                let message = db.index_file(&file.path().as_os_str(), None)?;
+                let index_opts = db.default_indexopts()?;
+                let message = db.index_file(file.path().as_os_str(), None)?;
                 println!("[TRACE] Sent message indexed as {}", message.id());
 
                 message.add_tag("sent")?;
