@@ -64,9 +64,7 @@ impl Smtp {
                                 println!("[TRACE] Message reindexed");
                                 Ok(())
                             }
-                            _ => Err(NotmuchMoreError::Other(anyhow!(
-                                "Error renaming sent message"
-                            ))),
+                            _ => Err(NotmuchMoreError::Other(anyhow!("Failed to reindex"))),
                         }
                     }
                     Err(e) => match e.file.keep() {
