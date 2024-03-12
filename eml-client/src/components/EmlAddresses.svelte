@@ -25,7 +25,7 @@
 <script>
   import {
     Input,
-  } from "sveltestrap"
+  } from "@sveltestrap/sveltestrap"
 
   export let emlMeta
   export let editable = false

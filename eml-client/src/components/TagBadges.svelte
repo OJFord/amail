@@ -1,7 +1,7 @@
 <script>
   import {
     Badge,
-  } from "sveltestrap"
+  } from "@sveltestrap/sveltestrap"
 
   export let tags
 

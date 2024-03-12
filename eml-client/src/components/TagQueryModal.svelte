@@ -10,7 +10,7 @@
     ModalFooter,
     ModalHeader,
     Row,
-  } from "sveltestrap"
+  } from "@sveltestrap/sveltestrap"
 
   import * as api from "../api.js"
 

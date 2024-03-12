@@ -1,7 +1,7 @@
 <script>
   import {
     Input,
-  } from "sveltestrap"
+  } from "@sveltestrap/sveltestrap"
 
   export let quietQueries = []
   export let querySelected = null

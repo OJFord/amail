@@ -13,7 +13,7 @@
     DropdownItem,
     DropdownMenu,
     DropdownToggle,
-  } from "sveltestrap"
+  } from "@sveltestrap/sveltestrap"
 
   import * as api from "../api.js"
 

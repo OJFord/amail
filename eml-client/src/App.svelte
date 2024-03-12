@@ -13,7 +13,7 @@
     Navbar,
     NavbarBrand,
     Row,
-  } from "sveltestrap"
+  } from "@sveltestrap/sveltestrap"
   import {
     faEdit,
   } from "@fortawesome/free-solid-svg-icons"

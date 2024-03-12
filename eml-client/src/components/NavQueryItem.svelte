@@ -12,7 +12,7 @@
     Badge,
     NavItem,
     NavLink,
-  } from "sveltestrap"
+  } from "@sveltestrap/sveltestrap"
 
   export let name
   export let selected

@@ -6,7 +6,7 @@
   import {
     Col,
     Row,
-  } from "sveltestrap"
+  } from "@sveltestrap/sveltestrap"
 
   import RelativeDate from "./RelativeDate.svelte"
   import TagBadges from "./TagBadges.svelte"

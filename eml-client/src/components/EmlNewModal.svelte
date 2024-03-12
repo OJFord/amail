@@ -5,7 +5,7 @@
     ModalBody,
     ModalFooter,
     ModalHeader,
-  } from "sveltestrap"
+  } from "@sveltestrap/sveltestrap"
 
   import * as api from "../api.js"
   import EmlCompose from "./EmlCompose.svelte"

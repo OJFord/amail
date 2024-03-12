@@ -12,7 +12,7 @@
     Container,
     Input,
     Row,
-  } from "sveltestrap"
+  } from "@sveltestrap/sveltestrap"
   import * as dialog from "@tauri-apps/api/dialog"
 
   import * as api from "../api.js"

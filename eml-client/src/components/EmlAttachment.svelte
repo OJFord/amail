@@ -20,7 +20,7 @@
     ModalBody,
     ModalHeader,
     Row,
-  } from "sveltestrap"
+  } from "@sveltestrap/sveltestrap"
   import PdfAttachmentViewer from "./PdfAttachmentViewer.svelte"
   import EmlBodyPart from "./EmlBodyPart.svelte"
 

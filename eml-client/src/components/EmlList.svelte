@@ -3,7 +3,7 @@
     ListGroup,
     ListGroupItem,
     Spinner,
-  } from "sveltestrap"
+  } from "@sveltestrap/sveltestrap"
 
   import * as api from "../api.js"
   import EmlListItem from "./EmlListItem.svelte"
