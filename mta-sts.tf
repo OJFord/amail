@@ -10,8 +10,9 @@ locals {
 resource "cloudflare_worker_script" "mta-sts" {
   for_each = local.email_domain_zones
 
-  name    = "mta-sts-${replace(each.value.zone, ".", "-")}"
-  content = <<EOC
+  account_id = var.cloudflare_account_id
+  name       = "mta-sts-${replace(each.value.zone, ".", "-")}"
+  content    = <<EOC
     async function handleRequest(request) {
       return new Response(`${local.mta_sts_content}`, {
         headers: {
