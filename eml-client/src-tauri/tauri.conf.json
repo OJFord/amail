@@ -1,65 +1,50 @@
 {
-  "package": {
-    "productName": "amail",
-    "version": "0.0.0"
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "windows": {
+      "certificateThumbprint": null,
+      "digestAlgorithm": "sha256",
+      "timestampUrl": ""
+    },
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "resources": [],
+    "externalBin": [],
+    "copyright": "",
+    "category": "DeveloperTools",
+    "shortDescription": "",
+    "longDescription": "",
+    "macOS": {
+      "frameworks": [],
+      "minimumSystemVersion": "",
+      "exceptionDomain": "",
+      "signingIdentity": null,
+      "entitlements": null
+    },
+    "linux": {
+      "deb": {
+        "depends": []
+      }
+    }
   },
   "build": {
     "beforeDevCommand": "DEBUG=true yarn --cwd=.. vite --clearScreen=false --port=42411",
-    "devPath": "http://localhost:42411",
-    "distDir": "../dist"
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:42411"
   },
-  "tauri": {
-    "bundle": {
-      "active": true,
-      "targets": "all",
-      "identifier": "com.ojford.amail.eml-client",
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ],
-      "resources": [],
-      "externalBin": [],
-      "copyright": "",
-      "category": "DeveloperTools",
-      "shortDescription": "",
-      "longDescription": "",
-      "deb": {
-        "depends": []
-      },
-      "macOS": {
-        "frameworks": [],
-        "minimumSystemVersion": "",
-        "exceptionDomain": "",
-        "signingIdentity": null,
-        "entitlements": null
-      },
-      "windows": {
-        "certificateThumbprint": null,
-        "digestAlgorithm": "sha256",
-        "timestampUrl": ""
-      }
-    },
-    "updater": {
-      "active": false
-    },
-    "allowlist": {
-      "dialog": {
-        "open": true,
-        "save": true
-      },
-      "fs": {
-        "writeFile": true,
-        "scope": ["$HOME/*"]
-      },
-      "path": {
-        "all": true
-      },
-      "shell": {
-        "open": true
-      }
+  "productName": "amail",
+  "version": "0.0.0",
+  "identifier": "com.ojford.amail.eml-client",
+  "plugins": {},
+  "app": {
+    "security": {
+      "csp": "default-src blob: data: filesystem: ws: wss: http: https: tauri: 'unsafe-eval' 'unsafe-inline' 'self' img-src: 'self'; connect-src ipc: http://ipc.localhost"
     },
     "windows": [
       {
@@ -69,9 +54,6 @@
         "resizable": true,
         "fullscreen": false
       }
-    ],
-    "security": {
-      "csp": "default-src blob: data: filesystem: ws: wss: http: https: tauri: 'unsafe-eval' 'unsafe-inline' 'self' img-src: 'self'"
-    }
+    ]
   }
 }

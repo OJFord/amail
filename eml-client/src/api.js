@@ -1,4 +1,4 @@
-import * as tauri from "@tauri-apps/api/tauri"
+import * as tauri from "@tauri-apps/api/core"
 
 export const applyTag = (query, tag) => tauri
   .invoke("apply_tag", {

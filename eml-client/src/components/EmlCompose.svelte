@@ -13,7 +13,7 @@
     Input,
     Row,
   } from "@sveltestrap/sveltestrap"
-  import * as dialog from "@tauri-apps/api/dialog"
+  import * as dialog from "@tauri-apps/plugin-dialog"
 
   import * as api from "../api.js"
   import EmlAddresses from "./EmlAddresses.svelte"

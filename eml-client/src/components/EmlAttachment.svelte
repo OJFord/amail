@@ -1,6 +1,6 @@
 <script>
-  import * as dialog from "@tauri-apps/api/dialog"
-  import * as fs from "@tauri-apps/api/fs"
+  import * as dialog from "@tauri-apps/plugin-dialog"
+  import * as fs from "@tauri-apps/plugin-fs"
   import * as path from "@tauri-apps/api/path"
   import {
     FontAwesomeIcon,

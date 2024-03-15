@@ -10,8 +10,8 @@ pub enum AmailError {
     Other(#[from] anyhow::Error),
 }
 
-impl From<AmailError> for tauri::InvokeError {
-    fn from(e: AmailError) -> tauri::InvokeError {
+impl From<AmailError> for tauri::ipc::InvokeError {
+    fn from(e: AmailError) -> tauri::ipc::InvokeError {
         Self::from(format!("{e}"))
     }
 }
