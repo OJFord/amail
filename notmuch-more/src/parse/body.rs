@@ -31,6 +31,7 @@ pub(crate) fn parse_body_part(part: &mailparse::ParsedMail) -> Result<EmlBody, N
         .ok_or_else(|| anyhow!("Failed to parse mimetype: {}", part.ctype.mimetype))?;
 
     let content_disp = part.get_content_disposition();
+    let err_multipart_no_subpart = anyhow!("Expected multipart body to have at least one subpart");
 
     match MimeMultipartType::from_content_type(mimect) {
         None => match part.ctype.mimetype.as_str() {
@@ -78,7 +79,8 @@ pub(crate) fn parse_body_part(part: &mailparse::ParsedMail) -> Result<EmlBody, N
         },
 
         Some(MimeMultipartType::Alternative) => {
-            let mut first = parse_body_part(&part.subparts[0])?;
+            let mut first =
+                parse_body_part(part.subparts.first().ok_or(err_multipart_no_subpart)?)?;
             first.alternatives = part.subparts[1..]
                 .iter()
                 .map(parse_body_part)
@@ -87,7 +89,8 @@ pub(crate) fn parse_body_part(part: &mailparse::ParsedMail) -> Result<EmlBody, N
         }
 
         Some(MimeMultipartType::Mixed) => {
-            let mut first = parse_body_part(&part.subparts[0])?;
+            let mut first =
+                parse_body_part(part.subparts.first().ok_or(err_multipart_no_subpart)?)?;
             first.extra = part.subparts[1..]
                 .iter()
                 .map(parse_body_part)
@@ -97,7 +100,8 @@ pub(crate) fn parse_body_part(part: &mailparse::ParsedMail) -> Result<EmlBody, N
         }
 
         Some(MimeMultipartType::Signed) => {
-            let mut first = parse_body_part(&part.subparts[0])?;
+            let mut first =
+                parse_body_part(part.subparts.first().ok_or(err_multipart_no_subpart)?)?;
             first.signature = Some(Box::new(parse_body_part(
                 part.subparts[1..]
                     .iter()
