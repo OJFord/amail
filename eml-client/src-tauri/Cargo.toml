@@ -21,7 +21,7 @@ tauri = "^2.0.0-beta"
 tauri-plugin-dialog = "^2.0.0-beta.2"
 tauri-plugin-fs = "^2.0.0-beta.2"
 tauri-plugin-shell = "^2.0.0-beta.2"
-thiserror = "^1.0.57"
+thiserror = "^1.0.58"
 whoami = "^1.5.1"
 
 [features]
