@@ -58,7 +58,7 @@ impl Smtp {
                     Ok(_) => {
                         println!("[TRACE] Renamed message {}, reindexing", message.id());
                         match db.index_file(&path, None) {
-                            Err(NotmuchError(notmuch::Status::DuplicateMessageID)) => {
+                            Ok(_) | Err(NotmuchError(notmuch::Status::DuplicateMessageID)) => {
                                 println!("[TRACE] New path indexed");
                                 message.reindex(index_opts)?;
                                 println!("[TRACE] Message reindexed");
