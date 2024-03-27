@@ -40,10 +40,10 @@
 
   const addAttachment = () => {
     dialog.open()
-      .then((path) => {
+      .then((f) => {
         attachments[attachments.length] = {
-          name: path.replace(/.*\//, ""),
-          path,
+          name: f.name,
+          path: f.path,
         }
       })
   }
