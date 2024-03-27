@@ -39,9 +39,7 @@ export default [
       ],
       "array-element-newline": [
         "error",
-        {
-          minItems: 1,
-        },
+        "always",
       ],
       "comma-dangle": [
         "error",
