@@ -1412,10 +1412,10 @@ https-proxy-agent@^5.0.0:
     agent-base "6"
     debug "4"
 
-ical.js@^1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/ical.js/-/ical.js-1.5.0.tgz#23213accd1d8f7248d01705acb06270a70d20662"
-  integrity sha512-7ZxMkogUkkaCx810yp0ZGKvq1ZpRgJeornPttpoxe6nYZ3NLesZe1wWMXDdwTkj/b5NtXT+Y16Aakph/ao98ZQ==
+ical.js@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/ical.js/-/ical.js-2.0.0.tgz#22254b7d93f789c4ad2f9d5186a11800bcd73628"
+  integrity sha512-eb/KPJlF1IxRNvbjkGtt3lXQg1TeGEh8RzmCQk65qIFw5p+SONy8FUCFoclsfxpX1CFjyShzO/Lm0bdig7vFPg==
 
 ignore@^5.2.0:
   version "5.2.4"
