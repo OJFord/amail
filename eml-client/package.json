@@ -1,7 +1,7 @@
 {
   "devDependencies": {
-    "@fortawesome/fontawesome-svg-core": "^6.5.1",
-    "@fortawesome/free-solid-svg-icons": "^6.5.1",
+    "@fortawesome/fontawesome-svg-core": "^6.5.2",
+    "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/svelte-fontawesome": "^0.2.2",
     "@spence1115/eslint-plugin-modules-newlines": "^1.0.1",
     "@sveltejs/vite-plugin-svelte": "^2.5.3",
@@ -15,13 +15,13 @@
     "bootswatch": "^5.3.3",
     "eslint": "^8.57.0",
     "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-svelte": "^2.30.0",
+    "eslint-plugin-svelte": "^2.37.0",
     "ical.js": "^1.5.0",
-    "pdfjs-dist": "4.0.379",
+    "pdfjs-dist": "4.1.392",
     "prettier": "^2.8.8",
     "prettier-plugin-svelte": "^2.10.1",
-    "sass": "^1.72.0",
-    "svelte": "^4.0.0",
+    "sass": "^1.75.0",
+    "svelte": "^4.2.14",
     "svelte-pdfjs": "^0.6.3",
     "vite": "^4.5.2"
   },
