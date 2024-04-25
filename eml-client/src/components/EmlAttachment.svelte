@@ -36,22 +36,9 @@
       defaultPath: `${downloadDir}/${part.filename}`,
     }),
     )
-    .then((selectedPath) => path
-      .homeDir()
-      .then((homeDir) => selectedPath?.replace(new RegExp(`^${homeDir}`), ""),
-      ),
-    )
     .then((path) => {
       if (path) {
-        return fs.writeBinaryFile(
-          {
-            contents: part.content_encoded,
-            path,
-          },
-          {
-            dir: 11,
-          },
-        )
+        return fs.writeFile(path, part.content_encoded)
       }
       // Else cancelled, that's ok
     })

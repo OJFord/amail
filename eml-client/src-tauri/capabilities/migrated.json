@@ -11,7 +11,8 @@
     "resources:default",
     "menu:default",
     "tray:default",
-    "shell:allow-open",
-    "dialog:allow-open"
+    "dialog:allow-open",
+    "dialog:allow-save",
+    "fs:allow-app-write"
   ]
 }
