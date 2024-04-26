@@ -6,6 +6,16 @@ import {
 } from "@sveltejs/vite-plugin-svelte"
 
 export default defineConfig({
+  build: {
+    target: "esnext",
+  },
+
+  optimizeDeps: {
+    esbuildOptions: {
+      target: "esnext",
+    },
+  },
+
   plugins: [
     svelte(),
   ],
