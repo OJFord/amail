@@ -10,17 +10,17 @@ edition = "2021"
 build = "src/build.rs"
 
 [build-dependencies]
-tauri-build = { version = "^2.0.0-beta", features = [] }
+tauri-build = { version = "^2.0.0-beta.10", features = [] }
 
 [dependencies]
 ammonia = "^3.1.2"
 anyhow = "^1.0"
 notmuch-more = "^0.0.0"
 serde_json = "^1.0"
-tauri = { version = "^2.0.0-beta", features = [] }
-tauri-plugin-dialog = "^2.0.0-beta.2"
+tauri = { version = "^2.0.0-beta.10", features = [] }
+tauri-plugin-dialog = "^2.0.0-beta.3"
 tauri-plugin-fs = "^2.0.0-beta.2"
-tauri-plugin-shell = "^2.0.0-beta.2"
+tauri-plugin-shell = "^2.0.0-beta.3"
 thiserror = "^1.0.58"
 whoami = "^1.5.1"
 
