@@ -15,7 +15,7 @@
     "bootswatch": "^5.3.3",
     "eslint": "^8.57.0",
     "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-svelte": "^2.37.0",
+    "eslint-plugin-svelte": "^2.38.0",
     "ical.js": "^1.5.0",
     "pdfjs-dist": "4.1.392",
     "prettier": "^2.8.8",
