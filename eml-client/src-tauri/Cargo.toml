@@ -21,7 +21,7 @@ tauri = { version = "^2.0.0-beta.10", features = [] }
 tauri-plugin-dialog = "^2.0.0-beta.3"
 tauri-plugin-fs = "^2.0.0-beta.2"
 tauri-plugin-shell = "^2.0.0-beta.3"
-thiserror = "^1.0.58"
+thiserror = "^1.0.60"
 whoami = "^1.5.1"
 
 [features]
