@@ -14,6 +14,9 @@ export default defineConfig({
     esbuildOptions: {
       target: "esnext",
     },
+    exclude: [
+      "pdfjs-dist",
+    ],
   },
 
   plugins: [

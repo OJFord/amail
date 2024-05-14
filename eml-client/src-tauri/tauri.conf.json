@@ -34,9 +34,10 @@
     }
   },
   "build": {
-    "beforeDevCommand": "DEBUG=true yarn --cwd=.. vite --clearScreen=false --port=42411",
-    "frontendDist": "../dist",
-    "devUrl": "http://localhost:42411"
+    "beforeBuildCommand": "rm -r ../dist; yarn --cwd=..; yarn --cwd=.. vite:build:debug-${TAURI_ENV_DEBUG:-false}",
+    "beforeDevCommand": "yarn --cwd=..; yarn --cwd=.. vite:dev --port=42411",
+    "devUrl": "http://localhost:42411",
+    "frontendDist": "../dist"
   },
   "productName": "amail",
   "version": "0.0.0",
@@ -44,7 +45,11 @@
   "plugins": {},
   "app": {
     "security": {
-      "csp": "default-src blob: data: filesystem: ws: wss: http: https: tauri: 'unsafe-eval' 'unsafe-inline' 'self' img-src: 'self'; connect-src ipc: http://ipc.localhost"
+      "csp": {
+        "default-src": "blob: data: filesystem: tauri: 'self'",
+        "connect-src": "ipc://localhost data:",
+        "style-src": "'unsafe-inline' tauri:"
+      }
     },
     "windows": [
       {

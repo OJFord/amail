@@ -12,7 +12,7 @@
   } from "svelte-pdfjs"
   import {
     set_pdfjs_context,
-  } from "svelte-pdfjs/utils/vite"
+  } from "svelte-pdfjs/vite"
 
   export let b64Data
 
@@ -36,11 +36,19 @@
       break
     }
   }
+
+  const loadOptions = {
+    isEvalSupported: false,
+  }
 </script>
 
 <svelte:window on:keydown={handleKey} />
 
-<Document file={docUrl} on:loadsuccess={(ev) => (doc = ev.detail)}>
+<Document
+  file={docUrl}
+  {loadOptions}
+  on:loadsuccess={(ev) => (doc = ev.detail)}
+>
   <div>
     <Page {scale} num={pageNumber} />
 
