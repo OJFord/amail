@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "pdfjs-dist": "^3.11.174"
+    "pdfjs-dist": "^4.2.67"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
