@@ -7,7 +7,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/svelte-fontawesome": "^0.2.2",
     "@spence1115/eslint-plugin-modules-newlines": "^1.0.1",
-    "@sveltejs/vite-plugin-svelte": "^3.1.0",
+    "@sveltejs/vite-plugin-svelte": "^3.1.1",
     "@sveltestrap/sveltestrap": "^6.2.7",
     "@tauri-apps/api": "^2.0.0-beta.7",
     "@tauri-apps/cli": "^2.0.0-beta.12",
@@ -18,14 +18,14 @@
     "bootswatch": "^5.3.3",
     "eslint": "^8.57.0",
     "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-svelte": "^2.37.0",
+    "eslint-plugin-svelte": "^2.41.0",
     "ical.js": "^1.5.0",
     "prettier": "^2.8.8",
     "prettier-plugin-svelte": "^2.10.1",
-    "sass": "^1.75.0",
-    "svelte": "^4.2.15",
+    "sass": "^1.77.6",
+    "svelte": "^4.2.18",
     "svelte-pdfjs": "^0.8.0",
-    "vite": "^5.2.10"
+    "vite": "^5.3.3"
   },
   "engines": {
     "node": ">=16.0.0"
