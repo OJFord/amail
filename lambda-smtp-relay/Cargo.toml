@@ -26,5 +26,5 @@ rustls = "^0.21"
 serde = "^1.0"
 serde_derive = "^1.0"
 stderrlog = "^0.6"
-tokio = {version = "^1.36", features=["macros"]}
+tokio = {version = "^1.42", features=["macros"]}
 webpki-roots = "^0.25"
