@@ -1,6 +1,6 @@
 use anyhow::anyhow;
-use email::mimeheaders::MimeContentType;
 use email::MimeMultipartType;
+use email::mimeheaders::MimeContentType;
 use itertools::Itertools;
 use regex::Regex;
 use serde::Serialize;

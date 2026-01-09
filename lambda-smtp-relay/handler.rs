@@ -5,15 +5,15 @@ use std::env;
 use std::str::FromStr;
 
 use aws_lambda_events::event::ses::SimpleEmailEvent;
-use lambda_runtime::service_fn;
 use lambda_runtime::Error;
 use lambda_runtime::LambdaEvent;
-use lettre::transport::smtp;
+use lambda_runtime::service_fn;
 use lettre::Transport;
+use lettre::transport::smtp;
 use rusoto_core::Region;
 use rusoto_s3::GetObjectRequest;
-use rusoto_s3::S3Client;
 use rusoto_s3::S3;
+use rusoto_s3::S3Client;
 use serde_derive::Serialize;
 use tokio::io::AsyncReadExt;
 

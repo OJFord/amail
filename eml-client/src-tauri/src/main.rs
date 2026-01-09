@@ -6,6 +6,7 @@
 use std::env;
 use std::process::Command;
 
+use notmuch_more::Database;
 use notmuch_more::compose;
 use notmuch_more::parse;
 use notmuch_more::parse::EmlBody;
@@ -14,7 +15,6 @@ use notmuch_more::parse::EmlParseError;
 use notmuch_more::query;
 use notmuch_more::smtp;
 use notmuch_more::tags;
-use notmuch_more::Database;
 
 mod error;
 use self::error::AmailError;

@@ -3,8 +3,8 @@ use std::str::FromStr;
 
 use anyhow::anyhow;
 use itertools::Itertools;
-use lettre::transport::smtp;
 use lettre::Transport;
+use lettre::transport::smtp;
 use notmuch::Database;
 use notmuch::Error::NotmuchError;
 use tempfile::NamedTempFile;

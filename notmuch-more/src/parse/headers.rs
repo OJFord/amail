@@ -13,12 +13,12 @@ use regex::Regex;
 use serde::Deserialize;
 use serde::Serialize;
 
-use super::addresses::parse_address_header;
-use super::addresses::parse_optional_address_list_header;
-use super::parse_address;
 use super::EmlAddr;
 use super::EmlParseError;
 use super::Mailbox;
+use super::addresses::parse_address_header;
+use super::addresses::parse_optional_address_list_header;
+use super::parse_address;
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct EmlMeta {
@@ -209,7 +209,7 @@ impl Rfc5322Fields {
     delegate! {
         to self.0 {
             pub fn get(&self, k: &str) -> Option<&String>;
-            pub fn iter(&self) -> std::collections::hash_map::Iter<String, String>;
+            pub fn iter(&self) -> std::collections::hash_map::Iter<'_, String, String>;
             pub fn insert(&mut self, k: String, v: String) ->  Option<String>;
         }
     }
@@ -231,10 +231,10 @@ impl Rfc5322Fields {
     }
 
     pub fn format_message_id_for_destination(&self, dest: &str) -> String {
-        if let Some(curr) = self.get("Message-ID") {
-            if let Ok(re) = Regex::new(r"^<(?P<t>.*)\.(?P<id>.*)\.(?P<d>.*)>$") {
-                return re.replace(curr, format!("<$t.$id.{dest}>")).into();
-            }
+        if let Some(curr) = self.get("Message-ID")
+            && let Ok(re) = Regex::new(r"^<(?P<t>.*)\.(?P<id>.*)\.(?P<d>.*)>$")
+        {
+            return re.replace(curr, format!("<$t.$id.{dest}>")).into();
         }
 
         let dt = self

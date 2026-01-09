@@ -6,8 +6,8 @@ use notmuch::Message;
 use serde::Deserialize;
 use serde::Serialize;
 
-use super::headers::parse_header;
 use super::EmlParseError;
+use super::headers::parse_header;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct Mailbox {

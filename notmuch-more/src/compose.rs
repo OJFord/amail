@@ -3,7 +3,7 @@ use std::convert::TryInto;
 use std::fs;
 
 use anyhow::anyhow;
-use base64::{engine::general_purpose::STANDARD as BASE64_STANDARD, Engine as _};
+use base64::{Engine as _, engine::general_purpose::STANDARD as BASE64_STANDARD};
 use chrono::Local;
 use chrono::TimeZone;
 use chrono::Utc;
@@ -13,8 +13,8 @@ use regex::Regex;
 use serde::Deserialize;
 use serde::Serialize;
 
-use crate::parse;
 use crate::NotmuchMoreError;
+use crate::parse;
 use parse::EmlAddr;
 use parse::EmlBody;
 use parse::EmlMeta;
@@ -147,7 +147,7 @@ pub fn template_reply(db: &Database, id: String) -> Result<ReplyTemplate, Notmuc
         .map(|m| EmlAddr::Single(m.clone()))
         .collect::<Vec<EmlAddr>>();
     reply_fields.to(match &reply_to_meta.reply_to {
-        Some(ref original_reply_to) => original_reply_to,
+        Some(original_reply_to) => original_reply_to,
         _ => &from_addrs,
     });
 

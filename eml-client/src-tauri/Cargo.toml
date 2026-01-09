@@ -6,7 +6,7 @@ authors = ["Oliver Ford"]
 license-file = "../../LICENCE"
 repository = "https://github.com/OJFord/amail"
 default-run = "amail"
-edition = "2021"
+edition = "2024"
 build = "src/build.rs"
 
 [build-dependencies]
