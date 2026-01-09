@@ -32,9 +32,9 @@
   },
   "private": true,
   "scripts": {
-    "vite:build:debug-false": "vite build --debug --mode=production",
+    "vite:dev": "vite --clearScreen=false --debug",
     "vite:build:debug-true": "vite build --debug --mode=development",
-    "vite:dev": "vite --clearScreen=false --debug"
+    "vite:build:debug-false": "vite build --debug --mode=production"
   },
   "type": "module"
 }
