@@ -1,6 +1,12 @@
 dev:
     cargo tauri dev
 
+build-debug:
+    cargo tauri build --debug
+
+build-release:
+    cargo tauri build
+
 lint:
     yarn prettier --write .
     yarn eslint --fix .

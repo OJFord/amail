@@ -1,7 +1,7 @@
 {
   "bundle": {
     "active": true,
-    "targets": "all",
+    "targets": [],
     "windows": {
       "certificateThumbprint": null,
       "digestAlgorithm": "sha256",
@@ -34,8 +34,8 @@
     }
   },
   "build": {
-    "beforeBuildCommand": "rm -r ../dist; yarn --cwd=..; yarn --cwd=.. vite:build:debug-${TAURI_ENV_DEBUG:-false}",
-    "beforeDevCommand": "yarn --cwd=..; yarn --cwd=.. vite:dev --port=42411",
+    "beforeBuildCommand": "rm -r dist; yarn; yarn run vite:build:debug-${TAURI_ENV_DEBUG}",
+    "beforeDevCommand": "yarn; yarn run vite:dev --port=42411",
     "devUrl": "http://localhost:42411",
     "frontendDist": "../dist"
   },
