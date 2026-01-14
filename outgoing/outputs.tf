@@ -1,6 +1,6 @@
 output "smtp" {
   value = {
-    host = "email-smtp.${data.aws_region.current.name}.amazonaws.com"
+    host = "email-smtp.${data.aws_region.current.region}.amazonaws.com"
     ports = [
       25,
       465,

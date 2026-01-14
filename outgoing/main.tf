@@ -45,7 +45,7 @@ resource "cloudflare_record" "spf" {
   zone_id = each.value.id
   type    = "TXT"
   name    = local.subdomain
-  value   = "v=spf1 include:amazonses.com -all"
+  content = "v=spf1 include:amazonses.com -all"
 }
 
 resource "cloudflare_record" "mx" {
@@ -55,5 +55,5 @@ resource "cloudflare_record" "mx" {
   type     = "MX"
   name     = local.subdomain
   priority = 10
-  value    = "feedback-smtp.${data.aws_region.current.name}.amazonses.com"
+  content  = "feedback-smtp.${data.aws_region.current.region}.amazonses.com"
 }

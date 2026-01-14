@@ -6,11 +6,11 @@ terraform {
     }
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 5.0.0"
+      version = ">= 6.0.0"
     }
     cloudflare = {
       source  = "cloudflare/cloudflare"
-      version = ">= 4.26.0, < 5.0.0"
+      version = ">= 4.39.0, < 5.0.0"
     }
     null = {
       source  = "hashicorp/null"

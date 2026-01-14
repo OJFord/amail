@@ -31,7 +31,7 @@ resource "cloudflare_record" "email_domain_verification" {
   zone_id = local.email_domain_zones[each.key].id
   type    = "TXT"
   name    = "_amazonses"
-  value   = each.value.verification_token
+  content = each.value.verification_token
 }
 
 resource "aws_ses_domain_identity_verification" "email_domain" {
@@ -62,7 +62,7 @@ resource "cloudflare_record" "dkim" {
   zone_id = each.value.id
   type    = "CNAME"
   name    = "${each.value.token}._domainkey"
-  value   = "${each.value.token}.dkim.amazonses.com"
+  content = "${each.value.token}.dkim.amazonses.com"
 }
 
 resource "cloudflare_record" "spf" {
@@ -77,7 +77,7 @@ resource "cloudflare_record" "spf" {
   zone_id = each.value.zone_id
   type    = "TXT"
   name    = each.value.name
-  value   = "v=spf1 -all"
+  content = "v=spf1 -all"
 }
 
 # DMARC here to ensure fail if outgoing module disabled.
@@ -87,7 +87,7 @@ resource "cloudflare_record" "dmarc" {
   zone_id = each.value.id
   type    = "TXT"
   name    = "_dmarc"
-  value = trimspace(join("; ", [
+  content = trimspace(join("; ", [
     "v=DMARC1",
     "p=reject",
     "sp=reject",
@@ -105,7 +105,7 @@ resource "cloudflare_record" "tlsrpt" {
   zone_id = each.value.id
   type    = "TXT"
   name    = "_smtp._tls"
-  value = trimspace(join("; ", [
+  content = trimspace(join("; ", [
     "v=TLSRPTv1",
     "rua=${join(",", [for addr in var.outgoing.monitoring.tls : "mailto:${addr}"])}",
     "" # trailing ;
@@ -120,7 +120,7 @@ resource "cloudflare_record" "mx" {
   zone_id  = each.value.id
   type     = "MX"
   name     = "@"
-  value    = "inbound-smtp.${data.aws_region.current.name}.amazonaws.com"
+  content  = "inbound-smtp.${data.aws_region.current.region}.amazonaws.com"
   priority = 10
 }
 
