@@ -24,6 +24,11 @@ jobs:
       - name: Set up pre-commit
         run: pre-commit install --install-hooks
 
+      - name: Set up terraform
+        uses: OJFord/tenv-github-action@main
+        with:
+          tool_name: terraform
+
       - name: Install dependencies
         run: |
           wget -qO - 'https://proget.makedeb.org/debian-feeds/prebuilt-mpr.pub' | gpg --dearmor | sudo tee /usr/share/keyrings/prebuilt-mpr-archive-keyring.gpg 1> /dev/null
