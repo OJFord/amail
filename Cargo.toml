@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "eml-client/src-tauri",
+    "eml-client/xtask-frontend",
     "lambda-smtp-relay",
     "notmuch-more",
 ]

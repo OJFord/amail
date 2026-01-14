@@ -1,12 +1,13 @@
 dev:
-    cargo tauri dev
+    TAURI=1 cargo tauri dev
 
 build-debug:
-    cargo tauri build --debug
+    TAURI=1 cargo tauri build --debug
 
 build-release:
-    cargo tauri build
+    TAURI=1 cargo tauri build
 
 lint:
+    yarn
     yarn prettier --write .
     yarn eslint --fix .

@@ -71,6 +71,7 @@ dependencies = [
  "tauri-plugin-shell",
  "thiserror 1.0.69",
  "whoami",
+ "xtask-frontend",
 ]
 
 [[package]]
@@ -6212,6 +6213,10 @@ name = "xml-rs"
 version = "0.8.28"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3ae8337f8a065cfc972643663ea4279e04e7256de865aa66fe25cec5fb912d3f"
+
+[[package]]
+name = "xtask-frontend"
+version = "0.0.0"
 
 [[package]]
 name = "zerocopy"
