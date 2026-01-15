@@ -1,2 +1,4 @@
 /dist
 /src-tauri/gen
+node_modules/
+package-lock.json
