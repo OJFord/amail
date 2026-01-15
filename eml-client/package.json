@@ -16,7 +16,7 @@
     "@tauri-apps/plugin-shell": "^2.3.4",
     "bootstrap-scss": "5.3.*",
     "bootswatch": "^5.3.8",
-    "eslint": "^8.57.0",
+    "eslint": "^9.39.2",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-svelte": "^2.46.1",
     "ical.js": "^2.2.1",

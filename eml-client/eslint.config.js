@@ -1,10 +1,11 @@
+import js from "@eslint/js"
 import importPlugin from "eslint-plugin-import"
 import modulesNewlines from "@spence1115/eslint-plugin-modules-newlines"
 import svelteParser from "svelte-eslint-parser"
 import svelte from "eslint-plugin-svelte"
 
 export default [
-  "eslint:recommended",
+  js.configs.recommended,
 
   {
     ignores: [
