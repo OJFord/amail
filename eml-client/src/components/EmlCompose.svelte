@@ -39,11 +39,31 @@
   const removeAttachment = (attachment) => (attachments = attachments.filter((a) => a.path != attachment.path))
 
   const addAttachment = () => {
-    dialog.open()
+    dialog
+      .open({
+        multiple: true,
+        directory: false,
+      })
       .then((f) => {
-        attachments[attachments.length] = {
-          name: f.name,
-          path: f.path,
+        let fs
+        if (f === null) {
+          // cancelled
+          return
+        } else if (!Array.isArray(f)) {
+          // single selection
+          fs = [
+            f,
+          ]
+        } else {
+          // multiple selection
+          fs = f
+        }
+        for (f of fs) {
+          attachments[attachments.length] = {
+            name: f.split("/")
+              .reverse()[0],
+            path: f,
+          }
         }
       })
   }
