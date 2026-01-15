@@ -228,6 +228,13 @@
   resolved "https://registry.npmjs.org/@rtsao/scc/-/scc-1.1.0.tgz"
   integrity sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==
 
+"@spence1115/eslint-plugin-modules-newlines@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.npmjs.org/@spence1115/eslint-plugin-modules-newlines/-/eslint-plugin-modules-newlines-1.0.1.tgz"
+  integrity sha512-QED6SSgSS/yDfPWVE2VyK/KBCuPohjb0HqVY9Ln3iNcZteW06ttyiRBN4AjVxYen9grnlsVQuBht549p0mXEpw==
+  dependencies:
+    requireindex "~1.1.0"
+
 "@sveltejs/vite-plugin-svelte-inspector@^2.1.0":
   version "2.1.0"
   resolved "https://registry.npmjs.org/@sveltejs/vite-plugin-svelte-inspector/-/vite-plugin-svelte-inspector-2.1.0.tgz"
@@ -1766,6 +1773,11 @@ regexp.prototype.flags@^1.5.4:
     get-proto "^1.0.1"
     gopd "^1.2.0"
     set-function-name "^2.0.2"
+
+requireindex@~1.1.0:
+  version "1.1.0"
+  resolved "https://registry.npmjs.org/requireindex/-/requireindex-1.1.0.tgz"
+  integrity sha512-LBnkqsDE7BZKvqylbmn7lTIVdpx4K/QCduRATpO5R+wtPmky/a8pN1bO2D6wXppn1497AJF9mNjqAXr6bdl9jg==
 
 resolve-from@^4.0.0:
   version "4.0.0"
