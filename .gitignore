@@ -4,3 +4,5 @@ target/
 .terraform.lock.hcl
 
 /lambda-smtp-relay/Cargo.lock
+terraform_*.zip
+LICENSE.txt

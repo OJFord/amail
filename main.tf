@@ -1,8 +1,8 @@
 locals {
   email_domain_zones = {
-    for z in data.cloudflare_zones.email_domain : z.filter[0].name => {
-      zone = z.zones[0].name
-      id   = z.zones[0].id
+    for z in data.cloudflare_zones.email_domain : z.result[0].name => {
+      zone = z.result[0].name
+      id   = z.result[0].id
     }
   }
 
@@ -20,18 +20,21 @@ resource "aws_ses_domain_identity" "email_domain" {
 data "cloudflare_zones" "email_domain" {
   for_each = aws_ses_domain_identity.email_domain
 
-  filter {
-    name = each.key
-  }
+  name = each.key
 }
 
-resource "cloudflare_record" "email_domain_verification" {
+moved {
+  from = cloudflare_record.email_domain_verification
+  to   = cloudflare_dns_record.email_domain_verification
+}
+resource "cloudflare_dns_record" "email_domain_verification" {
   for_each = aws_ses_domain_identity.email_domain
 
   zone_id = local.email_domain_zones[each.key].id
   type    = "TXT"
   name    = "_amazonses"
   content = each.value.verification_token
+  ttl     = 1
 }
 
 resource "aws_ses_domain_identity_verification" "email_domain" {
@@ -39,7 +42,7 @@ resource "aws_ses_domain_identity_verification" "email_domain" {
 
   domain = each.value.domain
   depends_on = [
-    cloudflare_record.email_domain_verification,
+    cloudflare_dns_record.email_domain_verification,
   ]
 }
 
@@ -50,7 +53,11 @@ resource "aws_ses_domain_dkim" "dkim" {
 }
 
 # DKIM here (i.e. even if outgoing module disabled) since it's now used for verification.
-resource "cloudflare_record" "dkim" {
+moved {
+  from = cloudflare_record.dkim
+  to   = cloudflare_dns_record.dkim
+}
+resource "cloudflare_dns_record" "dkim" {
   for_each = {
     for domain_i in setproduct(var.domains, range(local.num_ses_dkim_tokens))
     : "${local.email_domain_zones[domain_i[0]].zone}-dkim${domain_i[1]}" => merge(
@@ -63,9 +70,14 @@ resource "cloudflare_record" "dkim" {
   type    = "CNAME"
   name    = "${each.value.token}._domainkey"
   content = "${each.value.token}.dkim.amazonses.com"
+  ttl     = 1
 }
 
-resource "cloudflare_record" "spf" {
+moved {
+  from = cloudflare_record.spf
+  to   = cloudflare_dns_record.spf
+}
+resource "cloudflare_dns_record" "spf" {
   for_each = {
     for pair in setproduct(values(local.email_domain_zones), ["@", "*"])
     : "${pair[0].zone}-${pair[1]}" => {
@@ -78,10 +90,15 @@ resource "cloudflare_record" "spf" {
   type    = "TXT"
   name    = each.value.name
   content = "v=spf1 -all"
+  ttl     = 1
 }
 
 # DMARC here to ensure fail if outgoing module disabled.
-resource "cloudflare_record" "dmarc" {
+moved {
+  from = cloudflare_record.dmarc
+  to   = cloudflare_dns_record.dmarc
+}
+resource "cloudflare_dns_record" "dmarc" {
   for_each = local.email_domain_zones
 
   zone_id = each.value.id
@@ -97,9 +114,14 @@ resource "cloudflare_record" "dmarc" {
     "ruf=${join(",", [for addr in var.outgoing.monitoring.dmarc.forensics : "mailto:${addr}"])}",
     "" # trailing ;
   ]))
+  ttl = 1
 }
 
-resource "cloudflare_record" "tlsrpt" {
+moved {
+  from = cloudflare_record.tlsrpt
+  to   = cloudflare_dns_record.tlsrpt
+}
+resource "cloudflare_dns_record" "tlsrpt" {
   for_each = local.email_domain_zones
 
   zone_id = each.value.id
@@ -110,11 +132,16 @@ resource "cloudflare_record" "tlsrpt" {
     "rua=${join(",", [for addr in var.outgoing.monitoring.tls : "mailto:${addr}"])}",
     "" # trailing ;
   ]))
+  ttl = 1
 }
 
 data "aws_region" "current" {}
 
-resource "cloudflare_record" "mx" {
+moved {
+  from = cloudflare_record.mx
+  to   = cloudflare_dns_record.mx
+}
+resource "cloudflare_dns_record" "mx" {
   for_each = local.email_domain_zones
 
   zone_id  = each.value.id
@@ -122,6 +149,7 @@ resource "cloudflare_record" "mx" {
   name     = "@"
   content  = "inbound-smtp.${data.aws_region.current.region}.amazonaws.com"
   priority = 10
+  ttl      = 1
 }
 
 resource "random_id" "eml_store" {

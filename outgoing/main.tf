@@ -39,16 +39,25 @@ resource "aws_ses_domain_mail_from" "outgoing" {
   mail_from_domain = "${local.subdomain}.${each.value.zone}"
 }
 
-resource "cloudflare_record" "spf" {
+moved {
+  from = cloudflare_record.spf
+  to   = cloudflare_dns_record.spf
+}
+resource "cloudflare_dns_record" "spf" {
   for_each = { for z in var.email_domain_zones : z.zone => z }
 
   zone_id = each.value.id
   type    = "TXT"
   name    = local.subdomain
   content = "v=spf1 include:amazonses.com -all"
+  ttl     = 1
 }
 
-resource "cloudflare_record" "mx" {
+moved {
+  from = cloudflare_record.mx
+  to   = cloudflare_dns_record.mx
+}
+resource "cloudflare_dns_record" "mx" {
   for_each = { for z in var.email_domain_zones : z.zone => z }
 
   zone_id  = each.value.id
@@ -56,4 +65,5 @@ resource "cloudflare_record" "mx" {
   name     = local.subdomain
   priority = 10
   content  = "feedback-smtp.${data.aws_region.current.region}.amazonses.com"
+  ttl      = 1
 }
