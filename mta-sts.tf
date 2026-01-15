@@ -2,7 +2,7 @@ locals {
   mta_sts_content = join("\n", [
     "version: STSv1",
     "mode: enforce",
-    "mx: ${cloudflare_dns_record.mx[keys(local.email_domain_zones)[0]].value}",
+    "mx: ${cloudflare_dns_record.mx[keys(local.email_domain_zones)[0]].content}",
     "max_age: 604800",
   ])
 }
