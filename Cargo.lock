@@ -69,7 +69,7 @@ dependencies = [
  "tauri-plugin-dialog",
  "tauri-plugin-fs",
  "tauri-plugin-shell",
- "thiserror 1.0.69",
+ "thiserror 2.0.17",
  "whoami",
  "xtask-frontend",
 ]
@@ -2724,7 +2724,7 @@ dependencies = [
  "serde",
  "tempfile",
  "textwrap",
- "thiserror 1.0.69",
+ "thiserror 2.0.17",
 ]
 
 [[package]]
