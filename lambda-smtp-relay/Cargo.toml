@@ -27,4 +27,4 @@ serde = "^1.0"
 serde_derive = "^1.0"
 stderrlog = "^0.6"
 tokio = {version = "^1.42", features=["macros"]}
-webpki-roots = "^0.25"
+webpki-roots = "^1.0"
