@@ -135,7 +135,10 @@ pub fn template_reply(db: &Database, id: String) -> Result<ReplyTemplate, Notmuc
             .iter()
             .map(Mailbox::try_from)
             .collect::<Result<_, _>>()
-            .map_err(|e| anyhow!("Failed to parse: {e}"))?;
+            .unwrap_or_else(|e| {
+                eprintln!("[WARN] Failed to parse: {e}");
+                vec![]
+            });
 
         reply_fields.from_addr(&from);
     }
