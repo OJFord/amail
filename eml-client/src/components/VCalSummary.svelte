@@ -1,4 +1,4 @@
-<script context="module">
+<script module>
   import ICAL from "ical.js"
 
   export const parseVCalEvents = (content) => {
@@ -10,18 +10,30 @@
 </script>
 
 <script>
-  export let vcal
+  /**
+   * @typedef {Object} Props
+   * @property {any} vcal
+   * @property {boolean} [full]
+   * @property {any} [primaryEventSummary]
+   */
 
-  export let full = false
-  export let primaryEventSummary = null
+  /** @type {Props} */
+  let {
+    full = false,
+    primaryEventSummary = null,
+    vcal,
+    //
+  } = $props()
 
-  $: sortedEvents = parseVCalEvents(vcal)
-    .sort((a, b) => a.summary == primaryEventSummary
-      ? -1
-      : b.summary == primaryEventSummary
-        ? 1
-        : 0,
-    )
+  let sortedEvents = $derived(
+    parseVCalEvents(vcal)
+      .sort((a, b) => a.summary == primaryEventSummary
+        ? -1
+        : b.summary == primaryEventSummary
+          ? 1
+          : 0,
+      ),
+  )
 
   const formatDateRange = (start, end) => {
     start = start.toJSDate()

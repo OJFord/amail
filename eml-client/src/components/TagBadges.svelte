@@ -3,7 +3,9 @@
     Badge,
   } from "@sveltestrap/sveltestrap"
 
-  export let tags
+  let {
+    tags,
+  } = $props()
 
   const rgbForTag = (tag) => {
     const n = tag.split("")

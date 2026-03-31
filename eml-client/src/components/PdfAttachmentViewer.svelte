@@ -14,17 +14,21 @@
     set_pdfjs_context,
   } from "svelte-pdfjs/vite"
 
-  export let b64Data
+  let {
+    b64Data,
+  } = $props()
 
   set_pdfjs_context()
 
-  $: docUrl = `data:application/pdf;charset=US-ASCII;base64,${b64Data}`
-  let doc
-  let pageNumber = 1
+  let docUrl = $derived(
+    `data:application/pdf;charset=US-ASCII;base64,${b64Data}`,
+  )
+  let doc = $state()
+  let pageNumber = $state(1)
   const scale = 2
 
-  $: atBeginning = pageNumber == 1
-  $: atEnd = pageNumber == doc?.numPages
+  let atBeginning = $derived(pageNumber == 1)
+  let atEnd = $derived(pageNumber == doc?.numPages)
 
   const handleKey = (ev) => {
     switch (ev.key) {
@@ -42,7 +46,7 @@
   }
 </script>
 
-<svelte:window on:keydown={handleKey} />
+<svelte:window onkeydown={handleKey} />
 
 <Document
   file={docUrl}
@@ -55,7 +59,7 @@
     {#if !atBeginning}
       <button
         class="page-turn-btn page-turn-left"
-        on:click={() => handleKey({
+        onclick={() => handleKey({
           key: "ArrowLeft",
         })}
       >
@@ -66,7 +70,7 @@
     {#if !atEnd}
       <button
         class="page-turn-btn page-turn-right"
-        on:click={() => handleKey({
+        onclick={() => handleKey({
           key: "ArrowRight",
         })}
       >

@@ -1,4 +1,4 @@
-<script context="module">
+<script module>
   export const formatMailAddr = (m) => m.address
     ? m.name
       ? `${m.name} <${m.address}>`
@@ -10,7 +10,8 @@
     ? addrList
       .split(",")
       .map(
-        (addr) => addr.match(/((?<name>.+)(?: <))?(?<address>[^<]+@[^>]+)>?/).groups,
+        (addr) => addr.match(/((?<name>.+)(?: <))?(?<address>[^<]+@[^>]+)>?/)
+          .groups,
       )
       .map(({
         name = "", address,
@@ -27,17 +28,27 @@
     Input,
   } from "@sveltestrap/sveltestrap"
 
-  export let emlMeta
-  export let editable = false
+  /**
+   * @typedef {Object} Props
+   * @property {any} emlMeta
+   * @property {boolean} [editable]
+   */
 
-  $: from = emlMeta.from.map(formatMailAddr)
-    .join(", ")
-  $: to = (emlMeta.to ?? []).map(formatMailAddr)
-    .join(", ")
-  $: cc = (emlMeta.cc ?? []).map(formatMailAddr)
-    .join(", ")
-  $: bcc = (emlMeta.bcc ?? []).map(formatMailAddr)
-    .join(", ")
+  /** @type {Props} */
+  let {
+    editable = false,
+    emlMeta = $bindable(),
+    //
+  } = $props()
+
+  let from = $derived(emlMeta.from.map(formatMailAddr)
+    .join(", "))
+  let to = $derived((emlMeta.to ?? []).map(formatMailAddr)
+    .join(", "))
+  let cc = $derived((emlMeta.cc ?? []).map(formatMailAddr)
+    .join(", "))
+  let bcc = $derived((emlMeta.bcc ?? []).map(formatMailAddr)
+    .join(", "))
 </script>
 
 <h4>

@@ -10,12 +10,14 @@
   import * as api from "../api.js"
   import EmlCompose from "./EmlCompose.svelte"
 
-  export let isOpen
+  let {
+    isOpen = $bindable(),
+  } = $props()
 
-  let attachments
-  let body
-  let confirm
-  let emlMeta
+  let attachments = $state()
+  let body = $state()
+  let confirm = $state()
+  let emlMeta = $state()
 
   const init = () => {
     emlMeta = {

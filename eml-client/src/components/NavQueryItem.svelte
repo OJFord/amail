@@ -14,9 +14,12 @@
     NavLink,
   } from "@sveltestrap/sveltestrap"
 
-  export let name
-  export let selected
-  export let unreadCount
+  let {
+    name,
+    selected,
+    unreadCount,
+    //
+  } = $props()
 
   const dispatch = createEventDispatcher()
 </script>

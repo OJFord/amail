@@ -18,23 +18,27 @@
   import * as api from "../api.js"
   import EmlAddresses from "./EmlAddresses.svelte"
 
-  export let attachments
-  export let body
-  export let emlMeta
+  let {
+    attachments = $bindable(),
+    body = $bindable(),
+    emlMeta = $bindable(),
+  } = $props()
 
-  let sysName
+  let sysName = $state()
   api.getName()
     .then((name) => (sysName = name))
 
-  $: if (sysName && emlMeta.from.filter((f) => !f.name)) {
-    emlMeta.from = emlMeta.from.map((from) => from.name
-      ? from
-      : {
-        ...from,
-        name: sysName,
-      },
-    )
-  }
+  $effect(() => {
+    if (sysName && emlMeta.from.some((f) => !f.name)) {
+      emlMeta.from = emlMeta.from.map((from) => from.name
+        ? from
+        : {
+          ...from,
+          name: sysName,
+        },
+      )
+    }
+  })
 
   const removeAttachment = (attachment) => (attachments = attachments.filter((a) => a.path != attachment.path))
 

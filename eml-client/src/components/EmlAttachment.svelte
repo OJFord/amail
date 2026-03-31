@@ -24,7 +24,9 @@
   import PdfAttachmentViewer from "./PdfAttachmentViewer.svelte"
   import EmlBodyPart from "./EmlBodyPart.svelte"
 
-  export let part
+  let {
+    part,
+  } = $props()
 
   const previewable = (mimetype) => [
     "application/pdf",
@@ -44,12 +46,12 @@
     })
     .catch((e) => console.error(`failed to save attachment: ${e}`))
 
-  let previewOpen = false
+  let previewOpen = $state(false)
   const previewToggle = () => (previewOpen = !previewOpen)
 </script>
 
 <svelte:window
-  on:keydown={(ev) => {
+  onkeydown={(ev) => {
     if (ev.key == "Escape") {
       previewOpen = false
     }

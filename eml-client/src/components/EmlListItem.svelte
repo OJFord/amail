@@ -1,8 +1,4 @@
 <script>
-  export let emlMeta
-  export let hideTags = new Set()
-  $: hideTags.add("unread")
-
   import {
     Col,
     Row,
@@ -10,6 +6,16 @@
 
   import RelativeDate from "./RelativeDate.svelte"
   import TagBadges from "./TagBadges.svelte"
+
+  let {
+    emlMeta,
+    hideTags = new Set(),
+    //
+  } = $props()
+
+  $effect(() => {
+    hideTags.add("unread")
+  })
 </script>
 
 <div>
