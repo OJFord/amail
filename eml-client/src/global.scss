@@ -22,12 +22,10 @@ $h6-font-size: 0.4rem;
 $utilities: map-merge(
   $utilities,
   (
-    "viewport-height":
-      map-merge(
+    "viewport-height": map-merge(
         map-get($utilities, "viewport-height"),
         (
-          values:
-            map-merge(
+          values: map-merge(
               map-get(map-get($utilities, "viewport-height"), "values"),
               (
                 25: 25vh,

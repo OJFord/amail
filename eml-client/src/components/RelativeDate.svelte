@@ -1,5 +1,7 @@
 <script>
-  export let date
+  let {
+    date,
+  } = $props()
 
   const hoursDiff = (date) => {
     const now = new Date()
@@ -43,12 +45,18 @@
     return fullDate.format(date)
   }
 
-  $: formattedDate = date ? formatDate(date) : null
-  const msHour = 1000 * 60 * 60
-  setInterval(
-    () => (formattedDate = formatDate(date)),
-    (hoursDiff(date) * msHour) / 1.5 / 60,
-  )
+  let formattedDate = $state(formatDate(date))
+  $effect(() => {
+    const msHour = 1000 * 60 * 60
+    const id = setInterval(
+      () => (formattedDate = formatDate(date)),
+      (hoursDiff(date) * msHour) / 1.5 / 60,
+    )
+
+    return () => {
+      clearInterval(id)
+    }
+  })
 </script>
 
 <span>{formattedDate}</span>

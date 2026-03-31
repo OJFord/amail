@@ -3,8 +3,18 @@
     Input,
   } from "@sveltestrap/sveltestrap"
 
-  export let quietQueries = []
-  export let querySelected = null
+  /**
+   * @typedef {Object} Props
+   * @property {any} [quietQueries]
+   * @property {any} [querySelected]
+   */
+
+  /** @type {Props} */
+  let {
+    querySelected = $bindable(null),
+    quietQueries = [],
+    //
+  } = $props()
 </script>
 
 <div class="search">

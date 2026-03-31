@@ -21,12 +21,14 @@
   import TagBadges from "./TagBadges.svelte"
   import VCalSummary from "./VCalSummary.svelte"
 
-  export let emlMeta
+  let {
+    emlMeta,
+  } = $props()
 
   const dispatch = createEventDispatcher()
 
-  let body = null
-  let selectedAlt = null
+  let body = $state(null)
+  let selectedAlt = $state(null)
 
   const refreshDefaultSelection = (eml) => {
     body = eml
@@ -34,40 +36,47 @@
     selectedAlt = !body.is_cleaned_html && altHtml ? altHtml : body
   }
 
-  $: api.viewEml(emlMeta.id.valueOf())
-    .then(refreshDefaultSelection)
+  $effect(() => {
+    api.viewEml(emlMeta.id.valueOf())
+      .then(refreshDefaultSelection)
+  })
 
-  let alts
-  $: if (body) {
-    alts = [
-      body,
-    ].concat(body.alternatives)
-  }
+  let alts = $derived.by(() => {
+    if (body) {
+      return [
+        body,
+      ].concat(body.alternatives)
+    }
+  })
 
-  let attachments = []
-  $: if (selectedAlt) {
-    attachments = [
-      selectedAlt,
-    ]
-      .concat(selectedAlt.extra)
-      .filter((e) => e.disposition == "Attachment")
-  }
+  let attachments = $derived.by(() => {
+    if (selectedAlt) {
+      return [
+        selectedAlt,
+      ]
+        .concat(selectedAlt.extra)
+        .filter((e) => e.disposition == "Attachment")
+    }
+  })
 
-  let inlines = []
-  $: if (selectedAlt) {
-    inlines = [
-      selectedAlt,
-    ]
-      .concat(selectedAlt.extra)
-      .filter((e) => e.disposition == "Inline")
-  }
+  let inlines = $derived.by(() => {
+    if (selectedAlt) {
+      return [
+        selectedAlt,
+      ]
+        .concat(selectedAlt.extra)
+        .filter((e) => e.disposition == "Inline")
+    }
+  })
 
-  let replyModalOpen = false
+  let replyModalOpen = $state(false)
 
-  let content
-  $: if (content && emlMeta.id) {
-    content.scrollTop = 0
-  }
+  let content = $state()
+  $effect(() => {
+    if (content && emlMeta.id) {
+      content.scrollTop = 0
+    }
+  })
 </script>
 
 {#if body == null}

@@ -19,7 +19,7 @@
 
   const dispatch = createEventDispatcher()
 
-  let tags = []
+  let tags = $state([])
   api.tagList()
     .then((ts) => (tags = ts))
 </script>

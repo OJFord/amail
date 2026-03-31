@@ -1,7 +1,9 @@
 <script>
   import VCalSummary from "./VCalSummary.svelte"
 
-  export let part
+  let {
+    part,
+  } = $props()
 
   const friendlySize = (s) => {
     let si
@@ -33,7 +35,9 @@
     alt={part.filename}
   />
 {:else}
-  {#if part.size}{friendlySize(part.size)} of {/if}
+  {#if part.size}
+    {friendlySize(part.size)} of
+  {/if}
   <em>{part.mimetype}</em> content
 {/if}
 

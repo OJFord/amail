@@ -8,13 +8,28 @@
   import * as api from "../api.js"
   import EmlListItem from "./EmlListItem.svelte"
 
-  export let emlSelected = null
-  export let hideTags = new Set()
-  export let query
+  /**
+   * @typedef {Object} Props
+   * @property {any} [emlSelected]
+   * @property {any} [hideTags]
+   * @property {any} query
+   */
 
-  let emls = null
-  $: api.listEml(query)
-    .then((emlList) => (emls = emlList))
+  /** @type {Props} */
+  let {
+    emlSelected = $bindable(null),
+    hideTags = new Set(),
+    query,
+    //
+  } = $props()
+
+  let emls = $state(null)
+  $effect(() => {
+    api.listEml(query)
+      .then((emlList) => {
+        emls = emlList
+      })
+  })
 </script>
 
 {#if emls == null}
@@ -41,7 +56,9 @@
             {/if}
             <span>
               Parsing failed
-              {#if emlMeta.Err.within} in {emlMeta.Err.within}{/if}
+              {#if emlMeta.Err.within}
+                in {emlMeta.Err.within}
+              {/if}
               - {emlMeta.Err.reason}
             </span>
           </div>

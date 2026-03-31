@@ -29,15 +29,15 @@
 
   const dispatch = createEventDispatcher()
 
-  let emlSelected = null
-  let specialQueries = []
-  let tagQueries = []
-  let querySelected = "tag:inbox and not tag:spam"
+  let emlSelected = $state(null)
+  let specialQueries = $state([])
+  let tagQueries = $state([])
+  let querySelected = $state("tag:inbox and not tag:spam")
 
-  let newEmlModalOpen = false
+  let newEmlModalOpen = $state(false)
 
-  let tagModalOpen = false
-  let tagSelected
+  let tagModalOpen = $state(false)
+  let tagSelected = $state()
 
   const markRead = (id) => api.rmTag(`id:${id}`, "unread")
     .then(dispatch)
@@ -94,11 +94,13 @@
 
   refreshTagList()
 
-  $: if (emlSelected != null) {
-    markRead(emlSelected.id)
-      .then(refreshQuery)
-      .then(refreshTagList)
-  }
+  $effect(() => {
+    if (emlSelected != null) {
+      markRead(emlSelected.id)
+        .then(refreshQuery)
+        .then(refreshTagList)
+    }
+  })
 </script>
 
 <Container fluid class="h-100 d-flex flex-column">

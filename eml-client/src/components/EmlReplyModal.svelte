@@ -10,13 +10,16 @@
   import * as api from "../api.js"
   import EmlCompose from "./EmlCompose.svelte"
 
-  export let emlMeta
-  export let isOpen
+  let {
+    emlMeta,
+    isOpen = $bindable(),
+    //
+  } = $props()
 
-  let attachments
-  let body
-  let confirm
-  let replyMeta
+  let attachments = $state()
+  let body = $state()
+  let confirm = $state()
+  let replyMeta = $state()
 
   const refreshMeta = async () => {
     attachments = []
@@ -28,11 +31,13 @@
     console.debug(replyMeta)
   }
 
-  $: if (isOpen) {
-    refreshMeta()
-  } else {
-    replyMeta = null
-  }
+  $effect(() => {
+    if (isOpen) {
+      refreshMeta()
+    } else {
+      replyMeta = null
+    }
+  })
   const toggle = () => {
     isOpen = !isOpen
     return Promise.resolve(isOpen)

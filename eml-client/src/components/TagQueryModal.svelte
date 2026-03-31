@@ -14,9 +14,12 @@
 
   import * as api from "../api.js"
 
-  export let isOpen
-  export let tag
-  export let query
+  let {
+    isOpen = $bindable(),
+    query,
+    tag,
+    //
+  } = $props()
 
   const dispatch = createEventDispatcher()
 

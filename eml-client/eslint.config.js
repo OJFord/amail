@@ -1,6 +1,7 @@
 import js from "@eslint/js"
 import importPlugin from "eslint-plugin-import"
 import modulesNewlines from "@spence1115/eslint-plugin-modules-newlines"
+import globals from "globals"
 import svelteParser from "svelte-eslint-parser"
 import svelte from "eslint-plugin-svelte"
 
@@ -17,11 +18,8 @@ export default [
   {
     languageOptions: {
       globals: {
-        Intl: true,
-        console: true,
-        document: true,
+        ...globals.browser,
         process: true,
-        setInterval: true,
       },
     },
 
