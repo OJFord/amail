@@ -4,21 +4,21 @@ $h3-font-size: 1.2rem;
 $h4-font-size: 1rem;
 $h5-font-size: 0.6rem;
 $h6-font-size: 0.4rem;
-@import "./node_modules/bootswatch/dist/flatly/variables";
+@import "bootswatch/dist/flatly/variables";
 
 /*
  * The order of bootstrap-scss imports is significant,
  * changes in 'minor' versions (perhaps they don't intend to follow semver)
  * and is described here: https://getbootstrap.com/docs/5.2/customize/sass/
  */
-@import "./node_modules/bootstrap-scss/_functions";
-@import "./node_modules/bootstrap-scss/_variables";
+@import "bootstrap-scss/_functions";
+@import "bootstrap-scss/_variables";
 
-@import "./node_modules/bootstrap-scss/_maps";
-@import "./node_modules/bootstrap-scss/_mixins";
-@import "./node_modules/bootstrap-scss/_root";
+@import "bootstrap-scss/_maps";
+@import "bootstrap-scss/_mixins";
+@import "bootstrap-scss/_root";
 
-@import "./node_modules/bootstrap-scss/_utilities";
+@import "bootstrap-scss/_utilities";
 $utilities: map-merge(
   $utilities,
   (
@@ -38,8 +38,8 @@ $utilities: map-merge(
   )
 );
 
-@import "./node_modules/bootstrap-scss/bootstrap";
-@import "./node_modules/bootswatch/dist/flatly/bootswatch";
+@import "bootstrap-scss/bootstrap";
+@import "bootswatch/dist/flatly/bootswatch";
 
 html,
 body {

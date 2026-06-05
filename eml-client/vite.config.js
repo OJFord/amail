@@ -28,4 +28,10 @@ export default defineConfig({
       additionalData: "@import global",
     },
   },
+
+  resolve: {
+    conditions: [
+      "browser",
+    ],
+  },
 })
