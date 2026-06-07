@@ -13,7 +13,7 @@
     //
   } = $props()
 
-  const recipientLabel = (mailbox) => mailbox.name || mailbox.address
+  const mailboxLabel = (mailbox) => mailbox.name || mailbox.address
 
   const sentRecipientsSummary = (emlMeta) => {
     const recipients = [
@@ -24,7 +24,7 @@
       .flatMap((addr) => addr.members || [
         addr,
       ])
-      .map(recipientLabel)
+      .map(mailboxLabel)
 
     return recipients.length > 1
       ? `${recipients[0]} & ${recipients.length - 1} others`
@@ -60,7 +60,7 @@
     </Col>
 
     <Col>
-      {#if emlMeta.tags.includes("sent") && sentRecipientsSummary(emlMeta)}
+      {#if emlMeta.tags.includes("sent")}
         {sentRecipientsSummary(emlMeta)}
       {:else}
         {#if emlMeta.sender}
@@ -68,7 +68,7 @@
             .includes(emlMeta.sender.name)}
             {emlMeta.sender.address}
           {:else}
-            {emlMeta.sender.name}
+            {mailboxLabel(emlMeta.sender)}
           {/if}
           <small><i>on behalf of</i></small>
         {/if}
