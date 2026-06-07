@@ -46,8 +46,8 @@ jobs:
             wget \
             xdotool
 
-      - name: Install cargo-tauri
-        run: cargo install cargo-tauri --locked --version '^2'
+      - name: Install tauri CLI
+        run: cargo install tauri-cli --locked --version '^2.0.0'
 
       - name: Install frontend dependencies
         working-directory: eml-client
