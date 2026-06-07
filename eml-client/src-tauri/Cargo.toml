@@ -22,7 +22,7 @@ tauri-plugin-dialog = "^2.6.0"
 tauri-plugin-fs = "^2.4.5"
 tauri-plugin-shell = "^2.3.4"
 thiserror = "^2.0.17"
-whoami = "^1.5.1"
+whoami = "^2.1.0"
 
 [features]
 default = [ "custom-protocol" ]
