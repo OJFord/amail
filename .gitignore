@@ -4,3 +4,4 @@ target/
 .terraform.lock.hcl
 
 /lambda-smtp-relay/Cargo.lock
+node_modules/

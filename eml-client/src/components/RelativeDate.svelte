@@ -47,6 +47,8 @@
 
   let formattedDate = $state(formatDate(date))
   $effect(() => {
+    formattedDate = formatDate(date)
+
     const msHour = 1000 * 60 * 60
     const id = setInterval(
       () => (formattedDate = formatDate(date)),
