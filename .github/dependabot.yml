@@ -65,19 +65,6 @@ updates:
           - patch
 
   - package-ecosystem: cargo
-    directory: /lambda-smtp-relay
-    schedule:
-      interval: weekly
-    labels:
-      - component/client
-      - type/dependencies
-    groups:
-      cargo-minor:
-        update-types:
-          - minor
-          - patch
-
-  - package-ecosystem: cargo
     directory: /notmuch-more
     schedule:
       interval: weekly
