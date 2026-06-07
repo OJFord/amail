@@ -8,7 +8,7 @@ updates:
     labels:
       - type/dependencies
     groups:
-      minor:
+      cargo-minor:
         update-types:
           - minor
           - patch
@@ -20,7 +20,7 @@ updates:
     labels:
       - type/dependencies
     groups:
-      minor:
+      gha-minor:
         update-types:
           - minor
           - patch
@@ -33,7 +33,7 @@ updates:
       - component/core
       - type/dependencies
     groups:
-      minor:
+      tf-minor:
         update-types:
           - minor
           - patch
@@ -46,7 +46,7 @@ updates:
       - component/client
       - type/dependencies
     groups:
-      minor:
+      npm-minor:
         update-types:
           - minor
           - patch
@@ -59,7 +59,7 @@ updates:
       - component/lambda-smtp-relay
       - type/dependencies
     groups:
-      minor:
+      tf-minor:
         update-types:
           - minor
           - patch
@@ -72,7 +72,7 @@ updates:
       - component/outgoing
       - type/dependencies
     groups:
-      minor:
+      tf-minor:
         update-types:
           - minor
           - patch
