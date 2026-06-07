@@ -1,0 +1,63 @@
+name: build
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  tauri-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: yarn
+          cache-dependency-path: eml-client/yarn.lock
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            curl \
+            file \
+            libayatana-appindicator3-dev \
+            libnotmuch-dev \
+            librsvg2-dev \
+            libssl-dev \
+            libwebkit2gtk-4.1-dev \
+            libxdo-dev \
+            patchelf \
+            wget
+
+      - name: Install frontend dependencies
+        working-directory: eml-client
+        run: yarn install --frozen-lockfile
+
+      - name: Build Tauri app
+        working-directory: eml-client
+        env:
+          TAURI: "1"
+          TAURI_ENV_DEBUG: "false"
+        run: yarn tauri build
+
+      - name: Upload built app
+        uses: actions/upload-artifact@v4
+        with:
+          name: amail-tauri-linux-${{ github.sha }}
+          path: |
+            target/release/amail
+            target/release/bundle/**
+          if-no-files-found: error
