@@ -45,7 +45,9 @@
       {#if emlMeta.tags.includes("sent") && emlMeta.to}
         {emlMeta.to
           .map((addr) => {
-            return (addr.members || [addr])
+            return (addr.members || [
+              addr,
+            ])
               .map((m) => m.name || m.address)
               .join(", ")
           })
