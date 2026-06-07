@@ -101,7 +101,14 @@
         .format(new Date(emlMeta.timestamp * 1000))}
     </span>
 
-    <TagBadges tags={emlMeta.tags} />
+    <TagBadges
+      tags={emlMeta.tags}
+      query={`id:${emlMeta.id}`}
+      on:tagsUpdated={(event) => {
+        emlMeta.tags = emlMeta.tags.filter((tag) => tag != event.detail.tag)
+        dispatch("tagsUpdated", event.detail)
+      }}
+    />
   </Row>
 
   <Row class="border-bottom p-1">
