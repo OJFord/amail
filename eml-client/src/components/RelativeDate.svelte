@@ -45,7 +45,7 @@
     return fullDate.format(date)
   }
 
-  let formattedDate = $state(formatDate(date))
+  let formattedDate = $derived(formatDate(date))
   $effect(() => {
     const msHour = 1000 * 60 * 60
     const id = setInterval(
