@@ -21,7 +21,9 @@
       ...(emlMeta.cc ?? []),
       ...(emlMeta.bcc ?? []),
     ]
-      .flatMap((addr) => addr.members || [addr])
+      .flatMap((addr) => addr.members || [
+        addr,
+      ])
       .map(recipientLabel)
 
     return recipients.length > 1
