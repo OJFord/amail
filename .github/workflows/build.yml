@@ -33,31 +33,34 @@ jobs:
             build-essential \
             curl \
             file \
+            just \
             libayatana-appindicator3-dev \
+            libglib2.0-dev \
+            libgtk-3-dev \
             libnotmuch-dev \
             librsvg2-dev \
             libssl-dev \
             libwebkit2gtk-4.1-dev \
-            libxdo-dev \
+            pkg-config \
             patchelf \
-            wget
+            wget \
+            xdotool
+
+      - name: Install cargo-tauri
+        run: cargo install cargo-tauri --locked --version '^2'
 
       - name: Install frontend dependencies
         working-directory: eml-client
         run: yarn install --frozen-lockfile
 
       - name: Build Tauri app
-        working-directory: eml-client
         env:
-          TAURI: "1"
-          TAURI_ENV_DEBUG: "false"
-        run: yarn tauri build
+          JUST_UNSTABLE: "1"
+        run: just build-debug
 
       - name: Upload built app
         uses: actions/upload-artifact@v4
         with:
-          name: amail-tauri-linux-${{ github.sha }}
-          path: |
-            target/release/amail
-            target/release/bundle/**
+          name: amail-tauri-linux-debug-${{ github.sha }}
+          path: target/debug/amail
           if-no-files-found: error
