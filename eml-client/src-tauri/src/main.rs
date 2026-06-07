@@ -66,7 +66,7 @@ fn view_eml(state: tauri::State<State>, id: String) -> Result<EmlBody, AmailErro
 #[tauri::command]
 fn get_name() -> String {
     println!("Getting user's name");
-    whoami::realname()
+    whoami::realname().expect("failed to find user's name")
 }
 
 #[tauri::command]
