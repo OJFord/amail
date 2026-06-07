@@ -38,6 +38,19 @@ updates:
           - minor
           - patch
 
+  - package-ecosystem: cargo
+    directory: /eml-client/src-tauri
+    schedule:
+      interval: weekly
+    labels:
+      - component/client
+      - type/dependencies
+    groups:
+      cargo-minor:
+        update-types:
+          - minor
+          - patch
+
   - package-ecosystem: npm
     directory: /eml-client/
     schedule:
@@ -47,6 +60,32 @@ updates:
       - type/dependencies
     groups:
       npm-minor:
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: cargo
+    directory: /lambda-smtp-relay
+    schedule:
+      interval: weekly
+    labels:
+      - component/client
+      - type/dependencies
+    groups:
+      cargo-minor:
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: cargo
+    directory: /notmuch-more
+    schedule:
+      interval: weekly
+    labels:
+      - component/client
+      - type/dependencies
+    groups:
+      cargo-minor:
         update-types:
           - minor
           - patch
