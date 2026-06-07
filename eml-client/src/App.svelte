@@ -184,6 +184,10 @@
           hideTags={new Set([
             (tagQueries.find((t) => t.query == querySelected) ?? {}).name,
           ])}
+          on:tagsUpdated={() => {
+            refreshTagList()
+            refreshQuery()
+          }}
         />
       </Row>
     </Col>

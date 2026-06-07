@@ -1,5 +1,8 @@
 <script>
   import {
+    createEventDispatcher,
+  } from "svelte"
+  import {
     Col,
     Row,
   } from "@sveltestrap/sveltestrap"
@@ -12,6 +15,8 @@
     hideTags = new Set(),
     //
   } = $props()
+
+  const dispatch = createEventDispatcher()
 
   $effect(() => {
     hideTags.add("unread")
@@ -31,7 +36,14 @@
     </Col>
 
     <Col xs="3">
-      <TagBadges tags={emlMeta.tags.filter((t) => !hideTags.has(t))} />
+      <TagBadges
+        tags={emlMeta.tags.filter((t) => !hideTags.has(t))}
+        query={`id:${emlMeta.id}`}
+        on:tagsUpdated={(event) => {
+          emlMeta.tags = emlMeta.tags.filter((tag) => tag != event.detail.tag)
+          dispatch("tagsUpdated", event.detail)
+        }}
+      />
     </Col>
   </Row>
 

@@ -1,5 +1,8 @@
 <script>
   import {
+    createEventDispatcher,
+  } from "svelte"
+  import {
     ListGroup,
     ListGroupItem,
     Spinner,
@@ -22,6 +25,8 @@
     query,
     //
   } = $props()
+
+  const dispatch = createEventDispatcher()
 
   let emls = $state(null)
   $effect(() => {
@@ -48,7 +53,11 @@
             : ""}
       >
         {#if emlMeta.Ok}
-          <EmlListItem emlMeta={emlMeta.Ok} {hideTags} />
+          <EmlListItem
+            emlMeta={emlMeta.Ok}
+            {hideTags}
+            on:tagsUpdated={(event) => dispatch("tagsUpdated", event.detail)}
+          />
         {:else}
           <div>
             {#if emlMeta.Err.id}
