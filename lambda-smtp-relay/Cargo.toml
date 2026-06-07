@@ -15,10 +15,10 @@ name = "handler"
 path = "./handler.rs"
 
 [dependencies]
-aws_lambda_events = "^1.0"
+aws_lambda_events = "^1.2"
 futures = "^0.3"
-lambda_runtime = "^1.0"
-lettre = {version = "=0.11.19", default-features = false, features=["builder", "rustls-tls", "smtp-transport"]}
+lambda_runtime = "^1.2"
+lettre = {version = "=0.11.22", default-features = false, features=["builder", "rustls-tls", "smtp-transport"]}
 log = "^0.4"
 rusoto_core = {version = "^0.48", default-features = false, features=["rustls"]}
 rusoto_s3 = {version = "^0.48", default-features = false, features=["rustls"]}
@@ -26,5 +26,5 @@ rustls = "^0.21"
 serde = "^1.0"
 serde_derive = "^1.0"
 stderrlog = "^0.6"
-tokio = {version = "^1.42", features=["macros"]}
+tokio = {version = "^1.50", features=["macros"]}
 webpki-roots = "^1.0"
