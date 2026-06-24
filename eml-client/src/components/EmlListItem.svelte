@@ -13,6 +13,24 @@
     //
   } = $props()
 
+  const mailboxLabel = (mailbox) => mailbox.name || mailbox.address
+
+  const sentRecipientsSummary = (emlMeta) => {
+    const recipients = [
+      ...(emlMeta.to ?? []),
+      ...(emlMeta.cc ?? []),
+      ...(emlMeta.bcc ?? []),
+    ]
+      .flatMap((addr) => addr.members || [
+        addr,
+      ])
+      .map(mailboxLabel)
+
+    return recipients.length > 1
+      ? `${recipients[0]} & ${recipients.length - 1} others`
+      : recipients[0]
+  }
+
   $effect(() => {
     hideTags.add("unread")
   })
@@ -42,27 +60,19 @@
     </Col>
 
     <Col>
-      {#if emlMeta.tags.includes("sent") && emlMeta.to}
-        {emlMeta.to
-          .map((addr) => {
-            return (addr.members || [
-              addr,
-            ])
-              .map((m) => m.name || m.address)
-              .join(", ")
-          })
-          .join(", ")}
+      {#if emlMeta.tags.includes("sent")}
+        {sentRecipientsSummary(emlMeta)}
       {:else}
         {#if emlMeta.sender}
           {#if emlMeta.from.map((m) => m.name)
             .includes(emlMeta.sender.name)}
             {emlMeta.sender.address}
           {:else}
-            {emlMeta.sender.name}
+            {mailboxLabel(emlMeta.sender)}
           {/if}
           <small><i>on behalf of</i></small>
         {/if}
-        {emlMeta.from.map((m) => m.name)
+        {emlMeta.from.map(mailboxLabel)
           .join(", ")}
       {/if}
     </Col>
