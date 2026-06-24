@@ -72,7 +72,7 @@
           {/if}
           <small><i>on behalf of</i></small>
         {/if}
-        {emlMeta.from.map((m) => m.name)
+        {emlMeta.from.map(mailboxLabel)
           .join(", ")}
       {/if}
     </Col>
