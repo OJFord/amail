@@ -12,7 +12,6 @@ repos:
     rev: v1.0
     hooks:
       - id: fmt
-      - id: clippy
 
   - repo: https://github.com/antonbabenko/pre-commit-terraform
     rev: v1.105.0
@@ -26,6 +25,13 @@ repos:
         name: Cargo test
         language: system
         entry: cargo test
+        files: ^.*\.rs
+        pass_filenames: false
+
+      - id: clippy
+        name: Cargo clippy
+        language: system
+        entry: cargo +1.96.0 clippy --workspace --all-targets -- -D warnings
         files: ^.*\.rs
         pass_filenames: false
 
