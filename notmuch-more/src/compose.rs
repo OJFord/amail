@@ -122,11 +122,11 @@ pub fn template_reply(db: &Database, id: String) -> Result<ReplyTemplate, Notmuc
                 .map_err(|e| anyhow!("Failed to parse: {e}"))?,
         ),
     );
-    reply_fields.in_reply_to(&format!("<{}>", &reply_to_meta.id));
+    reply_fields.in_reply_to(&format!("<{}>", reply_to_meta.id));
     reply_fields.references(&format!(
         "{} <{}>",
-        &reply_to_meta.references.as_ref().unwrap_or(&String::new()),
-        &reply_to_meta.id
+        reply_to_meta.references.as_ref().unwrap_or(&String::new()),
+        reply_to_meta.id
     ));
 
     println!("[TRACE] swapping reply's from addr");
