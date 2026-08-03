@@ -10,11 +10,11 @@ jobs:
   pre-commit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           submodules: recursive
 
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           check-latest: true
 
@@ -25,7 +25,7 @@ jobs:
         run: pre-commit install --install-hooks
 
       - name: Set up terraform
-        uses: OJFord/tenv-github-action@main
+        uses: OJFord/tenv-github-action@edaa7e549acbacd4d6fbf5abac73af87edee2210 # main
         with:
           tool_name: terraform
 
