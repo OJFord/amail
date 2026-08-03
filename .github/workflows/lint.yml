@@ -10,14 +10,14 @@ jobs:
   pre-commit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           submodules: recursive
 
       - name: Install rust toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@v1
+        uses: actions-rust-lang/setup-rust-toolchain@166cdcfd11aee3cb47222f9ddb555ce30ddb9659 # v1
 
-      - uses: actions/setup-python@v7
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
           check-latest: true
 
@@ -28,7 +28,7 @@ jobs:
         run: pre-commit install --install-hooks
 
       - name: Set up terraform
-        uses: OJFord/tenv-github-action@main
+        uses: OJFord/tenv-github-action@edaa7e549acbacd4d6fbf5abac73af87edee2210 # main
         with:
           tool_name: terraform
 
