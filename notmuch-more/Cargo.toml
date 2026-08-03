@@ -10,7 +10,7 @@ repository = "https://github.com/OJFord/amail"
 [dependencies]
 ammonia = "^4.1.2"
 anyhow = "^1.0"
-base64 = "^0.22.1"
+base64 = "^0.23.0"
 chrono = "^0.4.45"
 delegate = "^0.13.5"
 email = "^0.0.21"
