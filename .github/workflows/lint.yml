@@ -16,10 +16,6 @@ jobs:
 
       - name: Install pinned Rust toolchain
         uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: 1.96.0
-          components: clippy,rustfmt
-          profile: minimal
 
       - uses: actions/setup-python@v6
         with:

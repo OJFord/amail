@@ -8,11 +8,6 @@ repos:
       - id: end-of-file-fixer
       - id: trailing-whitespace
 
-  - repo: https://github.com/doublify/pre-commit-rust
-    rev: v1.0
-    hooks:
-      - id: fmt
-
   - repo: https://github.com/antonbabenko/pre-commit-terraform
     rev: v1.105.0
     hooks:
@@ -28,10 +23,17 @@ repos:
         files: ^.*\.rs
         pass_filenames: false
 
+      - id: fmt
+        name: Cargo fmt
+        language: system
+        entry: cargo fmt --all -- --check
+        files: ^.*\.rs
+        pass_filenames: false
+
       - id: clippy
         name: Cargo clippy
         language: system
-        entry: cargo +1.96.0 clippy --workspace --all-targets -- -D warnings
+        entry: cargo clippy --workspace --all-targets -- -D warnings
         files: ^.*\.rs
         pass_filenames: false
 
