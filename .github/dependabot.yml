@@ -25,6 +25,20 @@ updates:
           - minor
           - patch
 
+  - package-ecosystem: pre-commit
+    directory: /
+    schedule:
+      interval: weekly
+    labels:
+      - type/dependencies
+
+  - package-ecosystem: rust-toolchain
+    directory: /
+    schedule:
+      interval: weekly
+    labels:
+      - type/dependencies
+
   - package-ecosystem: terraform
     directory: /
     schedule:
