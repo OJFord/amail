@@ -51,7 +51,7 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Build Tauri app
-        run: just build-debug
+        run: just --unstable build-debug
 
       - name: Upload built app
         uses: actions/upload-artifact@v4
