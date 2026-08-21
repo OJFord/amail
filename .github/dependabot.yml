@@ -52,6 +52,13 @@ updates:
           - minor
           - patch
 
+  - package-ecosystem: node-version
+    directory: /
+    schedule:
+      interval: weekly
+    labels:
+      - type/dependencies
+
   - package-ecosystem: npm
     directory: /eml-client/
     schedule:
