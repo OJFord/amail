@@ -34,7 +34,7 @@
     }
   },
   "build": {
-    "beforeBuildCommand": "rm -rf dist; yarn; yarn run vite:build:debug-${TAURI_ENV_DEBUG}",
+    "beforeBuildCommand": "if [ -d dist ]; then rm -r dist; fi; yarn; yarn run vite:build:debug-${TAURI_ENV_DEBUG}",
     "beforeDevCommand": "yarn; yarn run vite:dev --port=42411",
     "devUrl": "http://localhost:42411",
     "frontendDist": "../dist"
